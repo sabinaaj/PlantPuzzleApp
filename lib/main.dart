@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/worksheets/task_type_1_page.dart';
+import 'screens/area_list_page.dart';
 import 'themes.dart';
 
 void main() {
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: lightTheme,
       darkTheme: darkTheme,
-      home: const TaskType1Page(),
+      home: const AreaListPage(),
     );
   }
 }

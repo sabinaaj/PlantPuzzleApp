@@ -9,7 +9,6 @@ class TaskType1Page extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: const Text('uloha 1'),
         centerTitle: true,
       ),

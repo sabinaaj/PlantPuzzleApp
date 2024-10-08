@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import '../services/api_service.dart';  // Import API služby
-import '../models/area.dart';          // Import modelu Area
+import '../services/api_service.dart';  
+import '../models/area.dart';       
+import "../screens/area_page.dart";   
 
-class ItemList extends StatefulWidget {
-  const ItemList({super.key});
+class AreaList extends StatefulWidget {
+  const AreaList({super.key});
 
   @override
-  _ItemListState createState() => _ItemListState();
+  _AreaListState createState() => _AreaListState();
 }
 
-class _ItemListState extends State<ItemList> {
+class _AreaListState extends State<AreaList> {
   final ApiService _apiService = ApiService();
   late Future<List<dynamic>> _areasFuture;
 
@@ -21,8 +22,8 @@ class _ItemListState extends State<ItemList> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,  
+    return SafeArea(
+      top: true,
       child: FutureBuilder<List<dynamic>>(
         future: _areasFuture,
         builder: (context, snapshot) {
@@ -43,7 +44,6 @@ class _ItemListState extends State<ItemList> {
               return Container(
                 margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 decoration: BoxDecoration(
-                  color: Colors.white,
                   borderRadius: BorderRadius.circular(15.0),
                   border: Border(
                     top: BorderSide(width: 2.0, color: Colors.grey.shade300),
@@ -54,7 +54,12 @@ class _ItemListState extends State<ItemList> {
                 child: ListTile(
                   title: Text(area.title),
                   onTap: () {
-                    // Zde můžete přidat akci pro kliknutí na jednotlivé oblasti
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AreaPage(area: area),
+                      ),
+                    );
                   },
                 ),
               );

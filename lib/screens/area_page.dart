@@ -1,9 +1,27 @@
 import 'package:flutter/material.dart';
 import '../widgets/area_card.dart';
+import '../models/area.dart';
+import '../services/api_service.dart';
 
 
-class AreaPage extends StatelessWidget {
-  const AreaPage({super.key});
+class AreaPage extends StatefulWidget {
+  final Area area;
+
+  const AreaPage({super.key, required this.area});
+
+  @override
+  _AreaPageState createState() => _AreaPageState();
+}
+
+class _AreaPageState extends State<AreaPage> {
+  late Future<Map<String, dynamic>> _areaDetailsFuture;
+  final ApiService _apiService = ApiService();
+
+  @override
+  void initState() {
+    super.initState();
+    _areaDetailsFuture = _apiService.getAreaDetails(widget.area.id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +30,20 @@ class AreaPage extends StatelessWidget {
         title: const Text('Oblast'),
         centerTitle: true,
       ),
-      body: AreaCard(),  // Načítá dynamický seznam z widgetu
+     body: FutureBuilder<Map<String, dynamic>>(
+        future: _areaDetailsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData) {
+            return const Center(child: Text('No details available'));
+          }
+
+          return AreaCard(area: widget.area);
+        },
+      ),
     );
   }
 }
