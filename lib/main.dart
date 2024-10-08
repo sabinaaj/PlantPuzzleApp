@@ -1,42 +1,20 @@
 import 'package:flutter/material.dart';
+import 'screens/worksheets/task_type_1_page.dart';
+import 'themes.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Seznam položek'),
-      ),
-      body: ItemList(),
-    );
-  }
-}
-
-class ItemList extends StatelessWidget {
-  final List<String> items = List<String>.generate(20, (i) => "Položka ${i + 1}");
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(items[index]),
-        );
-      },
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      home: const TaskType1Page(),
     );
   }
 }
