@@ -58,9 +58,13 @@ class _AreaListState extends State<AreaList> {
                     ? Image.network(
                         area.iconUrl!,
                         height: 75,
-                        fit: BoxFit.cover,
+                        width: 60,
                       )
-                    : const Icon(Icons.image_not_supported),
+                    : Image.asset(
+                      'assets/images/area_placeholder.png',
+                      height: 75,
+                      width: 60,
+                    ),
                   title: Text(area.title),
                   onTap: () {
                     Navigator.push(

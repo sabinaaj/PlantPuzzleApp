@@ -20,7 +20,10 @@ class AreaHeader extends StatelessWidget {
                   height: 115,
                   fit: BoxFit.cover,
                 )
-              : const Icon(Icons.image_not_supported),
+              : Image.asset(
+                  'assets/images/area_placeholder.png',
+                  height: 100,
+                ),
         ),
         Padding(
           padding: const EdgeInsets.only(bottom: 15.0),

@@ -31,7 +31,6 @@ class WorksheetCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: 200.0,
                       child: Text(
                         worksheet.title,
                         maxLines: 4,
