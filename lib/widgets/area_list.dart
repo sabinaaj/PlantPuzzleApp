@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/api_service.dart';  
+import '../services/api_service_areas.dart';  
 import '../models/area.dart';       
 import "../screens/area_page.dart";   
 
@@ -42,6 +42,7 @@ class _AreaListState extends State<AreaList> {
             itemBuilder: (context, index) {
               final area = areas[index];
               return Container(
+                padding: const EdgeInsets.symmetric(vertical: 14.0),
                 margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.0),
@@ -51,7 +52,15 @@ class _AreaListState extends State<AreaList> {
                     right: BorderSide(width: 2.0, color: Colors.grey.shade300),
                     bottom: BorderSide(width: 4.0, color: Colors.grey.shade300)),
                   ),
-                child: ListTile(
+                child:  ListTile(
+                  
+                  leading: area.iconUrl != null
+                    ? Image.network(
+                        area.iconUrl!,
+                        height: 75,
+                        fit: BoxFit.cover,
+                      )
+                    : const Icon(Icons.image_not_supported),
                   title: Text(area.title),
                   onTap: () {
                     Navigator.push(

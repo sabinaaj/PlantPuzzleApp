@@ -8,7 +8,7 @@ class ApiService {
     final response = await http.get(Uri.parse('$baseUrl/areas/'));
     
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       throw Exception('Failed to load areas');
     }

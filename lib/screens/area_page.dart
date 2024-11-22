@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../widgets/area_card.dart';
+import '../widgets/area_page_tabs.dart';
 import '../models/area.dart';
-import '../services/api_service.dart';
+import '../services/api_service_areas.dart';
 
 
 class AreaPage extends StatefulWidget {
@@ -41,7 +41,9 @@ class _AreaPageState extends State<AreaPage> {
             return const Center(child: Text('No details available'));
           }
 
-          return AreaCard(area: widget.area);
+          return AreaTabs(area: widget.area);
+
+          
         },
       ),
     );
