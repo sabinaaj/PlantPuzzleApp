@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class BorderButton extends StatelessWidget {
   final String text;
-  final double? width;
-  final double height;
+  final double? width; 
+  final double? height; 
 
   const BorderButton({
     Key? key,

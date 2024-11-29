@@ -8,7 +8,7 @@ class ContinueButton extends StatelessWidget {
   const ContinueButton({
     Key? key,
     this.text = 'Tlačítko', // Default text
-    this.height = 45.0,
+    this.height = 50.0,
     this.width = double.infinity, // Default width
   }) : super(key: key);
 

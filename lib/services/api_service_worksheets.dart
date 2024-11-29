@@ -14,4 +14,13 @@ class ApiService {
     }
   }
 
+  Future<List<dynamic>> getWorksheet(int worksheetId) async {
+    final response = await http.get(Uri.parse('$baseUrl/$worksheetId/worksheet/'));
+      
+      if (response.statusCode == 200) {
+        return jsonDecode(utf8.decode(response.bodyBytes));
+      } else {
+        throw Exception('Failed to load worksheet $worksheetId');
+      }
+  }
 }
