@@ -8,7 +8,7 @@ final ThemeData lightTheme = ThemeData(
     secondaryContainer: Colors.grey,
     primary: MaterialColor(0xFF000000, blackColor),
     surface: MaterialColor(0xFFFFFFFF, whiteColor),
-    surfaceVariant: MaterialColor(0xFFFFFFFF, whiteColor),
+    surfaceContainerHighest: MaterialColor(0xFFFFFFFF, whiteColor),
     onSurface: Colors.black,
   ),
   tabBarTheme: TabBarTheme(

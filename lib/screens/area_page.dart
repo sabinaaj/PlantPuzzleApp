@@ -10,7 +10,7 @@ class AreaPage extends StatefulWidget {
   const AreaPage({super.key, required this.area});
 
   @override
-  _AreaPageState createState() => _AreaPageState();
+  State<AreaPage> createState() => _AreaPageState();
 }
 
 class _AreaPageState extends State<AreaPage> {

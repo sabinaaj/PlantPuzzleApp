@@ -14,7 +14,7 @@ class WorksheetList extends StatefulWidget {
 
 class _WorksheetListState extends State<WorksheetList> {
   final ApiService _apiService = ApiService();
-  late Future<List<Worksheet>> _worksheetsFuture;
+  late Future<List<WorksheetSummary>> _worksheetsFuture;
 
   @override
   void initState() {
@@ -22,14 +22,14 @@ class _WorksheetListState extends State<WorksheetList> {
     _worksheetsFuture = _loadWorksheets();
   }
 
-  Future<List<Worksheet>> _loadWorksheets() async {
+  Future<List<WorksheetSummary>> _loadWorksheets() async {
     final data = await _apiService.getWorksheetsByArea(widget.areaId);
-    return data.map<Worksheet>((json) => Worksheet.fromJson(json)).toList();
+    return data.map<WorksheetSummary>((json) => WorksheetSummary.fromJson(json)).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Worksheet>>(
+    return FutureBuilder<List<WorksheetSummary>>(
       future: _worksheetsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {

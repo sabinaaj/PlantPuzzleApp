@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:plant_puzzle_app/screens/worksheet_page.dart';
+import 'package:plant_puzzle_app/utilities/worksheet.dart';
 import '../models/worksheet.dart';
 import '../widgets/border_button.dart';
 
 class WorksheetCard extends StatelessWidget {
-  final Worksheet worksheet;
+  final WorksheetSummary worksheet;
 
   const WorksheetCard({super.key, required this.worksheet});
 
@@ -56,6 +58,12 @@ class WorksheetCard extends StatelessWidget {
             BorderButton(
               text: 'Spustit test',
               width: MediaQuery.of(context).size.width * 0.85,
+              onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WorksheetPage(worksheetId: worksheet.id),
+                      ),
+                    ),
             ),
           ],
         ),

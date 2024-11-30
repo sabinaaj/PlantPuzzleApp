@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 class BorderButton extends StatelessWidget {
   final String text;
   final double? width; 
-  final double? height; 
+  final double? height;
+  final VoidCallback? onPressed;
 
   const BorderButton({
-    Key? key,
+    super.key,
     this.text = 'Tlačítko', // Default text
     this.height = 45.0,
     this.width, // Default width
-  }) : super(key: key);
+    this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +36,7 @@ class BorderButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(8.0),
             ),
           ),
-          onPressed: () {
-            // Add your onPressed functionality here
-          },
+          onPressed: onPressed,
           child: Text(
             text, // Use the provided text
             style: const TextStyle(fontSize: 16.0),

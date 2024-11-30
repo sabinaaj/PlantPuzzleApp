@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../models/worksheet.dart';
 
 class ApiService {
   static const String baseUrl = "http://192.168.68.111:8001/worksheets/api"; 
@@ -14,7 +15,7 @@ class ApiService {
     }
   }
 
-  Future<List<dynamic>> getWorksheet(int worksheetId) async {
+  Future<Map<String, dynamic>> getWorksheet(int worksheetId) async {
     final response = await http.get(Uri.parse('$baseUrl/$worksheetId/worksheet/'));
       
       if (response.statusCode == 200) {

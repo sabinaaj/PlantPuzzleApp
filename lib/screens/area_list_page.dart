@@ -20,7 +20,7 @@ class AreaListPage extends StatelessWidget {
   ),
       ),
       body:
-       AreaList(), 
+       const AreaList(), 
     );
   }
 }

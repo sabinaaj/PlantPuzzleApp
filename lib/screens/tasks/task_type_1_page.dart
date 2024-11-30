@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:plant_puzzle_app/models/worksheet.dart';
 import '../../widgets/border_button.dart';
 import '../../widgets/continue_button.dart';
 
 class TaskType1Page extends StatefulWidget {
-  TaskType1Page();
+  final Question question;
+  final String taskText;
+
+  const TaskType1Page({super.key, required this.question, required this.taskText});
 
   @override
-  _TaskType1PageState createState() => _TaskType1PageState();
+  State<TaskType1Page> createState() => _TaskType1PageState();
 }
 
 class _TaskType1PageState extends State<TaskType1Page> {
@@ -18,12 +22,11 @@ class _TaskType1PageState extends State<TaskType1Page> {
   @override
   void initState() {
     super.initState();
-    _maxWidth = _calculateMaxTextWidth(['ano', 'ne']);
-    print(_maxWidth);
+    _maxWidth = _calculateMaxTextWidth(widget.question.options.map((opt) => opt.text ?? '').toList());
   }
 
   double _calculateMaxTextWidth(List<String> texts) {
-    final textStyle = TextStyle(fontSize: 16.0); // Styl textu
+    const textStyle = TextStyle(fontSize: 16.0); 
     double maxWidth = 0;
 
     for (final text in texts) {
@@ -32,25 +35,21 @@ class _TaskType1PageState extends State<TaskType1Page> {
         textDirection: TextDirection.ltr,
       )..layout();
       maxWidth = maxWidth > textPainter.width ? maxWidth : textPainter.width;
-      print(textPainter.width);
-      print(maxWidth);
     }
 
-    return maxWidth + 40.0; // Přidání paddingu
+    return maxWidth + 40.0; // Add padding
   }
 
   @override
   Widget build(BuildContext context) {
-    String? selectedOption;
-
-    return Scaffold(
+    return  Scaffold(
+        
       appBar: AppBar(
-        title: Text('Title'),
+        title: const Text('Title'),
         actions: [
           IconButton(
-            icon: Icon(Icons.account_circle),
+            icon: const Icon(Icons.account_circle),
             onPressed: () {
-              // Akce pro ikonu uživatele
             },
           ),
         ],
@@ -62,39 +61,40 @@ class _TaskType1PageState extends State<TaskType1Page> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Vyber správnou možnost:',
-              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400),
+              widget.taskText,
+              style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400),
             ),
             Column(
               children: [
                 Text(
-                  "question",
-                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                  widget.question.text ?? '',
+                  style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 50),
+                const SizedBox(height: 50),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     BorderButton(
                       key: _button1Key,
-                      text: 'ano',
+                      text: widget.question.options[0].text ?? '',
                       height: 50,
                       width: _maxWidth,
                     ),
                     BorderButton(
                       key: _button2Key,
-                      text: 'ne',
+                      text: widget.question.options[1].text ?? '',
                       height: 50,
                       width: _maxWidth,
                     ),
                   ],
                 ),
-                SizedBox(height: 100),
+                const SizedBox(height: 100),
               ],
             ),
             ContinueButton(
               text: 'Vyhodnotit',
+              onPressed: () => Navigator.pop(context),
             ),
           ],
         ),
