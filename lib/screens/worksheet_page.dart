@@ -28,12 +28,12 @@ class _WorksheetPageState extends State<WorksheetPage> {
 
     if ((currentQuestionIndex < task.questions.length - 1) && (task.type == 1 || task.type == 4)) {
       setState(() {
-        currentQuestionIndex++; // Přepnutí na další otázku
+        currentQuestionIndex++; // Switch to next question
       });
     } else if (currentTaskIndex < worksheet.tasks.length - 1) {
       setState(() {
-        currentTaskIndex++; // Přepnutí na další úlohu
-        currentQuestionIndex = 0; // Reset otázky
+        currentTaskIndex++; // Switch to next task
+        currentQuestionIndex = 0; // Reset question index
       });
     } else {
       // Konec testu
@@ -62,7 +62,7 @@ class _WorksheetPageState extends State<WorksheetPage> {
         future: _worksheetFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(
                 child: Text("Chyba při načítání dat: ${snapshot.error}"));     

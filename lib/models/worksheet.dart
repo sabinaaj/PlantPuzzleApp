@@ -140,7 +140,7 @@ class Option {
 
 class TaskImage {
   final int id;
-  final String image;
+  final String? image;
 
   TaskImage({
     required this.id,
@@ -150,14 +150,14 @@ class TaskImage {
   factory TaskImage.fromJson(Map<String, dynamic> json) {
     return TaskImage(
       id: json['id'],
-      image: json['image'],
+      image: json['image_url'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'image': image,
+      'image_url': image,
     };
   }
 }

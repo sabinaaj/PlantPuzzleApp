@@ -80,6 +80,7 @@ class _TaskType1State extends State<TaskType1> {
             const SizedBox(height: 100),
           ],
         ),
+        const SizedBox(),
       ],
     );
   }
