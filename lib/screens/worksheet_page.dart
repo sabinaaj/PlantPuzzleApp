@@ -36,10 +36,6 @@ class _WorksheetPageState extends State<WorksheetPage> {
         currentQuestionIndex = 0; // Reset question index
       });
     } else {
-      // Konec testu
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Test dokončen!")),
-      );
       Navigator.pop(context);
     }
   }
@@ -48,15 +44,7 @@ class _WorksheetPageState extends State<WorksheetPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Title'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.account_circle),
-            onPressed: () {
-              // Akce pro ikonu uživatele
-            },
-          ),
-        ],
+        title: const Text('Test'),
       ),
       body: FutureBuilder<Worksheet>(
         future: _worksheetFuture,
@@ -74,7 +62,7 @@ class _WorksheetPageState extends State<WorksheetPage> {
 
             return Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,

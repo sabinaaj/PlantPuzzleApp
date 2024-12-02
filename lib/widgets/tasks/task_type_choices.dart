@@ -23,8 +23,8 @@ class TaskTypeChoices extends StatelessWidget {
           taskText,
           style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400),
         ),
-        // Question text
 
+      // Task type 2
       if (images.isEmpty)
         Align(
           alignment: Alignment.center,
@@ -34,7 +34,9 @@ class TaskTypeChoices extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
         )
-      else
+
+      // Task type 3 and 4
+      else 
         Align(
           alignment: Alignment.center,
           child: Image.network(
@@ -45,20 +47,31 @@ class TaskTypeChoices extends StatelessWidget {
           ),
         ),
 
-        // Options
-        Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: question.options.map((option) {
-              return Padding(
+      // Options
+      Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+            if (images.isNotEmpty && question.text != null)
+              Align(
+                alignment: Alignment.center,
+                child: Text(
+                  '${question.text ?? ''}.',
+                  style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ), 
+
+            for (var i = 0; i < question.options.length; i++) ...[
+              Padding(
                 padding: const EdgeInsets.only(top: 14.0),
                 child: BorderButton(
-                    text: option.text ?? '',
+                    text: question.options[i].text ?? '',
                     height: 50,
                     width: double.infinity),
-              );
-            }).toList()),
-
-        const SizedBox(),
+              )
+            ],
+          ],
+        ),
       ],
     );
   }

@@ -18,24 +18,26 @@ class ContinueButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.center, // Center align the button
-      child: SizedBox(
-        width: width,
-        height: height,
-        child: TextButton(
-          style: TextButton.styleFrom(
-            backgroundColor: const Color(0xFF93C572),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 14.0),
+        child: SizedBox(
+          width: width,
+          height: height,
+          child: TextButton(
+            style: TextButton.styleFrom(
+              backgroundColor: const Color(0xFF93C572),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+            ),
+            onPressed: onPressed,
+            child: Text(
+              text, // Use the provided text
+              style: const TextStyle(fontSize: 16.0, color: Colors.white),
             ),
           ),
-          onPressed: onPressed,
-          child: Text(
-            text, // Use the provided text
-            style: const TextStyle(fontSize: 16.0, color: Colors.white),
-          ),
         ),
-      ),
+      )
     );
   }
-
 }

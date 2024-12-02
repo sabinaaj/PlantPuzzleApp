@@ -36,10 +36,14 @@ class BorderButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(8.0),
             ),
           ),
-          onPressed: onPressed,
-          child: Text(
-            text, // Use the provided text
-            style: const TextStyle(fontSize: 16.0),
+          onPressed: onPressed ?? () {},
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Text(
+              text,
+              style: const TextStyle(fontSize: 16.0),
+              overflow: TextOverflow.visible, 
+            ),
           ),
         ),
       ),
