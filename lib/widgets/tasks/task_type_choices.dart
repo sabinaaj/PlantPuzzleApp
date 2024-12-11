@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
-import '../../widgets/border_button.dart';
+import '../../widgets/toggle_button.dart';
 import '../../models/worksheet.dart';
 
 class TaskTypeChoices extends StatelessWidget {
   final Question question;
   final String taskText;
   final List<TaskImage> images;
+  final Function(Option) onOptionSelected;
 
-  const TaskTypeChoices({super.key, required this.question, required this.taskText, required this.images});
+  const TaskTypeChoices({
+    super.key,
+    required this.question,
+    required this.taskText,
+    required this.images,
+    required this.onOptionSelected,
+    });
 
   @override
   Widget build(BuildContext context) {
@@ -64,10 +71,15 @@ class TaskTypeChoices extends StatelessWidget {
             for (var i = 0; i < question.options.length; i++) ...[
               Padding(
                 padding: const EdgeInsets.only(top: 14.0),
-                child: BorderButton(
-                    text: question.options[i].text ?? '',
-                    height: 50,
-                    width: double.infinity),
+                child: ToggleButton(
+                  text: question.options[i].text ?? '',
+                  height: 50,
+                  width: double.infinity,
+                  onToggle: (isSelected) {
+                    print('Tlačítko vybráno: $isSelected');
+                    onOptionSelected(question.options[i]);
+                  },
+                ),
               )
             ],
           ],

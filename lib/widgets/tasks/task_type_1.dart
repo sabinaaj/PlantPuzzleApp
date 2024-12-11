@@ -5,9 +5,14 @@ import '../../widgets/border_button.dart';
 class TaskType1 extends StatefulWidget {
   final Question question;
   final String taskText;
+  final Function(Option) onOptionSelected;
 
   const TaskType1(
-      {super.key, required this.question, required this.taskText});
+      {super.key,
+       required this.question,
+       required this.taskText,
+       required this.onOptionSelected
+      });
 
   @override
   State<TaskType1> createState() => _TaskType1State();
@@ -68,12 +73,14 @@ class _TaskType1State extends State<TaskType1> {
                   text: widget.question.options[0].text ?? '',
                   height: 50,
                   width: _maxWidth,
+                  onPressed: () => widget.onOptionSelected(widget.question.options[0]),
                 ),
                 BorderButton(
                   key: _button2Key,
                   text: widget.question.options[1].text ?? '',
                   height: 50,
                   width: _maxWidth,
+                  onPressed: () => widget.onOptionSelected(widget.question.options[1]),
                 ),
               ],
             ),

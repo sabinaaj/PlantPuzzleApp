@@ -5,10 +5,12 @@ import '../../models/worksheet.dart';
 class TaskType5 extends StatelessWidget {
   final Task task;
   final List<String> questions;
+  final Function(Option) onOptionSelected;
 
   TaskType5({
     super.key,
     required this.task,
+    required this.onOptionSelected
   }) : questions = task.questions.map((question) => question.text ?? '').toList();
 
   @override
@@ -39,7 +41,7 @@ class TaskType5 extends StatelessWidget {
                           child: BorderButton(
                             text: questions[i],
                             width: double.infinity,
-                            height: double.infinity, 
+                            height: double.infinity,
                           ),
                         ),
                         if (i < questions.length - 1)
@@ -60,7 +62,8 @@ class TaskType5 extends StatelessWidget {
                           child: BorderButton(
                             text: task.questions[0].options[i].text ?? '',
                             width: double.infinity,
-                            height: double.infinity, 
+                            height: double.infinity,
+                            onPressed: () => onOptionSelected(task.questions[0].options[i]),
                           ),
                         ),
                         if (i < task.questions[0].options.length - 1)
