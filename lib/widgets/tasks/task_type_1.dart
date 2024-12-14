@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:plant_puzzle_app/models/worksheet.dart';
-import '../../widgets/border_button.dart';
+import '../../widgets/toggle_button.dart';
+import '../../utilities/worksheets.dart';
 
 class TaskType1 extends StatefulWidget {
   final Question question;
   final String taskText;
-  final Function(Option) onOptionSelected;
 
-  const TaskType1(
-      {super.key,
-       required this.question,
-       required this.taskText,
-       required this.onOptionSelected
-      });
+  const TaskType1({
+    super.key,
+    required this.question,
+    required this.taskText,
+  });
 
   @override
   State<TaskType1> createState() => _TaskType1State();
 }
 
 class _TaskType1State extends State<TaskType1> {
-  final GlobalKey _button1Key = GlobalKey();
-  final GlobalKey _button2Key = GlobalKey();
+  final GlobalKey _option1Key = GlobalKey();
+  final GlobalKey _option2Key = GlobalKey();
 
   double _maxWidth = 0;
 
@@ -31,56 +30,51 @@ class _TaskType1State extends State<TaskType1> {
         widget.question.options.map((opt) => opt.text ?? '').toList());
   }
 
-  double _calculateMaxTextWidth(List<String> texts) {
-    const textStyle = TextStyle(fontSize: 16.0);
-    double maxWidth = 0;
+  double _calculateMaxTextWidth(List<String> optionTexts) {
+    final textStyle = const TextStyle(fontSize: 16);
+    var maxWidth = 0.0;
 
-    for (final text in texts) {
+    for (final optionText in optionTexts) {
       final textPainter = TextPainter(
-        text: TextSpan(text: text, style: textStyle),
+        text: TextSpan(text: optionText, style: textStyle),
         textDirection: TextDirection.ltr,
       )..layout();
       maxWidth = maxWidth > textPainter.width ? maxWidth : textPainter.width;
     }
 
-    return maxWidth + 40.0; // Add padding
+    return maxWidth + 40; // Add padding
   }
 
   @override
   Widget build(BuildContext context) {
+
+    final taskTextStyle = const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400);
+    final questionTextStyle = const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold);
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.taskText,
-          style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400),
-        ),
+        Text(widget.taskText, style: taskTextStyle),
         Column(
           children: [
-            Text(
-              widget.question.text ?? '',
-              style:
-                  const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
+            Text(widget.question.text ?? '',
+                style: questionTextStyle, textAlign: TextAlign.center),
             const SizedBox(height: 50),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                BorderButton(
-                  key: _button1Key,
+                ToggleButton(
+                  key: _option1Key,
                   text: widget.question.options[0].text ?? '',
                   height: 50,
                   width: _maxWidth,
-                  onPressed: () => widget.onOptionSelected(widget.question.options[0]),
                 ),
-                BorderButton(
-                  key: _button2Key,
+                ToggleButton(
+                  key: _option2Key,
                   text: widget.question.options[1].text ?? '',
                   height: 50,
                   width: _maxWidth,
-                  onPressed: () => widget.onOptionSelected(widget.question.options[1]),
                 ),
               ],
             ),

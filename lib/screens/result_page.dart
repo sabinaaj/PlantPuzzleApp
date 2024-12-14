@@ -16,9 +16,6 @@ class ResultPage extends StatelessWidget {
     for (var task in worksheet.tasks) {
       for (var question in task.questions) {
         totalQuestions++;
-        if (userAnswers[totalQuestions - 1]?.isCorrect ?? false) {
-          correctAnswers++;
-        }
       }
     }
 

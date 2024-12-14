@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import '../../widgets/border_button.dart';
+import '../../widgets/toggle_button.dart';
 import '../../models/worksheet.dart';
 
 class TaskType5 extends StatelessWidget {
   final Task task;
   final List<String> questions;
-  final Function(Option) onOptionSelected;
 
   TaskType5({
     super.key,
     required this.task,
-    required this.onOptionSelected
   }) : questions = task.questions.map((question) => question.text ?? '').toList();
 
   @override
@@ -38,7 +36,7 @@ class TaskType5 extends StatelessWidget {
                     children: [
                       for (var i = 0; i < questions.length; i++) ...[
                         Expanded(
-                          child: BorderButton(
+                          child: ToggleButton(
                             text: questions[i],
                             width: double.infinity,
                             height: double.infinity,
@@ -59,11 +57,10 @@ class TaskType5 extends StatelessWidget {
                     children: [
                       for (var i = 0; i < task.questions[0].options.length; i++) ...[
                         Expanded(
-                          child: BorderButton(
+                          child: ToggleButton(
                             text: task.questions[0].options[i].text ?? '',
                             width: double.infinity,
                             height: double.infinity,
-                            onPressed: () => onOptionSelected(task.questions[0].options[i]),
                           ),
                         ),
                         if (i < task.questions[0].options.length - 1)
