@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import '../utilities/worksheets.dart';
+import '../../models/worksheet.dart';
 
 class ToggleButton extends StatefulWidget {
-  final String text;
+  final Option? option;
+  final String? text;
   final double? width;
   final double? height;
   final Function(bool)? onToggle;
 
   const ToggleButton({
     super.key,
-    this.text = 'Tlačítko',
-    this.height = 45.0,
+    this.option,
+    this.text,
+    this.height = 50.0,
     this.width,
     this.onToggle,
   });
@@ -47,6 +50,14 @@ class ToggleButtonState extends State<ToggleButton> {
       isSelected = false;
     });
   }
+
+  bool getIsSelected() {
+    return isSelected;
+  }
+
+  Option? getOption() {
+    return widget.option;
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -58,6 +69,8 @@ class ToggleButtonState extends State<ToggleButton> {
         Color backgroundColor;
 
         if (pageState == PageState.evaluate && isSelected) {
+          backgroundColor = widget.option?.isCorrect ?? false ? Colors.green : Colors.red;
+        } else if (widget.option != null && pageState == PageState.evaluate && widget.option!.isCorrect) {
           backgroundColor = Colors.green;
         } else {
           backgroundColor = isSelected ? Colors.grey.shade300 : Colors.white;
@@ -85,14 +98,16 @@ class ToggleButtonState extends State<ToggleButton> {
                 ),
               ),
               onPressed: () {
-                setState(() {
+                pageState == PageState.answer
+                ? setState(() {
                   isSelected = !isSelected;
-                });
+                  })
+                : null;
               },
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Text(
-                  widget.text,
+                  widget.option?.text ?? widget.text ?? '',
                   style: const TextStyle(fontSize: 16.0),
                   overflow: TextOverflow.visible,
                 ),

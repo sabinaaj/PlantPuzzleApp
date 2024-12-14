@@ -5,6 +5,7 @@ import '../widgets/tasks/task_type_1.dart';
 import '../widgets/tasks/task_type_choices.dart';
 import '../widgets/tasks/task_type_5.dart';
 import '../widgets/toggle_button.dart';
+import '../screens/result_page.dart';
 
 enum PageState { answer, evaluate }
 
@@ -17,14 +18,9 @@ class StateManager {
   Stream<List<ToggleButtonState>> get buttonsStream => _buttonsController.stream;
   List<ToggleButtonState> get buttons => _buttonsController.value;
 
-  /* final _selectedOptionController = BehaviorSubject<Option?>.seeded(null);
-  Stream<Option?> get selectedOptionStream => _selectedOptionController.stream;
-  int? get selectedOption => _selectedOptionController.value; */
-
   void setPageState(PageState state) => _pageStateController.add(state);
 
   void resetButtons() {
-    print(_buttonsController.value);
     for (final button in _buttonsController.value) {
       button.resetButton();
     }
@@ -40,12 +36,10 @@ class StateManager {
     _buttonsController.add(updatedButtons);
   }
 
-  /* void setSelectedOption(int? optionIndex) => _selectedOptionController.add(optionIndex); */
 
   void dispose() {
     _pageStateController.close();
     _buttonsController.close();
-    // _selectedOptionController.close();
   }
 }
 
@@ -87,6 +81,8 @@ class WorksheetStateManager {
   final Worksheet worksheet;
   late final int totalPages;
 
+  List<VisitorResponse> responses = []; 
+
   WorksheetStateManager({required this.worksheet});
 
   /// Calculates the total number of pages based on the given worksheet.
@@ -94,17 +90,16 @@ class WorksheetStateManager {
   /// If the task type is 1 or 4, the number of questions in the task is added to
   /// the total. Otherwise, 1 is added to the total.
   int calculateTotalPages() {
-    return worksheet.tasks.fold<int>(
+    totalPages = worksheet.tasks.fold<int>(
       0,
-      (total, task) =>
-          total +
-          (task.type == 1 || task.type == 4 ? task.questions.length : 1),
+      (total, task) => total + (task.type == 1 || task.type == 4 ? task.questions.length : 1),
     );
+    return totalPages;
   }
 
   /// Advances to the next page, which may be a question in the same task or the
   /// first question in the next task. It changes counters.
-  void nextPage() {
+  void nextPage(BuildContext context) {
     final task = worksheet.tasks[currentTaskIndex];
     _currentPageIndex.add(_currentPageIndex.value + 1);
 
@@ -117,9 +112,14 @@ class WorksheetStateManager {
       if (_currentQuestionIndex.value > 0) {
         _currentQuestionIndex.add(0);
       }
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ResultPage(worksheetStateManager: this,),
+        ),
+      );
     }
-
-    // TODO: resultPage
   }
 
   /// Returns a widget based on the given task and question.
@@ -154,4 +154,45 @@ class WorksheetStateManager {
         return Container();
     }
   }
+
+  void saveAnswers(StateManager stateManager) {
+    final task = worksheet.tasks[currentTaskIndex];
+    final question = task.questions[currentQuestionIndex];
+
+    List<Option> options = [];
+    bool isCorrect = true;
+
+    for (final button in stateManager._buttonsController.value) {
+      final Option? option = button.getOption();
+
+      if (option == null) {
+        continue;
+      }
+
+      if (button.isSelected) {
+        options.add(option);
+
+        if (!option.isCorrect) {
+          isCorrect = false;
+        }
+      }
+
+    responses.add(VisitorResponse(
+      question: question,
+      options: options,
+      isCorrect: isCorrect,
+    ));
+    }
+  }
+
+  int getCorrectAnswers() {
+    int correctAnswers = 0;
+    for (var response in responses) {
+      if (response.isCorrect) {
+        correctAnswers++;
+      }
+    }
+    return correctAnswers;
+  }
+
 }

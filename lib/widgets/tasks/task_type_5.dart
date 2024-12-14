@@ -58,7 +58,7 @@ class TaskType5 extends StatelessWidget {
                       for (var i = 0; i < task.questions[0].options.length; i++) ...[
                         Expanded(
                           child: ToggleButton(
-                            text: task.questions[0].options[i].text ?? '',
+                            option: task.questions[0].options[i],
                             width: double.infinity,
                             height: double.infinity,
                           ),

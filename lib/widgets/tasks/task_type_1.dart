@@ -66,14 +66,12 @@ class _TaskType1State extends State<TaskType1> {
               children: [
                 ToggleButton(
                   key: _option1Key,
-                  text: widget.question.options[0].text ?? '',
-                  height: 50,
+                  option: widget.question.options[0],
                   width: _maxWidth,
                 ),
                 ToggleButton(
                   key: _option2Key,
-                  text: widget.question.options[1].text ?? '',
-                  height: 50,
+                  option: widget.question.options[1],
                   width: _maxWidth,
                 ),
               ],

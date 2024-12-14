@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../widgets/continue_button.dart';
 import '../../models/worksheet.dart';
 import '../services/api_service_worksheets.dart';
-import '../screens/result_page.dart';
 import '../utilities/worksheets.dart';
 
 class WorksheetPage extends StatefulWidget {
@@ -32,7 +31,6 @@ class _WorksheetPageState extends State<WorksheetPage> {
   }
 
   @override
-
   /// Builds the main page for a worksheet.
   Widget build(BuildContext context) {
     return FutureBuilder<Worksheet>(
@@ -93,10 +91,11 @@ class _WorksheetPageState extends State<WorksheetPage> {
                                 : 'Další',
                             onPressed: () {
                               if (pageState == PageState.answer) {
+                                worksheetStateManager.saveAnswers(stateManager);
                                 stateManager.setPageState(PageState.evaluate);
                               } else {
                                 stateManager.resetButtons();
-                                worksheetStateManager.nextPage();
+                                worksheetStateManager.nextPage(context);
                                 stateManager.setPageState(PageState.answer);
                               }
                             },
