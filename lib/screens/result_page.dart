@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:plant_puzzle_app/utilities/worksheets.dart';
+import 'package:plant_puzzle_app/utilities/worksheet.dart';
 import '../../widgets/continue_button.dart';
 
 class ResultPage extends StatelessWidget {
-    final WorksheetStateManager worksheetStateManager;
+  final WorksheetStateManager worksheetStateManager;
 
-    const ResultPage({super.key, required this.worksheetStateManager});
+  const ResultPage({super.key, required this.worksheetStateManager});
 
   @override
   Widget build(BuildContext context) {
@@ -14,31 +14,42 @@ class ResultPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text('Výsledky testu')),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'Správné odpovědi: $correctAnswers z $totalPages',
-              style: TextStyle(fontSize: 24),
-            ),
-            Text(
-              'Úspěšnost: ${(correctAnswers / totalPages * 100).toStringAsFixed(1)}%',
-              style: TextStyle(fontSize: 20),
-            ),
+            const SizedBox(),
+
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                'Správné odpovědi: $correctAnswers z $totalPages',
+                style: TextStyle(fontSize: 24),
+              ),
+              const SizedBox(height: 15),
+              Text(
+                'Úspěšnost: ${(correctAnswers / totalPages * 100).toStringAsFixed(1)}%',
+                style: TextStyle(fontSize: 20),
+              )
+            ]),
             ContinueButton(
               text: "Dokončit",
               onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(
+                int count = 0;
+                Navigator.popUntil(
                   context,
-                  '/worksheet',
-                  (Route<dynamic> route) => false,
+                  (route) {
+                    count++;
+                    return count > 2;
+                  },
                 );
               },
             ),
           ],
         ),
-      ),
+      )
     );
   }
 }

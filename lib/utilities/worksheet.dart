@@ -36,7 +36,6 @@ class StateManager {
     _buttonsController.add(updatedButtons);
   }
 
-
   void dispose() {
     _pageStateController.close();
     _buttonsController.close();
@@ -156,8 +155,10 @@ class WorksheetStateManager {
   }
 
   void saveAnswers(StateManager stateManager) {
+    
     final task = worksheet.tasks[currentTaskIndex];
     final question = task.questions[currentQuestionIndex];
+    print(question.text);
 
     List<Option> options = [];
     bool isCorrect = true;
@@ -169,20 +170,30 @@ class WorksheetStateManager {
         continue;
       }
 
+      print('Option: ${option.text}');
       if (button.isSelected) {
+        print('Option is selected');
         options.add(option);
 
         if (!option.isCorrect) {
+          print('Option is not correct');
           isCorrect = false;
         }
+      } else {
+        print('Option is not selected');
       }
+
+      print('----');
+    }
+
+    print(options);
+    print(isCorrect);
 
     responses.add(VisitorResponse(
       question: question,
       options: options,
       isCorrect: isCorrect,
     ));
-    }
   }
 
   int getCorrectAnswers() {
@@ -195,4 +206,9 @@ class WorksheetStateManager {
     return correctAnswers;
   }
 
+  void dispose() {
+    _currentTaskIndex.close();
+    _currentQuestionIndex.close();
+    _currentPageIndex.close();
+  }
 }

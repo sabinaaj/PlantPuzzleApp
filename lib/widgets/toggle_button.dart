@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
-import '../utilities/worksheets.dart';
+import '../utilities/worksheet.dart';
 import '../../models/worksheet.dart';
 
 class ToggleButton extends StatefulWidget {
   final Option? option;
-  final String? text;
   final double? width;
   final double? height;
-  final Function(bool)? onToggle;
 
   const ToggleButton({
     super.key,
     this.option,
-    this.text,
     this.height = 50.0,
     this.width,
-    this.onToggle,
   });
 
   @override
@@ -67,16 +63,28 @@ class ToggleButtonState extends State<ToggleButton> {
       builder: (context, pageStateSnapshot) {
         final pageState = pageStateSnapshot.data ?? PageState.answer;
         Color backgroundColor;
+        Color textColor;
+        Color borderColor;
 
         if (pageState == PageState.evaluate && isSelected) {
-          backgroundColor = widget.option?.isCorrect ?? false ? Colors.green : Colors.red;
+          if (widget.option?.isCorrect ?? false) {
+            backgroundColor = const Color.fromARGB(230, 147, 197, 114);
+            textColor = Colors.white;
+            borderColor = const Color.fromARGB(230, 106, 156, 73);
+          } else {
+            backgroundColor = const Color.fromARGB(230, 248, 113, 113);
+            textColor = Colors.white;
+            borderColor = const Color.fromARGB(230, 239, 68, 68);
+          }
         } else if (widget.option != null && pageState == PageState.evaluate && widget.option!.isCorrect) {
-          backgroundColor = Colors.green;
+          backgroundColor = const Color.fromARGB(255, 159, 201, 131);
+          textColor = Colors.white;
+          borderColor = const Color.fromARGB(255, 113, 170, 75);
         } else {
           backgroundColor = isSelected ? Colors.grey.shade300 : Colors.white;
+          textColor = Colors.black;
+          borderColor = isSelected ? Colors.grey.shade400 : Colors.grey.shade300;
         }
-
-        print('PageState: $pageState, _isSelected: $isSelected, backgroundColor: $backgroundColor');
 
         return Align(
           alignment: Alignment.center,
@@ -85,9 +93,11 @@ class ToggleButtonState extends State<ToggleButton> {
             height: widget.height,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12.0),
-              border: Border.all(
-                width: 2.0,
-                color: Colors.grey.shade300,
+              border: Border(
+                top: BorderSide(width: 2.0, color: borderColor),
+                left: BorderSide(width: 2.0, color: borderColor),
+                right: BorderSide(width: 2.0, color: borderColor),
+                bottom: BorderSide(width: 4.0, color: borderColor), // Thicker bottom border
               ),
               color: backgroundColor,
             ),
@@ -107,8 +117,8 @@ class ToggleButtonState extends State<ToggleButton> {
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
                 child: Text(
-                  widget.option?.text ?? widget.text ?? '',
-                  style: const TextStyle(fontSize: 16.0),
+                  widget.option?.text ?? '',
+                  style: TextStyle(fontSize: 16.0, color: textColor),
                   overflow: TextOverflow.visible,
                 ),
               ),
