@@ -148,6 +148,7 @@ class WorksheetStateManager {
       case 5:
         return TaskType5(
           task: task,
+          worksheetStateManager: this,
         );
       default:
         return Container();
@@ -164,6 +165,10 @@ class WorksheetStateManager {
     bool isCorrect = true;
 
     for (final button in stateManager._buttonsController.value) {
+      if (task.type == 5) {
+        continue;
+      }
+
       final Option? option = button.getOption();
 
       if (option == null) {
@@ -195,6 +200,9 @@ class WorksheetStateManager {
       isCorrect: isCorrect,
     ));
   }
+
+  void saveTask5Answers() {}
+
 
   int getCorrectAnswers() {
     int correctAnswers = 0;

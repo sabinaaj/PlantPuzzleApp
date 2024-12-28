@@ -6,12 +6,14 @@ class ToggleButton extends StatefulWidget {
   final Option? option;
   final double? width;
   final double? height;
+  final bool multipleSelection;
 
   const ToggleButton({
     super.key,
     this.option,
     this.height = 50.0,
     this.width,
+    this.multipleSelection = false,
   });
 
   @override
@@ -37,6 +39,10 @@ class ToggleButtonState extends State<ToggleButton> {
 
   void toggleSelection() {
     setState(() {
+      if (!widget.multipleSelection) {
+        stateManager.resetButtons();
+      }
+
       isSelected = !isSelected;
     });
   }
@@ -109,9 +115,7 @@ class ToggleButtonState extends State<ToggleButton> {
               ),
               onPressed: () {
                 pageState == PageState.answer
-                ? setState(() {
-                  isSelected = !isSelected;
-                  })
+                ? toggleSelection()
                 : null;
               },
               child: SingleChildScrollView(

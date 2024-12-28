@@ -69,7 +69,8 @@ class _TaskTypeChoicesState extends State<TaskTypeChoices> {
                 padding: const EdgeInsets.only(top: 14.0),
                 child: ToggleButton(
                     option: option,
-                    width: double.infinity),
+                    width: double.infinity,
+                    multipleSelection: true),
               ),
           ],
         ),

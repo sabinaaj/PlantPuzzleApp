@@ -3,110 +3,164 @@ import '../../widgets/task_5_button.dart';
 import '../../models/worksheet.dart';
 import '../../utilities/worksheet.dart';
 
-class TaskType5 extends StatefulWidget {
+class TaskType5 extends StatefulWidget{
   final Task task;
   final List<String> questions;
-  final Task5StateManager task5StateManager = Task5StateManager();
+  final WorksheetStateManager worksheetStateManager;
 
   TaskType5({
     super.key,
     required this.task,
-  }) : questions = task.questions.map((question) => question.text ?? '').toList();
+    required this.worksheetStateManager,
+  }) : questions =
+            task.questions.map((question) => question.text ?? '').toList();
 
   @override
   State<TaskType5> createState() => _TaskType5State();
 }
 
-class _TaskType5State extends State<TaskType5> {
+class _TaskType5State extends State<TaskType5> with TickerProviderStateMixin {
+  late final StateManager stateManager;
   int? selectedQuestionIndex;
   int? selectedOptionIndex;
 
+  List<bool> questionVisibility = [];
+  List<bool> optionVisibility = [];
+
+  bool isCorrect = true;
+
+
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    stateManager = StateManagerProvider.of(context);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    questionVisibility = List<bool>.filled(widget.questions.length, true);
+    optionVisibility = List<bool>.filled(widget.task.questions[0].options.length, true);
+  }
+
+  void evaluateAnswer() {
+    if (selectedQuestionIndex != null && selectedOptionIndex != null) {
+      
+      final question = widget.task.questions[selectedQuestionIndex!];
+      final option = question.options[selectedOptionIndex!];
+
+      print(question.text);
+      print(option.text);
+      print(option.isCorrect);
+      
+      if (option.isCorrect) {
+        setState(() {
+          questionVisibility[selectedQuestionIndex!] = false;
+          optionVisibility[selectedOptionIndex!] = false;
+
+          selectedQuestionIndex = null;
+          selectedOptionIndex = null;
+        });
+      } else {
+        setState(() {
+          isCorrect = false;
+          selectedQuestionIndex = null;
+          selectedOptionIndex = null;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Nadpis nebo text úkolu
-        Padding(
-          padding: const EdgeInsets.only(bottom: 16.0),
-          child: Text(
-            widget.task.text,
-            style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400),
-          ),
-        ),
-        // Tlačítka zaberou celou výšku stránky
-        Expanded(
-          child: Row(
-            children: [
-              // První sloupec
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: Column(
-                    children: [
-                      for (var i = 0; i < widget.questions.length; i++) ...[
-                        Expanded(
-                          child: Task5Button(
-                            text: widget.questions[i],
-                            onPressed: () {
-                              if (selectedQuestionIndex == null) {
-                                setState(() {
-                                  print('selectedQuestionIndex: $selectedQuestionIndex');
-                                  selectedQuestionIndex = i;
-                                });
-                              } else if (selectedQuestionIndex == i) {
-                                setState(() {
-                                  print('selectedQuestionIndex: $selectedQuestionIndex');
-                                  selectedQuestionIndex = null;
-                                });
-                              }
-                              print('selectedQuestionIndex: $selectedQuestionIndex');
-                            },
-                            canBeSelected: () => selectedQuestionIndex == null || selectedQuestionIndex == i,
-                          ),
-                        ),
-                        if (i < widget.questions.length - 1)
-                          const SizedBox(height: 14), 
-                      ],
-                    ],
-                  ),
-                ),
+    return StreamBuilder<PageState>(
+      stream: stateManager.pageStateStream,
+      builder: (context, pageStateSnapshot) {
+        final pageState = pageStateSnapshot.data ?? PageState.answer;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Nadpis nebo text úkolu
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Text(
+                widget.task.text,
+                style: const TextStyle(
+                    fontSize: 16.0, fontWeight: FontWeight.w400),
               ),
-              // Druhý sloupec
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8),
-                  child: Column(
-                    children: [
-                      for (var i = 0; i < widget.task.questions[0].options.length; i++) ...[
-                        Expanded(
-                          child: Task5Button(
-                            text: widget.task.questions[0].options[i].text ?? '',
-                            onPressed: () {
-                              if (selectedOptionIndex == null) {
-                                setState(() {
-                                  selectedOptionIndex = selectedOptionIndex == i ? null : i;
-                                });
-                              } else if (selectedOptionIndex == i) {
-                                setState(() {
-                                  selectedOptionIndex = null;
-                                });
-                              }
-                            },
-                            canBeSelected: () => selectedOptionIndex == null || selectedOptionIndex == i,
-                          ),
-                        ),
-                        if (i < widget.task.questions[0].options.length - 1)
-                          const SizedBox(height: 14), 
-                      ],
-                    ],
+            ),
+            // Tlačítka zaberou celou výšku stránky
+            Expanded(
+              child: Row(
+                children: [
+                  // První sloupec
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: Column(
+                        children: [
+                          for (var i = 0; i < widget.questions.length; i++) ...[
+                            Expanded(
+                              child: Task5Button(
+                                text: widget.questions[i],
+                                isSelected: selectedQuestionIndex == i,
+                                isVisible: questionVisibility[i],
+                                onPressed: () {
+                                  pageState == PageState.answer
+                                  ? setState(() {
+                                    selectedQuestionIndex = i;
+                                    evaluateAnswer();
+                                  }): null;
+                                },
+                              ),
+                            ),
+                            if (i < widget.questions.length - 1)
+                              const SizedBox(height: 14),
+                          ],
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                  // Druhý sloupec
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: Column(
+                        children: [
+                          for (var i = 0;
+                              i < widget.task.questions[0].options.length;
+                              i++) ...[
+                            Expanded(
+                              child: Task5Button(
+                                text:
+                                    widget.task.questions[0].options[i].text ?? '',
+                                isSelected: selectedOptionIndex == i,
+                                isVisible: optionVisibility[i],
+                                onPressed: () {
+                                  pageState == PageState.answer
+                                  ? setState(() {
+                                    selectedOptionIndex = i;
+                                    evaluateAnswer();
+                                  }): null;
+                                },
+                              ),
+                            ),
+                            if (i < widget.task.questions[0].options.length - 1)
+                              const SizedBox(height: 14),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-      ],
+            ),
+          ],
+        );
+      },
     );
   }
 }
