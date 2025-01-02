@@ -16,7 +16,6 @@ class Task5Button extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Styling tlačítka podle stavu
     final backgroundColor = isSelected ? Colors.grey.shade300 : Colors.white;
     final textColor = Colors.black;
     final borderColor = isSelected ? Colors.grey.shade400 : Colors.grey.shade300;
@@ -47,7 +46,7 @@ class Task5Button extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8.0),
               ),
             ),
-            onPressed: onPressed, // Předává akci na rodiče
+            onPressed: onPressed,
             child: SingleChildScrollView(
               scrollDirection: Axis.vertical,
               child: Text(

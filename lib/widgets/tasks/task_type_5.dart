@@ -19,7 +19,7 @@ class TaskType5 extends StatefulWidget{
   State<TaskType5> createState() => _TaskType5State();
 }
 
-class _TaskType5State extends State<TaskType5> with TickerProviderStateMixin {
+class _TaskType5State extends State<TaskType5> {
   late final StateManager stateManager;
   int? selectedQuestionIndex;
   int? selectedOptionIndex;
@@ -28,8 +28,6 @@ class _TaskType5State extends State<TaskType5> with TickerProviderStateMixin {
   List<bool> optionVisibility = [];
 
   bool isCorrect = true;
-
-
 
   @override
   void didChangeDependencies() {
@@ -53,7 +51,7 @@ class _TaskType5State extends State<TaskType5> with TickerProviderStateMixin {
 
       print(question.text);
       print(option.text);
-      print(option.isCorrect);
+      print(isCorrect);
       
       if (option.isCorrect) {
         setState(() {
@@ -71,7 +69,31 @@ class _TaskType5State extends State<TaskType5> with TickerProviderStateMixin {
         });
       }
     }
+
+    checkAllAnswersHidden();
   }
+
+  void checkAllAnswersHidden() {
+    final allQuestionsHidden =
+        questionVisibility.every((visibility) => visibility == false);
+    final allOptionsHidden =
+        optionVisibility.every((visibility) => visibility == false);
+
+    if (allQuestionsHidden && allOptionsHidden) {
+      widget.worksheetStateManager.saveTask5Answers(isCorrect);
+
+      widget.worksheetStateManager.showFeedbackModal(
+        context,
+        isCorrect ? '' : 'false',
+        () {
+          stateManager.resetButtons();
+          widget.worksheetStateManager.nextPage(context);
+          stateManager.setPageState(PageState.answer);
+        },
+        task5: true
+      );
+    }
+}
 
   @override
   Widget build(BuildContext context) {

@@ -5,6 +5,7 @@ import '../widgets/tasks/task_type_1.dart';
 import '../widgets/tasks/task_type_choices.dart';
 import '../widgets/tasks/task_type_5.dart';
 import '../widgets/toggle_button.dart';
+import '../widgets/continue_button.dart';
 import '../screens/result_page.dart';
 
 enum PageState { answer, evaluate }
@@ -155,7 +156,7 @@ class WorksheetStateManager {
     }
   }
 
-  void saveAnswers(StateManager stateManager) {
+  String saveAnswers(StateManager stateManager) {
     
     final task = worksheet.tasks[currentTaskIndex];
     final question = task.questions[currentQuestionIndex];
@@ -163,6 +164,7 @@ class WorksheetStateManager {
 
     List<Option> options = [];
     bool isCorrect = true;
+    String correctAnswer = '';
 
     for (final button in stateManager._buttonsController.value) {
       if (task.type == 5) {
@@ -176,6 +178,10 @@ class WorksheetStateManager {
       }
 
       print('Option: ${option.text}');
+      if (option.isCorrect) {
+          correctAnswer = option.text ?? '';
+      }
+
       if (button.isSelected) {
         print('Option is selected');
         options.add(option);
@@ -199,9 +205,27 @@ class WorksheetStateManager {
       options: options,
       isCorrect: isCorrect,
     ));
+    print(correctAnswer);
+    
+    if (isCorrect) {
+      return '';
+    } else {
+      return correctAnswer;
+    }
   }
 
-  void saveTask5Answers() {}
+  void saveTask5Answers(bool isCorrect) {
+
+    final task = worksheet.tasks[currentTaskIndex];
+    final question = task.questions[currentQuestionIndex];
+
+    responses.add(VisitorResponse(
+      question: question,
+      options: [],
+      isCorrect: isCorrect,
+    ));
+
+  }
 
 
   int getCorrectAnswers() {
@@ -212,6 +236,67 @@ class WorksheetStateManager {
       }
     }
     return correctAnswers;
+  }
+
+  /// Shows feedback modal to indicate if the answer was correct or not.
+  void showFeedbackModal(BuildContext context, String corectAnswer, VoidCallback onNext, {bool task5 = false}) {
+    bool isCorrect = false;
+    if (corectAnswer == '') {
+      isCorrect = true;
+    }
+
+    print(corectAnswer);
+
+    String modalText;
+    if (isCorrect) {
+      modalText = "Správná odpověď!";
+    } else {
+      if (task5) {
+        modalText = "Špatná odpověď!";
+      } else {  
+        modalText = "Bohužel! Správná odpověď je $corectAnswer.";
+      }
+    }
+      
+    showModalBottomSheet(
+      context: context,
+      isDismissible: false, // Prevent dismissing by tapping outside
+      enableDrag: false, // Prevent dragging
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+      ),
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0, bottom: 6.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                isCorrect ? Icons.check_circle : Icons.error,
+                color: isCorrect ? Colors.green : Colors.red,
+                size: 48,
+              ),
+              const SizedBox(height: 16.0),
+              Text(
+                modalText,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 6.0),
+              ContinueButton(
+                text: 'Další',
+                onPressed: () {
+                  Navigator.pop(context);
+                  onNext();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void dispose() {

@@ -74,8 +74,7 @@ class _WorksheetPageState extends State<WorksheetPage> {
                   child: StreamBuilder<PageState>(
                     stream: stateManager.pageStateStream,
                     builder: (context, pageStateSnapshot) {
-                      final pageState =
-                          pageStateSnapshot.data ?? PageState.answer;
+                      final pageState = pageStateSnapshot.data ?? PageState.answer;
 
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -85,18 +84,20 @@ class _WorksheetPageState extends State<WorksheetPage> {
                             child: worksheetStateManager.getWidgetForTask(),
                           ),
                           ContinueButton(
-                            text: pageState == PageState.answer
-                                ? 'Vyhodnotit'
-                                : 'Další',
+                            text: 'Vyhodnotit',
                             onPressed: () {
-                              if (pageState == PageState.answer) {
-                                worksheetStateManager.saveAnswers(stateManager);
-                                stateManager.setPageState(PageState.evaluate);
-                              } else {
-                                stateManager.resetButtons();
-                                worksheetStateManager.nextPage(context);
-                                stateManager.setPageState(PageState.answer);
-                              }
+                              stateManager.setPageState(PageState.evaluate);
+                              final correctAnswer = worksheetStateManager.saveAnswers(stateManager);
+
+                              worksheetStateManager.showFeedbackModal(
+                                context,
+                                correctAnswer,
+                                () {
+                                  stateManager.resetButtons();
+                                  worksheetStateManager.nextPage(context);
+                                  stateManager.setPageState(PageState.answer);
+                                },
+                              );
                             },
                           ),
                         ],
