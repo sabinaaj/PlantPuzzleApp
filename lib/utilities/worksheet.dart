@@ -7,42 +7,55 @@ import '../widgets/tasks/task_type_5.dart';
 import '../widgets/toggle_button.dart';
 import '../widgets/continue_button.dart';
 import '../screens/result_page.dart';
+import '../services/api_service_worksheets.dart';
 
+/// Enum representing the state of the current page (answering or evaluation)
 enum PageState { answer, evaluate }
 
+/// Manages the state of the page, including toggle buttons and page transitions
 class StateManager {
-  final _pageStateController = BehaviorSubject<PageState>.seeded(PageState.answer);
+  final _pageStateController =
+      BehaviorSubject<PageState>.seeded(PageState.answer);
   Stream<PageState> get pageStateStream => _pageStateController.stream;
   PageState get currentPageState => _pageStateController.value;
 
-  final _buttonsController = BehaviorSubject<List<ToggleButtonState>>.seeded([]);
-  Stream<List<ToggleButtonState>> get buttonsStream => _buttonsController.stream;
+  final _buttonsController =
+      BehaviorSubject<List<ToggleButtonState>>.seeded([]);
+  Stream<List<ToggleButtonState>> get buttonsStream =>
+      _buttonsController.stream;
   List<ToggleButtonState> get buttons => _buttonsController.value;
 
+  /// Updates the current page state
   void setPageState(PageState state) => _pageStateController.add(state);
 
+  /// Resets all registered toggle buttons
   void resetButtons() {
     for (final button in _buttonsController.value) {
       button.resetButton();
     }
   }
 
+  /// Registers a new toggle button
   void registerButton(ToggleButtonState button) {
     final updatedButtons = List<ToggleButtonState>.from(buttons)..add(button);
     _buttonsController.add(updatedButtons);
   }
 
+  /// Unregisters an existing toggle button
   void unregisterButton(ToggleButtonState button) {
-    final updatedButtons = List<ToggleButtonState>.from(buttons)..remove(button);
+    final updatedButtons = List<ToggleButtonState>.from(buttons)
+      ..remove(button);
     _buttonsController.add(updatedButtons);
   }
 
+  /// Disposes the state controllers
   void dispose() {
     _pageStateController.close();
     _buttonsController.close();
   }
 }
 
+/// Provides access to the [StateManager] instance in the widget tree
 class StateManagerProvider extends InheritedWidget {
   final StateManager stateManager;
 
@@ -65,6 +78,7 @@ class StateManagerProvider extends InheritedWidget {
   }
 }
 
+/// Manages the state of the worksheet, including tasks, questions, and pages
 class WorksheetStateManager {
   final _currentTaskIndex = BehaviorSubject<int>.seeded(0);
   Stream<int> get currentTaskIndexStream => _currentTaskIndex.stream;
@@ -81,14 +95,11 @@ class WorksheetStateManager {
   final Worksheet worksheet;
   late final int totalPages;
 
-  List<VisitorResponse> responses = []; 
+  List<VisitorResponse> responses = [];
 
   WorksheetStateManager({required this.worksheet});
 
   /// Calculates the total number of pages based on the given worksheet.
-  ///
-  /// If the task type is 1 or 4, the number of questions in the task is added to
-  /// the total. Otherwise, 1 is added to the total.
   int calculateTotalPages() {
     totalPages = worksheet.tasks.fold<int>(
       0,
@@ -97,8 +108,7 @@ class WorksheetStateManager {
     return totalPages;
   }
 
-  /// Advances to the next page, which may be a question in the same task or the
-  /// first question in the next task. It changes counters.
+  /// Advances to the next page or navigates to the result page if completed
   void nextPage(BuildContext context) {
     final task = worksheet.tasks[currentTaskIndex];
     _currentPageIndex.add(_currentPageIndex.value + 1);
@@ -116,7 +126,9 @@ class WorksheetStateManager {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ResultPage(worksheetStateManager: this,),
+          builder: (context) => ResultPage(
+            worksheetStateManager: this,
+          ),
         ),
       );
     }
@@ -156,17 +168,16 @@ class WorksheetStateManager {
     }
   }
 
+  /// Saves the answers for the current task
   String saveAnswers(StateManager stateManager) {
-    
     final task = worksheet.tasks[currentTaskIndex];
     final question = task.questions[currentQuestionIndex];
-    print(question.text);
 
     List<Option> options = [];
     bool isCorrect = true;
     String correctAnswer = '';
 
-    for (final button in stateManager._buttonsController.value) {
+    for (final button in stateManager.buttons) {
       if (task.type == 5) {
         continue;
       }
@@ -177,87 +188,55 @@ class WorksheetStateManager {
         continue;
       }
 
-      print('Option: ${option.text}');
       if (option.isCorrect) {
-          correctAnswer = option.text ?? '';
+        correctAnswer = option.text ?? '';
       }
 
       if (button.isSelected) {
-        print('Option is selected');
         options.add(option);
 
         if (!option.isCorrect) {
-          print('Option is not correct');
           isCorrect = false;
         }
-      } else {
-        print('Option is not selected');
       }
-
-      print('----');
     }
-
-    print(options);
-    print(isCorrect);
 
     responses.add(VisitorResponse(
       question: question,
       options: options,
       isCorrect: isCorrect,
     ));
-    print(correctAnswer);
-    
-    if (isCorrect) {
-      return '';
-    } else {
-      return correctAnswer;
-    }
+
+    return isCorrect ? '' : correctAnswer;
   }
 
+  /// Saves answers for Task Type 5
   void saveTask5Answers(bool isCorrect) {
-
-    final task = worksheet.tasks[currentTaskIndex];
-    final question = task.questions[currentQuestionIndex];
+    final question = worksheet.tasks[currentTaskIndex].questions[currentQuestionIndex];
 
     responses.add(VisitorResponse(
       question: question,
       options: [],
       isCorrect: isCorrect,
     ));
-
   }
 
-
+  /// Counts the total number of correct answers
   int getCorrectAnswers() {
-    int correctAnswers = 0;
-    for (var response in responses) {
-      if (response.isCorrect) {
-        correctAnswers++;
-      }
-    }
-    return correctAnswers;
+    return responses.where((response) => response.isCorrect).length;
   }
 
-  /// Shows feedback modal to indicate if the answer was correct or not.
-  void showFeedbackModal(BuildContext context, String corectAnswer, VoidCallback onNext, {bool task5 = false}) {
-    bool isCorrect = false;
-    if (corectAnswer == '') {
-      isCorrect = true;
-    }
+  /// Displays a feedback modal with the result of the current answer
+  void showFeedbackModal(
+    BuildContext context, String correctAnswer, VoidCallback onNext,{bool task5 = false}) {
+    final isCorrect = correctAnswer.isEmpty;
 
-    print(corectAnswer);
+    final modalText = isCorrect
+        ? "Správná odpověď!"
+        : task5
+            ? "Špatná odpověď!"
+            : "Bohužel! Správná odpověď je $correctAnswer.";
 
-    String modalText;
-    if (isCorrect) {
-      modalText = "Správná odpověď!";
-    } else {
-      if (task5) {
-        modalText = "Špatná odpověď!";
-      } else {  
-        modalText = "Bohužel! Správná odpověď je $corectAnswer.";
-      }
-    }
-      
     showModalBottomSheet(
       context: context,
       isDismissible: false, // Prevent dismissing by tapping outside
@@ -279,7 +258,7 @@ class WorksheetStateManager {
               const SizedBox(height: 16.0),
               Text(
                 modalText,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
                 ),
@@ -299,6 +278,12 @@ class WorksheetStateManager {
     );
   }
 
+    /*void submitResponses() async {
+    final ApiService apiService = ApiService();
+    await apiService.submitResponses(responses);
+  }*/
+
+  /// Disposes all the state controllers
   void dispose() {
     _currentTaskIndex.close();
     _currentQuestionIndex.close();

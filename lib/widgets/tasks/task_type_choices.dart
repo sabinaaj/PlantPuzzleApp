@@ -15,10 +15,10 @@ class TaskTypeChoices extends StatefulWidget {
   });
 
   @override
-  _TaskTypeChoicesState createState() => _TaskTypeChoicesState();
+  State<TaskTypeChoices> createState() => TaskTypeChoicesState();
 }
 
-class _TaskTypeChoicesState extends State<TaskTypeChoices> {
+class TaskTypeChoicesState extends State<TaskTypeChoices> {
   @override
 
   /// Returns a widget for the task 2, 3 and 4.
