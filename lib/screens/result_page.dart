@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plant_puzzle_app/utilities/worksheet.dart';
-import '../../widgets/continue_button.dart';
+import '../widgets/buttons/continue_button.dart';
 
 class ResultPage extends StatelessWidget {
   final WorksheetStateManager worksheetStateManager;

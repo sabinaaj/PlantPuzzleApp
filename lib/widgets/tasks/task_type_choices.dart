@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../widgets/toggle_button.dart';
+import '../buttons/toggle_button.dart';
 import '../../models/worksheet.dart';
 
 class TaskTypeChoices extends StatefulWidget {

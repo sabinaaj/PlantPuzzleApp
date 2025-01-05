@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/area_list_page.dart';
+import 'screens/registration_page.dart';
 import 'themes.dart';
 
 void main() {

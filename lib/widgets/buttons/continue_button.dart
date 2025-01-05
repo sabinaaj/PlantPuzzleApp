@@ -23,11 +23,12 @@ class ContinueButton extends StatelessWidget {
         child: SizedBox(
           width: width,
           height: height,
-          child: TextButton(
-            style: TextButton.styleFrom(
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              elevation: 2.0,
               backgroundColor: const Color(0xFF93C572),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
+              borderRadius: BorderRadius.circular(12.0),
               ),
             ),
             onPressed: onPressed,

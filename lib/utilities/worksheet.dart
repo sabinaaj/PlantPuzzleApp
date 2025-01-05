@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import '../widgets/tasks/task_type_1.dart';
 import '../widgets/tasks/task_type_choices.dart';
 import '../widgets/tasks/task_type_5.dart';
-import '../widgets/toggle_button.dart';
-import '../widgets/continue_button.dart';
+import '../widgets/buttons/toggle_button.dart';
+import '../widgets/buttons/continue_button.dart';
 import '../screens/result_page.dart';
 import '../services/api_service_worksheets.dart';
 
