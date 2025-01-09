@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 
 class TextInput extends StatelessWidget {
   final String hintText;
+  final TextEditingController textController;
 
   const TextInput({
     super.key,
-    this.hintText = 'Text', // Default text
+    required this.hintText,
+    required this.textController,
   });
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController textController = TextEditingController();
-
     return SizedBox(
       child: TextField(
         controller: textController,

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import '../widgets/buttons/continue_button.dart';
 import '../widgets/text_input.dart';
+import '../services/api_service_visitors.dart';
+import 'area_list_page.dart';
+import 'registration_page.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController usernameController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final ApiService _apiService = ApiService();
 
   @override
   Widget build(BuildContext context) {
@@ -30,16 +33,49 @@ class LoginPage extends StatelessWidget {
               ),
               const SizedBox(height: 40.0),
 
-              TextInput(hintText: 'Uživatelské jméno'),
-               
+              TextInput(
+                hintText: 'Uživatelské jméno',
+                textController: usernameController,
+              ),
+
               ContinueButton(
                 height: 55,
                 text: 'Přihlásit se',
-                onPressed: () => (),),
-              
+                onPressed: () async {
+                  String username = usernameController.text.trim();
+
+                  if (username.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Zadejte uživatelské jméno!')),
+                    );
+                    return;
+                  }
+
+                  try {
+                    await _apiService.loginUser(username);
+                    // Přesměrování při úspěšném přihlášení
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => const AreaListPage(),
+                      ),
+                      (route) => false,
+                    );
+                  } catch (e) {
+                    // Zobrazení varování při selhání
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Přihlášení se nezdařilo. Zkontrolujte uživatelské jméno.')),
+                    );
+                  }
+                },
+              ),
               TextButton(
                 onPressed: () {
-                  print('Přesměrování na registraci');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RegistrationPage(),
+                    ),
+                  );
                 },
                 child: Text('Nemáš účet? Zaregistruj se'),
               ),

@@ -8,6 +8,10 @@ class RegistrationPage extends StatefulWidget {
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+
   String _selectedOption = 'Navštěvník botanického parku';
 
   @override
@@ -29,15 +33,24 @@ class _RegistrationPageState extends State<RegistrationPage> {
               ),
               const SizedBox(height: 20.0),
 
-              TextInput(hintText: 'Uživatelské jméno'),
+              TextInput(
+                hintText: 'Uživatelské jméno',
+                textController: usernameController
+              ),
 
               const SizedBox(height: 10.0),
 
-              TextInput(hintText: 'Křestní jméno'),
+              TextInput(
+                hintText: 'Křestní jméno',
+                textController: firstNameController
+              ),
 
               const SizedBox(height: 10.0),
 
-              TextInput(hintText: 'Příjmení'),
+              TextInput(
+                hintText: 'Příjmení',
+                textController: lastNameController
+              ),
 
               const SizedBox(height: 10.0),
 
