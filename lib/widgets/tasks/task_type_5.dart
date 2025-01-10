@@ -48,10 +48,6 @@ class _TaskType5State extends State<TaskType5> {
       
       final question = widget.task.questions[selectedQuestionIndex!];
       final option = question.options[selectedOptionIndex!];
-
-      print(question.text);
-      print(option.text);
-      print(isCorrect);
       
       if (option.isCorrect) {
         setState(() {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/buttons/continue_button.dart';
 import '../widgets/text_input.dart';
+import '../services/api_service_visitors.dart';
+import 'school_group_selection_page.dart';
 
 class RegistrationPage extends StatefulWidget {
   @override
@@ -11,8 +13,69 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
+  final ApiService _apiService = ApiService();
 
   String _selectedOption = 'Navštěvník botanického parku';
+  bool _isLoading = false;
+
+  void _validateAndContinue() async {
+    final username = usernameController.text.trim();
+    final firstName = firstNameController.text.trim();
+    final lastName = lastNameController.text.trim();
+
+    if (username.isEmpty || firstName.isEmpty || lastName.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Vyplňte všechna pole!')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final isUsernameTaken = await _apiService.isUsernameTaken(username);
+
+      if (isUsernameTaken) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Uživatelské jméno již existuje.')),
+        );
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      if (_selectedOption == 'Navštěvník botanického parku') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => SchoolGroupSelectionPage(
+            username: username,
+            firstName: firstName,
+            lastName: lastName,
+          )),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => SchoolGroupSelectionPage(
+            username: username,
+            firstName: firstName,
+            lastName: lastName,
+          )),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Došlo k chybě. Zkuste to znovu. $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,10 +175,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
               ContinueButton(
                 height: 55,
-                text: 'Registrovat se',
-                onPressed: () {
-                  print('Vybraný typ: $_selectedOption');
-                },
+                text: _isLoading ? 'Načítám...' : 'Přejít na další krok',
+                onPressed: _isLoading ? null : _validateAndContinue,
               ),
             ],
           ),

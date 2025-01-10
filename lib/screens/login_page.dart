@@ -9,6 +9,31 @@ class LoginPage extends StatelessWidget {
   final TextEditingController usernameController = TextEditingController();
   final ApiService _apiService = ApiService();
 
+  LoginPage({super.key});
+
+  Future<void> _handleLogin(BuildContext context) async {
+    final username = usernameController.text.trim();
+
+    if (username.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Zadejte uživatelské jméno!')),
+      );
+      return;
+    }
+
+    try {
+      await _apiService.loginUser(username);
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const AreaListPage()),
+        (route) => false,
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Přihlášení se nezdařilo. Zkontrolujte uživatelské jméno.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,32 +66,7 @@ class LoginPage extends StatelessWidget {
               ContinueButton(
                 height: 55,
                 text: 'Přihlásit se',
-                onPressed: () async {
-                  String username = usernameController.text.trim();
-
-                  if (username.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Zadejte uživatelské jméno!')),
-                    );
-                    return;
-                  }
-
-                  try {
-                    await _apiService.loginUser(username);
-                    // Přesměrování při úspěšném přihlášení
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                        builder: (context) => const AreaListPage(),
-                      ),
-                      (route) => false,
-                    );
-                  } catch (e) {
-                    // Zobrazení varování při selhání
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Přihlášení se nezdařilo. Zkontrolujte uživatelské jméno.')),
-                    );
-                  }
-                },
+                onPressed: () => _handleLogin(context),
               ),
               TextButton(
                 onPressed: () {
@@ -77,7 +77,7 @@ class LoginPage extends StatelessWidget {
                     ),
                   );
                 },
-                child: Text('Nemáš účet? Zaregistruj se'),
+                child: Text('Jsi tu poprvé? Zaregistruj se'),
               ),
             ],
           ),

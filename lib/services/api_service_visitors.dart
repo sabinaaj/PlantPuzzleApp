@@ -21,7 +21,7 @@ class ApiService {
   }
 
   Future<void> registerUser(String username, String firstName, String lastName,
-      String schoolId) async {
+      {String? schoolId, List<int>? schoolGroupsIds}) async {
     final response = await http.post(
       Uri.parse('$baseUrl/register/'),
       headers: {'Content-Type': 'application/json'},
@@ -30,13 +30,37 @@ class ApiService {
         'first_name': firstName,
         'last_name': lastName,
         'school': schoolId,
+        'school_groups_ids': schoolGroupsIds,
       }),
     );
 
-    if (response.statusCode == 201) {
-      print('Registration successful');
+    if (response.statusCode == 200) {
+
     } else {
       throw Exception('Registration failed');
+    }
+  }
+
+  Future<bool> isUsernameTaken(String username) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/username-check/$username'),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['is_taken'];
+    } else {
+      throw Exception('Chyba při ověřování uživatelského jména.');
+    }
+  }
+
+  Future<List<dynamic>> getSchoolGroups() async {
+    final response = await http.get(Uri.parse('$baseUrl/school-groups'));
+
+    if (response.statusCode == 200) {
+      return jsonDecode(utf8.decode(response.bodyBytes));
+    } else {
+      throw Exception('Chyba při načítání školních skupin.');
     }
   }
 }
