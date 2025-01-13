@@ -30,14 +30,15 @@ class ApiService {
         'first_name': firstName,
         'last_name': lastName,
         'school': schoolId,
-        'school_groups_ids': schoolGroupsIds,
+        'school_group': schoolGroupsIds,
       }),
     );
 
-    if (response.statusCode == 200) {
-
+    if (response.statusCode == 201) {
+      final data = jsonDecode(response.body);
+      await saveUser(data['visitor_id'], username);
     } else {
-      throw Exception('Registration failed');
+      throw Exception('Registrace se nezdařila.');
     }
   }
 

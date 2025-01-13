@@ -4,13 +4,16 @@ class ContinueButton extends StatelessWidget {
   final String text;
   final double? width;
   final double height;
+  final double vPadding;
   final VoidCallback? onPressed;
+  
 
   const ContinueButton({
     super.key,
     this.text = 'Tlačítko', // Default text
     this.height = 50.0,
     this.width = double.infinity, // Default width
+    this.vPadding = 14.0,
     this.onPressed,
   });
 
@@ -19,7 +22,7 @@ class ContinueButton extends StatelessWidget {
     return Align(
       alignment: Alignment.center, // Center align the button
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 14.0),
+        padding: EdgeInsets.symmetric(vertical: vPadding),
         child: SizedBox(
           width: width,
           height: height,

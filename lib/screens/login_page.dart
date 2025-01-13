@@ -43,30 +43,36 @@ class LoginPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                'assets/images/logo.png',
-                height: 125,
-                width: 125,
+               Image.asset(
+              'assets/images/logo.png',
+              height: 125,
+              width: 125,
+            ),
+            const SizedBox(height: 8.0), 
+
+            Text(
+              'PlantPuzzle',
+              style: TextStyle(
+                fontSize: 24.0, 
+                fontWeight: FontWeight.w600, 
+                color: Colors.black,
               ),
-              Text(
-                'PlantPuzzle',
-                style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black,
-                ),
-              ),
+            ),
               const SizedBox(height: 40.0),
 
               TextInput(
                 hintText: 'Uživatelské jméno',
                 textController: usernameController,
+                icon: Icon(Icons.person_outlined),
               ),
+
+              const SizedBox(height: 14.0),
 
               ContinueButton(
                 height: 55,
                 text: 'Přihlásit se',
                 onPressed: () => _handleLogin(context),
+                vPadding: 0.0,
               ),
               TextButton(
                 onPressed: () {
@@ -77,7 +83,12 @@ class LoginPage extends StatelessWidget {
                     ),
                   );
                 },
-                child: Text('Jsi tu poprvé? Zaregistruj se'),
+                child: Text(
+                  'Jsi tu poprvé? Zaregistruj se',
+                  style: TextStyle(
+                    color: Colors.grey.shade800,
+                  ),
+                ),
               ),
             ],
           ),

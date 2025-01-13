@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/buttons/continue_button.dart';
 import '../widgets/text_input.dart';
+import '../widgets/border_container.dart';
 import '../services/api_service_visitors.dart';
 import 'school_group_selection_page.dart';
 
@@ -50,20 +51,22 @@ class _RegistrationPageState extends State<RegistrationPage> {
       if (_selectedOption == 'Navštěvník botanického parku') {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => SchoolGroupSelectionPage(
-            username: username,
-            firstName: firstName,
-            lastName: lastName,
-          )),
+          MaterialPageRoute(
+              builder: (context) => SchoolGroupSelectionPage(
+                    username: username,
+                    firstName: firstName,
+                    lastName: lastName,
+                  )),
         );
       } else {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => SchoolGroupSelectionPage(
-            username: username,
-            firstName: firstName,
-            lastName: lastName,
-          )),
+          MaterialPageRoute(
+              builder: (context) => SchoolGroupSelectionPage(
+                    username: username,
+                    firstName: firstName,
+                    lastName: lastName,
+                  )),
         );
       }
     } catch (e) {
@@ -87,92 +90,96 @@ class _RegistrationPageState extends State<RegistrationPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'REGISTRACE',
+                'Registrace',
                 style: TextStyle(
-                  fontSize: 22.0,
+                  fontSize: 24.0,
                   fontWeight: FontWeight.w500,
                   color: Colors.black,
                 ),
               ),
+
               const SizedBox(height: 20.0),
 
               TextInput(
-                hintText: 'Uživatelské jméno',
-                textController: usernameController
-              ),
+                  hintText: 'Uživatelské jméno',
+                  textController: usernameController),
 
               const SizedBox(height: 10.0),
 
               TextInput(
-                hintText: 'Křestní jméno',
-                textController: firstNameController
-              ),
+                  hintText: 'Křestní jméno',
+                  textController: firstNameController),
 
               const SizedBox(height: 10.0),
 
               TextInput(
-                hintText: 'Příjmení',
-                textController: lastNameController
-              ),
-
+                  hintText: 'Příjmení', textController: lastNameController),
               const SizedBox(height: 10.0),
 
-              Container(
-                padding: const EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                 border: Border.all(color: Colors.grey.shade300, width: 2.0),
-                 borderRadius: BorderRadius.circular(12.0),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
+              BorderContainer(
+                padding: 10.0,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 5.0),
+                    child: Text(
                       'Jsem',
                       style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey.shade800
-                      ),
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey.shade800),
                     ),
-
-                    const SizedBox(height: 10.0),
-
-                    Row(
-                      children: [
-                      Radio<String>(
+                  ),
+                  const SizedBox(height: 10.0),
+                  Row(children: [
+                    Radio<String>(
                       groupValue: _selectedOption,
                       value: 'Navštěvník botanického parku',
+                      fillColor: WidgetStateProperty.resolveWith<Color>(
+                          (Set<WidgetState> states) {
+                        if (states.contains(WidgetState.selected)) {
+                          return const Color(0xFF93C572);
+                        }
+                        return Colors.grey.shade400;
+                      }),
                       onChanged: (value) {
                         setState(() {
                           _selectedOption = value!;
                         });
                       },
                     ),
+                    Text('Navštěvník botanického parku',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                        )),
+                  ]),
 
-                    Text('Navštěvník botanického parku'),
-                    ]),
-
-                    Row(
-                      children: [
-                      Radio<String>(
+                  Row(children: [
+                    Radio<String>(
                       groupValue: _selectedOption,
                       value: 'Na školní exkurzi',
+                      fillColor: WidgetStateProperty.resolveWith<Color>(
+                          (Set<WidgetState> states) {
+                        if (states.contains(WidgetState.selected)) {
+                          return const Color(0xFF93C572);
+                        }
+                        return Colors.grey.shade400;
+                      }),
                       onChanged: (value) {
                         setState(() {
                           _selectedOption = value!;
                         });
                       },
                     ),
+                    Text('Na školní exkurzi',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                        )),
+                  ])
+                ],
 
-                    Text('Na školní exkurzi'),
-                    ])
-
-                  ],
-                ),
               ),
-
               const SizedBox(height: 20.0),
-
+              
               ContinueButton(
                 height: 55,
                 text: _isLoading ? 'Načítám...' : 'Přejít na další krok',

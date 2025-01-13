@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/buttons/continue_button.dart';
+import '../widgets/border_container.dart';
 import '../services/api_service_visitors.dart';
 import 'area_list_page.dart';
 
@@ -83,55 +84,87 @@ class _SchoolGroupSelectionPageState extends State<SchoolGroupSelectionPage> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        body: Center(
-          child: isLoading
-              ? CircularProgressIndicator()
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Výběr školy pro ${widget.username}',
-                      style: TextStyle(
-                        fontSize: 22.0,
-                        fontWeight: FontWeight.w500,
-                      ),
+ @override
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+      child: Center(
+        child: isLoading
+            ? CircularProgressIndicator()
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Vítej, ${widget.username}!',
+                    style: TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.w500,
                     ),
-                    const SizedBox(height: 20.0),
-                    Expanded(
-                      child: ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        itemCount: schoolGroups.length,
-                        itemBuilder: (context, index) {
-                          final group = schoolGroups[index];
-                          return CheckboxListTile(
-                            title: Text(group['group']),
-                            value: selectedGroups.contains(group['id']),
-                            onChanged: (bool? value) {
-                              setState(() {
-                                if (value == true) {
-                                  selectedGroups.add(group['id']);
-                                } else {
-                                  selectedGroups.remove(group['id']);
-                                }
-                              });
-                            },
-                          );
-                        },
-                      ),
+                  ),
+                  const SizedBox(height: 10.0),
+                  Text(
+                    'Vyber do jaké věkové skupiny patříš:',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.w500,
                     ),
-                    const SizedBox(height: 20.0),
-                    ContinueButton(
-                      height: 55,
-                      text: isLoading ? 'Načítám...' : 'Registrovat se',
-                      onPressed: isLoading ? null : _register,
+                  ),
+                  Text(
+                    'Skupin je možné vybrat víc. ',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  const SizedBox(height: 15.0),
+
+                  BorderContainer(
+                  children: [ ListView.builder(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      itemCount: schoolGroups.length,
+                      itemBuilder: (context, index) {
+                        final group = schoolGroups[index];
+
+                        return CheckboxListTile(
+                          title: Text(group['group']),
+                          value: selectedGroups.contains(group['id']),
+                          fillColor: WidgetStateProperty.resolveWith<Color>(
+                              (Set<WidgetState> states) {
+                            if (states.contains(WidgetState.selected)) {
+                              return const Color(0xFF93C572);
+                            }
+                            return Colors.white;
+                          }),
+                          side: BorderSide(color: Colors.grey.shade400),
+                          onChanged: (bool? value) {
+                            setState(() {
+                              if (value == true) {
+                                selectedGroups.add(group['id']);
+                              } else {
+                                selectedGroups.remove(group['id']);
+                              }
+                            });
+                          },
+                        );
+                      },
                     ),
                   ],
                 ),
-        ),
+
+                  const SizedBox(height: 10.0),
+
+                  ContinueButton(
+                    height: 55,
+                    text: isLoading ? 'Načítám...' : 'Registrovat se',
+                    onPressed: isLoading ? null : _register,
+                  ),
+                ],
+              ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
