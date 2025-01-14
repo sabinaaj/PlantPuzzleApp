@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import '../widgets/tasks/task_type_1.dart';
 import '../widgets/tasks/task_type_choices.dart';
 import '../widgets/tasks/task_type_5.dart';
-import '../widgets/toggle_button.dart';
-import '../widgets/continue_button.dart';
+import '../widgets/buttons/toggle_button.dart';
+import '../widgets/buttons/continue_button.dart';
 import '../screens/result_page.dart';
-import '../services/api_service_worksheets.dart';
 
 /// Enum representing the state of the current page (answering or evaluation)
 enum PageState { answer, evaluate }
@@ -60,10 +59,10 @@ class StateManagerProvider extends InheritedWidget {
   final StateManager stateManager;
 
   const StateManagerProvider({
-    Key? key,
+    super.key,
     required this.stateManager,
-    required Widget child,
-  }) : super(key: key, child: child);
+    required super.child,
+  });
 
   static StateManager of(BuildContext context) {
     final StateManagerProvider? result =

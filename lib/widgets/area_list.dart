@@ -43,7 +43,7 @@ class _AreaListState extends State<AreaList> {
               final area = areas[index];
               return Container(
                 padding: const EdgeInsets.symmetric(vertical: 14.0),
-                margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                margin: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 16.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15.0),
                   border: Border(

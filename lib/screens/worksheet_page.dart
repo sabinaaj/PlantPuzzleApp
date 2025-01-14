@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../widgets/continue_button.dart';
+import '../widgets/buttons/continue_button.dart';
 import '../../models/worksheet.dart';
 import '../services/api_service_worksheets.dart';
 import '../utilities/worksheet.dart';
@@ -31,6 +31,7 @@ class _WorksheetPageState extends State<WorksheetPage> {
   }
 
   @override
+
   /// Builds the main page for a worksheet.
   Widget build(BuildContext context) {
     return FutureBuilder<Worksheet>(
@@ -70,41 +71,36 @@ class _WorksheetPageState extends State<WorksheetPage> {
               body: StateManagerProvider(
                 stateManager: stateManager,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-                  child: StreamBuilder<PageState>(
-                    stream: stateManager.pageStateStream,
-                    builder: (context, pageStateSnapshot) {
-                      final pageState = pageStateSnapshot.data ?? PageState.answer;
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 6.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: worksheetStateManager.getWidgetForTask(),
+                      ),
+                      ContinueButton(
+                        text: 'Vyhodnotit',
+                        onPressed: () {
+                          stateManager.setPageState(PageState.evaluate);
+                          final correctAnswer =
+                              worksheetStateManager.saveAnswers(stateManager);
 
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: worksheetStateManager.getWidgetForTask(),
-                          ),
-                          ContinueButton(
-                            text: 'Vyhodnotit',
-                            onPressed: () {
-                              stateManager.setPageState(PageState.evaluate);
-                              final correctAnswer = worksheetStateManager.saveAnswers(stateManager);
-
-                              worksheetStateManager.showFeedbackModal(
-                                context,
-                                correctAnswer,
-                                () {
-                                  stateManager.resetButtons();
-                                  worksheetStateManager.nextPage(context);
-                                  stateManager.setPageState(PageState.answer);
-                                },
-                              );
+                          worksheetStateManager.showFeedbackModal(
+                            context,
+                            correctAnswer,
+                            () {
+                              stateManager.resetButtons();
+                              worksheetStateManager.nextPage(context);
+                              stateManager.setPageState(PageState.answer);
                             },
-                          ),
-                        ],
-                      );
-                    },
+                          );
+                        },
+                      ),
+                    ],
                   ),
-                )
+                ),
               ),
             );
           },

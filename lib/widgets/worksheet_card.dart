@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plant_puzzle_app/screens/worksheet_page.dart';
 import '../models/worksheet.dart';
-import '../widgets/border_button.dart';
+import 'buttons/border_button.dart';
 
 class WorksheetCard extends StatelessWidget {
   final WorksheetSummary worksheet;
