@@ -5,3 +5,14 @@ Future<void> saveUser(int visitorId, String username) async {
   await prefs.setInt('visitor_id', visitorId);
   await prefs.setString('username', username);
 }
+
+Future<bool> isUserLoggedIn() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.containsKey('visitor_id');
+}
+
+Future<void> logoutUser() async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove('visitor_id');
+  await prefs.remove('username');
+}
