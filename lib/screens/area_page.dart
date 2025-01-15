@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_puzzle_app/widgets/navigation_app_bar.dart';
 import '../widgets/area_page_tabs.dart';
 import '../models/area.dart';
 import '../services/api_service_areas.dart';
@@ -26,9 +27,8 @@ class _AreaPageState extends State<AreaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Oblast'),
-        centerTitle: true,
+      appBar: NavigationAppBar(
+        backgroundColor: Colors.grey.shade300,
       ),
      body: FutureBuilder<Map<String, dynamic>>(
         future: _areaDetailsFuture,

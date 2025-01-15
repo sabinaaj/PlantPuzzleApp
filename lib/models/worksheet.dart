@@ -16,16 +16,19 @@ class WorksheetSummary {
 
 class Worksheet {
   final int id;
+  final String title;
   final List<Task> tasks;
 
   Worksheet({
     required this.id,
+    required this.title,
     required this.tasks,
   });
 
   factory Worksheet.fromJson(Map<String, dynamic> json) {
     return Worksheet(
       id: json['id'],
+      title: json['title'],
       tasks: (json['tasks'] as List)
           .map((taskJson) => Task.fromJson(taskJson))
           .toList(),

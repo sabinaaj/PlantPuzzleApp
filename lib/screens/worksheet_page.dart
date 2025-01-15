@@ -57,10 +57,42 @@ class _WorksheetPageState extends State<WorksheetPage> {
 
             return Scaffold(
               appBar: AppBar(
-                title: const Text('Test'),
+                title: Text(worksheet.title, style: TextStyle(fontSize: 20.0)),
+                centerTitle: true,
+                leading: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text("Potvrzení"),
+                        content: const Text("Opravdu chceš skončit?"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Zavřít dialog
+                            },
+                            child: const Text("Ne"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Zavřít dialog
+                              Navigator.of(context).pop(); // Zavřít stránku
+                            },
+                            child: const Text("Ano"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
                 bottom: PreferredSize(
                   preferredSize: const Size.fromHeight(4.0),
                   child: LinearProgressIndicator(
+                    borderRadius: BorderRadius.circular(8.0),
+                    minHeight: 6.0,
                     value: currentPageIndex / totalPages,
                     backgroundColor: Colors.grey[300],
                     valueColor:
@@ -68,6 +100,7 @@ class _WorksheetPageState extends State<WorksheetPage> {
                   ),
                 ),
               ),
+
               body: StateManagerProvider(
                 stateManager: stateManager,
                 child: Padding(

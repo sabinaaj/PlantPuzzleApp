@@ -4,28 +4,25 @@ import '../screens/user_page.dart';
 class NavigationAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   final Size preferredSize;
+  final Widget? leading;
+  final double? leadingWidth;
+  final PreferredSizeWidget? bottom;
+  final Color? backgroundColor;
 
-  NavigationAppBar({Key? key})
-      : preferredSize = const Size.fromHeight(kToolbarHeight + 4.0),
-        super(key: key);
+  const NavigationAppBar(
+    {this.leading,
+    this.leadingWidth,
+    this.bottom,
+    this.backgroundColor,
+    super.key})
+      : preferredSize = const Size.fromHeight(kToolbarHeight + 4.0);
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      leadingWidth: 130.0,
-      leading: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          IconButton(
-            icon: Image.asset('assets/images/plant.png', height: 30),
-            onPressed: () {},
-          ),
-          const Text(
-            'Oblasti',
-            style: TextStyle(fontSize: 22.0),
-          ),
-        ],
-      ),
+      backgroundColor: backgroundColor,
+      leadingWidth: leadingWidth,
+      leading: leading,
       actions: [
         IconButton(
           icon: Image.asset('assets/images/map.png', height: 30),
@@ -46,14 +43,7 @@ class NavigationAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
       ],
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(4.0),
-        child: Divider(
-          height: 2.0,
-          color: Colors.grey.shade300,
-          thickness: 2.0,
-        ),
-      ),
+      bottom: bottom,
     );
   }
 }

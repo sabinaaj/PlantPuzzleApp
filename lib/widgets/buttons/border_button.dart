@@ -4,13 +4,17 @@ class BorderButton extends StatelessWidget {
   final String text;
   final double? width; 
   final double? height;
+  final Color backgroundColor;
+  final Color borderColor;
   final VoidCallback? onPressed;
 
   const BorderButton({
     super.key,
     this.text = 'Tlačítko', // Default text
     this.height = 45.0,
-    this.width, // Default width
+    this.width,
+    this.backgroundColor = Colors.white,
+    this.borderColor = const Color(0xFFD6D6D6),
     this.onPressed,
   });
 
@@ -22,12 +26,13 @@ class BorderButton extends StatelessWidget {
         width: width,
         height: height,
         decoration: BoxDecoration(
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(12.0),
           border: Border(
-            top: BorderSide(width: 2.0, color: Colors.grey.shade300),
-            left: BorderSide(width: 2.0, color: Colors.grey.shade300),
-            right: BorderSide(width: 2.0, color: Colors.grey.shade300),
-            bottom: BorderSide(width: 4.0, color: Colors.grey.shade300), // Thicker bottom border
+            top: BorderSide(width: 2.0, color: borderColor),
+            left: BorderSide(width: 2.0, color: borderColor),
+            right: BorderSide(width: 2.0, color: borderColor),
+            bottom: BorderSide(width: 4.0, color: borderColor), // Thicker bottom border
           ),
         ),
         child: TextButton(
@@ -41,7 +46,7 @@ class BorderButton extends StatelessWidget {
             scrollDirection: Axis.vertical,
             child: Text(
               text,
-              style: const TextStyle(fontSize: 16.0),
+              style: TextStyle(fontSize: 16.0),
               overflow: TextOverflow.visible, 
             ),
           ),
