@@ -161,32 +161,3 @@ class TaskImage {
     };
   }
 }
-
-class VisitorResponse {
-  final Question question;
-  final List<Option> options;
-  final bool isCorrect;
-
-  VisitorResponse({
-    required this.question,
-    required this.options,
-    required this.isCorrect,
-  });
-
-  factory VisitorResponse.fromJson(Map<String, dynamic> json) {
-    return VisitorResponse(
-      question: Question.fromJson(json['question']),
-      options: (json['options'] as List)
-          .map((optionJson) => Option.fromJson(optionJson))
-          .toList(),
-      isCorrect: json['is_correct'],
-    );
-  }
-    Map<String, dynamic> toJson() {
-    return {
-      'question': question.toJson(),
-      'options': options.map((opt) => opt.toJson()).toList(),
-      'is_correct': isCorrect,
-    };
-  }   
-}
