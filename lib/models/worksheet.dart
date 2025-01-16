@@ -16,16 +16,19 @@ class WorksheetSummary {
 
 class Worksheet {
   final int id;
+  final String title;
   final List<Task> tasks;
 
   Worksheet({
     required this.id,
+    required this.title,
     required this.tasks,
   });
 
   factory Worksheet.fromJson(Map<String, dynamic> json) {
     return Worksheet(
       id: json['id'],
+      title: json['title'],
       tasks: (json['tasks'] as List)
           .map((taskJson) => Task.fromJson(taskJson))
           .toList(),
@@ -160,33 +163,4 @@ class TaskImage {
       'image_url': image,
     };
   }
-}
-
-class VisitorResponse {
-  final Question question;
-  final List<Option> options;
-  final bool isCorrect;
-
-  VisitorResponse({
-    required this.question,
-    required this.options,
-    required this.isCorrect,
-  });
-
-  factory VisitorResponse.fromJson(Map<String, dynamic> json) {
-    return VisitorResponse(
-      question: Question.fromJson(json['question']),
-      options: (json['options'] as List)
-          .map((optionJson) => Option.fromJson(optionJson))
-          .toList(),
-      isCorrect: json['is_correct'],
-    );
-  }
-    Map<String, dynamic> toJson() {
-    return {
-      'question': question.toJson(),
-      'options': options.map((opt) => opt.toJson()).toList(),
-      'is_correct': isCorrect,
-    };
-  }   
 }

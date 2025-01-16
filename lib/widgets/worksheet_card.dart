@@ -57,6 +57,8 @@ class WorksheetCard extends StatelessWidget {
             BorderButton(
               text: 'Spustit test',
               width: MediaQuery.of(context).size.width * 0.85,
+              backgroundColor: const Color.fromARGB(230, 147, 197, 114),
+              borderColor: const Color.fromARGB(230, 106, 156, 73),
               onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(

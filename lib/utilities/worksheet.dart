@@ -1,12 +1,15 @@
-import 'package:plant_puzzle_app/models/worksheet.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:flutter/material.dart';
+import '../models/worksheet.dart';
+import '../models/visitors.dart';
 import '../widgets/tasks/task_type_1.dart';
 import '../widgets/tasks/task_type_choices.dart';
 import '../widgets/tasks/task_type_5.dart';
 import '../widgets/buttons/toggle_button.dart';
 import '../widgets/buttons/continue_button.dart';
 import '../screens/result_page.dart';
+import '../services/api_service_visitors.dart';
+
 
 /// Enum representing the state of the current page (answering or evaluation)
 enum PageState { answer, evaluate }
@@ -201,8 +204,8 @@ class WorksheetStateManager {
     }
 
     responses.add(VisitorResponse(
-      question: question,
-      options: options,
+      questionId: question.id,
+      optionsIds: options.map((opt) => opt.id).toList(),
       isCorrect: isCorrect,
     ));
 
@@ -214,15 +217,10 @@ class WorksheetStateManager {
     final question = worksheet.tasks[currentTaskIndex].questions[currentQuestionIndex];
 
     responses.add(VisitorResponse(
-      question: question,
-      options: [],
+      questionId: question.id,
+      optionsIds: [],
       isCorrect: isCorrect,
     ));
-  }
-
-  /// Counts the total number of correct answers
-  int getCorrectAnswers() {
-    return responses.where((response) => response.isCorrect).length;
   }
 
   /// Displays a feedback modal with the result of the current answer
@@ -277,10 +275,26 @@ class WorksheetStateManager {
     );
   }
 
-    /*void submitResponses() async {
+  /// Counts the total number of correct answers
+  int getCorrectAnswers() {
+    return responses.where((response) => response.isCorrect).length;
+  }
+
+  SuccessRate getSuccessRate() {
+    final correctAnswersCnt = getCorrectAnswers();
+    final int rate = ((correctAnswersCnt / totalPages) * 100).toInt();
+
+    SuccessRate successRate =
+        SuccessRate(rate: rate, worksheetId: worksheet.id);
+
+    return successRate;
+  }
+
+  void submitResponses() async {
     final ApiService apiService = ApiService();
     await apiService.submitResponses(responses);
-  }*/
+    await apiService.submitSuccessRate(getSuccessRate());
+  }
 
   /// Disposes all the state controllers
   void dispose() {

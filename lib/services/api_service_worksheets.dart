@@ -24,21 +24,4 @@ class ApiService {
       }
   }
 
- /* Future<void> submitResponses(List<VisitorResponse> responses) async {
-    final url = Uri.parse('$baseUrl/submit-responses/');
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'responses': responses.map((r) => r.toJson()).toList(),
-      }),
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception('Failed to submit responses for worksheet');
-    }
-  }
-*/
 }

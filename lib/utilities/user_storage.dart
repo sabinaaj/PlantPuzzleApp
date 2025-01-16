@@ -1,9 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-Future<void> saveUser(int visitorId, String username) async {
+Future<void> saveUser(int visitorId) async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.setInt('visitor_id', visitorId);
-  await prefs.setString('username', username);
 }
 
 Future<bool> isUserLoggedIn() async {
@@ -14,5 +13,9 @@ Future<bool> isUserLoggedIn() async {
 Future<void> logoutUser() async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.remove('visitor_id');
-  await prefs.remove('username');
+}
+
+Future<int> getLoggedInUserId() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getInt('visitor_id') ?? 0;
 }

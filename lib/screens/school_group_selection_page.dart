@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../widgets/buttons/continue_button.dart';
 import '../widgets/border_container.dart';
 import '../services/api_service_visitors.dart';
+import 'package:plant_puzzle_app/models/visitors.dart';
+
 import 'area_list_page.dart';
 
 class SchoolGroupSelectionPage extends StatefulWidget {
@@ -62,12 +64,14 @@ class _SchoolGroupSelectionPageState extends State<SchoolGroupSelectionPage> {
     });
 
     try {
-      await _apiService.registerUser(
-        widget.username,
-        widget.firstName,
-        widget.lastName,
-        schoolGroupsIds: selectedGroups,
+      final visitor = Visitor(
+        username: widget.username,
+        firstName: widget.firstName,
+        lastName: widget.lastName,
+        schoolGroupIds: selectedGroups,
       );
+
+      await _apiService.registerUser(visitor);
 
       Navigator.pushAndRemoveUntil(
           context,
