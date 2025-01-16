@@ -9,7 +9,7 @@ class ApiService {
   Future<Visitor> getVisitor(int visitorId) async {
     final response = await http.get(Uri.parse('$baseUrl/$visitorId/'));
     if (response.statusCode == 200) {
-      return Visitor.fromJson(jsonDecode(response.body));
+      return Visitor.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
     } else {
       throw Exception('Failed to load visitor');
     }
@@ -67,4 +67,48 @@ Future<void> registerUser(Visitor visitor) async {
       throw Exception('Chyba při načítání školních skupin.');
     }
   }
+
+  Future<void> submitResponses(List<VisitorResponse> responses) async {
+    final url = Uri.parse('$baseUrl/submit-responses/');
+    final visitorId = await getLoggedInUserId();
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'responses': responses.map((response) {
+          return {
+            ...response.toJson(),
+            'visitor': visitorId,
+          };
+        }).toList()
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      print(response.body);
+      throw Exception('Failed to submit responses for worksheet');
+    }
+  }
+
+  Future<void> submitSuccessRate(SuccessRate rate) async {
+  final url = Uri.parse('$baseUrl/submit-success-rate/');
+  final response = await http.post(
+    url,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: jsonEncode({
+      ...rate.toJson(),
+      'visitor': await getLoggedInUserId(),
+    }),
+  );
+
+  if (response.statusCode != 201) {
+    throw Exception('Failed to submit success rate');
+  }
+}
+
 }

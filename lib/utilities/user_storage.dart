@@ -14,3 +14,8 @@ Future<void> logoutUser() async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.remove('visitor_id');
 }
+
+Future<int> getLoggedInUserId() async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getInt('visitor_id') ?? 0;
+}

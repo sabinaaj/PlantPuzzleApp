@@ -43,29 +43,27 @@ class Visitor {
 
 
 class VisitorResponse {
-  final Question question;
-  final List<Option> options;
+  final int questionId;
+  final List<int> optionsIds;
   final bool isCorrect;
 
   VisitorResponse({
-    required this.question,
-    required this.options,
+    required this.questionId,
+    required this.optionsIds,
     required this.isCorrect,
   });
 
   factory VisitorResponse.fromJson(Map<String, dynamic> json) {
     return VisitorResponse(
-      question: Question.fromJson(json['question']),
-      options: (json['options'] as List)
-          .map((optionJson) => Option.fromJson(optionJson))
-          .toList(),
+      questionId: json['question'],
+      optionsIds: List<int>.from(json['options']),
       isCorrect: json['is_correct'],
     );
   }
     Map<String, dynamic> toJson() {
     return {
-      'question': question.toJson(),
-      'options': options.map((opt) => opt.toJson()).toList(),
+      'question': questionId,
+      'options': optionsIds,
       'is_correct': isCorrect,
     };
   }   
@@ -73,28 +71,24 @@ class VisitorResponse {
 
 class SuccessRate {
   final int rate;
-  final Visitor visitor;
-  final Worksheet worksheet;
+  final int worksheetId;
 
   SuccessRate({
     required this.rate,
-    required this.visitor,
-    required this.worksheet,
+    required this.worksheetId,
   });
 
   factory SuccessRate.fromJson(Map<String, dynamic> json) {
     return SuccessRate(
       rate: json['rate'],
-      visitor: json['visitor'],
-      worksheet: json['worksheet'],
+      worksheetId: json['worksheet'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'rate': rate,
-      'visitor': visitor,
-      'worksheet': worksheet,
+      'worksheet': worksheetId,
     };
   }
 }

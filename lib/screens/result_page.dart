@@ -10,9 +10,9 @@ class ResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final successRate = worksheetStateManager.getSuccessRate();
     final correctAnswers = worksheetStateManager.getCorrectAnswers();
     final totalPages = worksheetStateManager.totalPages;
-    final double successRate = (correctAnswers / totalPages) * 100;
 
     return Scaffold(
       appBar: AppBar(),
@@ -26,10 +26,10 @@ class ResultPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  _buildResultImage(successRate),
+                  _buildResultImage(successRate.rate),
                   const SizedBox(height: 20),
 
-                    _buildResultMessage(successRate),
+                    _buildResultMessage(successRate.rate),
                     const SizedBox(height: 10),
                     Text(
                       'Správné odpovědi:',
@@ -47,7 +47,7 @@ class ResultPage extends StatelessWidget {
                       style: const TextStyle(fontSize: 18),
                     ),
                     Text(
-                      '${successRate.toStringAsFixed(1)} %',
+                      '${successRate.rate.toString()} %',
                       style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                     ),
                 ],
@@ -56,6 +56,7 @@ class ResultPage extends StatelessWidget {
             ContinueButton(
               text: "Dokončit",
               onPressed: () {
+                worksheetStateManager.submitResponses();
                 int count = 0;
                 Navigator.popUntil(
                   context,
@@ -72,14 +73,14 @@ class ResultPage extends StatelessWidget {
     );
   }
 
-  Widget _buildResultImage(double successRate) {
+  Widget _buildResultImage(int rate) {
     String imagePath;
     double imageHeight;
 
-    if (successRate > 75) {
+    if (rate > 75) {
       imagePath = 'assets/images/happy_flower.png';
       imageHeight = 200;
-    } else if (successRate < 50) {
+    } else if (rate < 50) {
       imagePath = 'assets/images/sad_flower.png';
       imageHeight = 200;
     } else {
@@ -93,12 +94,12 @@ class ResultPage extends StatelessWidget {
     );
   }
 
-  Widget _buildResultMessage(double successRate) {
+  Widget _buildResultMessage(int rate) {
     String message;
 
-    if (successRate > 75) {
+    if (rate > 75) {
       message = 'Skvělá práce! Jen tak dál!';
-    } else if (successRate < 50) {
+    } else if (rate < 50) {
       message = 'Nevadí, příště to bude lepší!';
     } else {
       message = 'Dobrá práce, ale je co zlepšovat.';
