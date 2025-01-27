@@ -13,7 +13,7 @@ class UserHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
+          padding: const EdgeInsets.only(right: 14.0, top: 8.0, bottom: 8.0),
           child: Image.asset(
             'assets/images/user.png',
             height: 50,

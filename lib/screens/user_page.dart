@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:plant_puzzle_app/widgets/user_header.dart';
+import '../widgets/user_header.dart';
+import '../widgets/user_school_container.dart';
+import '../widgets/user_overview_container.dart';
 import '../utilities/user_storage.dart';
 import '../services/api_service_visitors.dart';
 import '../models/visitors.dart';
@@ -80,14 +82,6 @@ class _UserPageState extends State<UserPage> {
             ),
           ),
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(4.0),
-          child: Divider(
-            height: 2.0,
-            color: Colors.grey.shade300,
-            thickness: 2.0,
-          ),
-        ),
       ),
       body: FutureBuilder<Visitor>(
           future: visitor,
@@ -100,8 +94,8 @@ class _UserPageState extends State<UserPage> {
             // Display error message if an error occurs
             else if (snapshot.hasError) {
               return Center(
-                  child:
-                      Text('Stránku se nepodařilo načíst. Zkuste to znovu.'));
+                child:
+                  Text('Stránku se nepodařilo načíst. Zkuste to znovu.'));
             }
 
             // Handle empty or missing data
@@ -113,18 +107,18 @@ class _UserPageState extends State<UserPage> {
             final visitor = snapshot.data!;
 
             return Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   UserHeader(visitor: visitor),
-                
-                  const SizedBox(height: 8),
-                  if (visitor.schoolId != null)
-                    Text(
-                      'Škola ID: ${visitor.schoolId}',
-                      style: const TextStyle(fontSize: 18),
-                    ),
+                  const SizedBox(height: 14.0),
+
+                  UserSchoolContainer (visitor: visitor),
+                  const SizedBox(height: 20.0),
+
+                  UserOverviewContainer(visitor: visitor),
+
                 ],
               ),
             );
