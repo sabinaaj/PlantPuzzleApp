@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../widgets/areas/area_header.dart';
 import '../../widgets/worksheets/worksheet_list.dart';
 import '../../models/area.dart';
+import '../../colors.dart';
 
 class AreaTabs extends StatelessWidget {
   final Area area;
@@ -19,11 +20,10 @@ class AreaTabs extends StatelessWidget {
             AreaHeader(area: area),
 
             Container(
-              color: Colors.grey.shade300, 
               child: TabBar(
                 dividerHeight: 2.0,
-                dividerColor: Colors.grey.shade500,
-                indicatorColor: Colors.grey.shade500,
+                dividerColor: Colors.grey.shade400,
+                indicatorColor: AppColors.secondaryGreen,
                 labelStyle: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

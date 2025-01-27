@@ -27,7 +27,7 @@ class _AreaPageState extends State<AreaPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: NavigationAppBar(
-        backgroundColor: Colors.grey.shade300,
+        backgroundColor: Colors.white,
       ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _areaDetailsFuture,

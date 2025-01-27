@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import '../utilities/worksheet.dart';
 import '../widgets/buttons/continue_button.dart';
@@ -98,17 +100,11 @@ class ResultPage extends StatelessWidget {
             // Continue button
             ContinueButton(
               text: "Dokončit",
-              onPressed: () {
+              onPressed: () async {
                 // Submit responses and navigate back to the main screen
-                worksheetStateManager.submitResponses();
-                int count = 0;
-                Navigator.popUntil(
-                  context,
-                  (route) {
-                    count++;
-                    return count > 2;
-                  },
-                );
+                await worksheetStateManager.submitResponses();
+                Navigator.of(context).pop();
+                Navigator.of(context).pop(true);
               },
             ),
           ],

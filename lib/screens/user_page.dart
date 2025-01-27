@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plant_puzzle_app/widgets/user_header.dart';
 import '../utilities/user_storage.dart';
 import '../services/api_service_visitors.dart';
 import '../models/visitors.dart';
@@ -116,15 +117,8 @@ class _UserPageState extends State<UserPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Uživatelské jméno: ${visitor.username}',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Jméno: ${visitor.firstName} ${visitor.lastName}',
-                    style: const TextStyle(fontSize: 18),
-                  ),
+                  UserHeader(visitor: visitor),
+                
                   const SizedBox(height: 8),
                   if (visitor.schoolId != null)
                     Text(

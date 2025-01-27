@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../widgets/worksheets/worksheet_card.dart';
 import '../../services/api_service_worksheets.dart';
+import '../../screens/worksheet_page.dart';
 import '../../models/worksheet.dart';
 
 class WorksheetList extends StatefulWidget {
@@ -27,6 +28,12 @@ class _WorksheetListState extends State<WorksheetList> {
     return data.map<WorksheetSummary>((json) => WorksheetSummary.fromJson(json)).toList();
   }
 
+  void reloadData() {
+    setState(() {
+      _worksheetsFuture = _loadWorksheets();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<WorksheetSummary>>(
@@ -35,23 +42,35 @@ class _WorksheetListState extends State<WorksheetList> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Center(child: Text('Chyba: ${snapshot.error}'));
+          return Center(child: Text('Žádné pracovní listy nenalezeny.'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('Žádné pracovní listy nenalezeny'));
+          return const Center(child: Text('Žádné pracovní listy nenalezeny.'));
         }
 
         final worksheets = snapshot.data!;
-        return ListView.builder(
+        return Container(
+          color: Colors.grey.shade100,
+          child: ListView.builder(
           itemCount: worksheets.length + 1, 
           itemBuilder: (context, index) {
             if (index < worksheets.length) {
               final worksheet = worksheets[index];
-              return WorksheetCard(worksheet: worksheet);
+              return WorksheetCard(
+                worksheet: worksheet,
+                onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WorksheetPage(worksheetId: worksheet.id),
+                      ),
+                    ).then((value) => reloadData()),
+                    );
             } else {
               return const SizedBox(height: 8);
             }
           },
-        );
+        )
+        ) ;
+        
       },
     );
   }
