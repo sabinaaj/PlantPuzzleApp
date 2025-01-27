@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
 
+class AppColors {
+  static const Color primaryGreen = Color(0xFF93C572);
+  static const Color secondaryGreen = Color(0xE66A9C49);
+  static const Color primaryRed = Color(0xE6F87171);
+  static const Color secondaryRed = Color(0xE6EF4444);
+  static const Color grey300 = Color(0xFFD6D6D6);
+}
+
 final Map<int, Color> blackColor = {
   50: const Color.fromRGBO(10, 10, 10, .1),
   100: const Color.fromRGBO(10, 10, 10, .2),

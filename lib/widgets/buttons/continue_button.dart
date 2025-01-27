@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../colors.dart';
 
 class ContinueButton extends StatelessWidget {
   final String text;
@@ -10,7 +11,7 @@ class ContinueButton extends StatelessWidget {
 
   const ContinueButton({
     super.key,
-    this.text = 'Tlačítko', // Default text
+    this.text = 'Pokračovat',
     this.height = 50.0,
     this.width = double.infinity, // Default width
     this.vPadding = 14.0,
@@ -20,7 +21,7 @@ class ContinueButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: Alignment.center, // Center align the button
+      alignment: Alignment.center,
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: vPadding),
         child: SizedBox(
@@ -29,14 +30,14 @@ class ContinueButton extends StatelessWidget {
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               elevation: 2.0,
-              backgroundColor: const Color(0xFF93C572),
+              backgroundColor: AppColors.primaryGreen,
               shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12.0),
               ),
             ),
             onPressed: onPressed,
             child: Text(
-              text, // Use the provided text
+              text,
               style: const TextStyle(fontSize: 16.0, color: Colors.white),
             ),
           ),

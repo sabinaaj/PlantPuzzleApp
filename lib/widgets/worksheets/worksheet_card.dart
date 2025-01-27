@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:plant_puzzle_app/screens/worksheet_page.dart';
-import '../models/worksheet.dart';
-import 'buttons/border_button.dart';
+import '../buttons/border_button.dart';
+import '../../screens/worksheet_page.dart';
+import '../../models/worksheet.dart';
+import '../../colors.dart';
 
 class WorksheetCard extends StatelessWidget {
   final WorksheetSummary worksheet;
@@ -57,8 +58,8 @@ class WorksheetCard extends StatelessWidget {
             BorderButton(
               text: 'Spustit test',
               width: MediaQuery.of(context).size.width * 0.85,
-              backgroundColor: const Color.fromARGB(230, 147, 197, 114),
-              borderColor: const Color.fromARGB(230, 106, 156, 73),
+              backgroundColor: AppColors.primaryGreen,
+              borderColor: AppColors.secondaryGreen,
               onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(

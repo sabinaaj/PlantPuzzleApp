@@ -1,11 +1,8 @@
-import 'worksheet.dart';
-
-
 class Visitor {
   final String username;
   final String firstName;
   final String lastName;
-  final int? schoolId; 
+  final int? schoolId;
   final List<int>? schoolGroupIds;
   final List<int>? achievementIds;
 
@@ -41,7 +38,6 @@ class Visitor {
   }
 }
 
-
 class VisitorResponse {
   final int questionId;
   final List<int> optionsIds;
@@ -60,13 +56,13 @@ class VisitorResponse {
       isCorrect: json['is_correct'],
     );
   }
-    Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson() {
     return {
       'question': questionId,
       'options': optionsIds,
       'is_correct': isCorrect,
     };
-  }   
+  }
 }
 
 class SuccessRate {

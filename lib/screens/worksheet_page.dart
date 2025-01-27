@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../widgets/buttons/continue_button.dart';
-import '../../models/worksheet.dart';
+import '../widgets/worksheets/worksheet_app_bar.dart';
 import '../services/api_service_worksheets.dart';
 import '../utilities/worksheet.dart';
+import '../models/worksheet.dart';
 
 class WorksheetPage extends StatefulWidget {
   final int worksheetId;
@@ -23,7 +24,7 @@ class _WorksheetPageState extends State<WorksheetPage> {
     _worksheetFuture = _loadWorksheet(widget.worksheetId);
   }
 
-  /// Loads a worksheet from the API using the provided worksheet ID.
+  /// Fetches a worksheet from the API based on the provided worksheet ID.
   Future<Worksheet> _loadWorksheet(int worksheetId) async {
     final ApiService apiService = ApiService();
     final data = await apiService.getWorksheet(worksheetId);
@@ -31,20 +32,21 @@ class _WorksheetPageState extends State<WorksheetPage> {
   }
 
   @override
-
-  /// Builds the main page for a worksheet.
   Widget build(BuildContext context) {
     return FutureBuilder<Worksheet>(
       future: _worksheetFuture,
       builder: (context, snapshot) {
+        // Handle API errors.
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         }
 
+        // Display a loading indicator while waiting for data.
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
 
+        // Data has been successfully fetched.
         final worksheet = snapshot.data!;
         final WorksheetStateManager worksheetStateManager =
             WorksheetStateManager(worksheet: worksheet);
@@ -56,63 +58,29 @@ class _WorksheetPageState extends State<WorksheetPage> {
             final currentPageIndex = currentPageIndexSnapshot.data ?? 0;
 
             return Scaffold(
-              appBar: AppBar(
-                title: Text(worksheet.title, style: TextStyle(fontSize: 20.0)),
-                centerTitle: true,
-                leading: IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: const Text("Potvrzení"),
-                        content: const Text("Opravdu chceš skončit?"),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(); // Zavřít dialog
-                            },
-                            child: const Text("Ne"),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop(); // Zavřít dialog
-                              Navigator.of(context).pop(); // Zavřít stránku
-                            },
-                            child: const Text("Ano"),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
-                bottom: PreferredSize(
-                  preferredSize: const Size.fromHeight(4.0),
-                  child: LinearProgressIndicator(
-                    borderRadius: BorderRadius.circular(8.0),
-                    minHeight: 6.0,
-                    value: currentPageIndex / totalPages,
-                    backgroundColor: Colors.grey[300],
-                    valueColor:
-                        const AlwaysStoppedAnimation<Color>(Color(0xFF93C572)),
-                  ),
-                ),
-              ),
-
+              appBar: WorksheetAppBar(
+                title: worksheet.title,
+                progressValue: currentPageIndex / totalPages,
+                onClose: () {
+                  Navigator.of(context).pop(); // Close dialog
+                  Navigator.of(context).pop(); // Go back
+                },),
               body: StateManagerProvider(
                 stateManager: stateManager,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 6.0),
+                    horizontal: 16.0,
+                    vertical: 6.0,
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Render the widget for the current task.
                       Expanded(
                         child: worksheetStateManager.getWidgetForTask(),
                       ),
+                      // Add a "Continue" button to evaluate answers.
                       ContinueButton(
                         text: 'Vyhodnotit',
                         onPressed: () {
@@ -120,6 +88,7 @@ class _WorksheetPageState extends State<WorksheetPage> {
                           final correctAnswer =
                               worksheetStateManager.saveAnswers(stateManager);
 
+                          // Show feedback modal with the results.
                           worksheetStateManager.showFeedbackModal(
                             context,
                             correctAnswer,

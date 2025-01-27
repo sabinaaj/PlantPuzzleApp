@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../colors.dart';
 
 class BorderButton extends StatelessWidget {
   final String text;
@@ -10,11 +11,11 @@ class BorderButton extends StatelessWidget {
 
   const BorderButton({
     super.key,
-    this.text = 'Tlačítko', // Default text
+    this.text = 'Tlačítko',
     this.height = 45.0,
     this.width,
     this.backgroundColor = Colors.white,
-    this.borderColor = const Color(0xFFD6D6D6),
+    this.borderColor = AppColors.grey300,
     this.onPressed,
   });
 

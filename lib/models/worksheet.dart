@@ -1,4 +1,3 @@
-
 class WorksheetSummary {
   final int id;
   final String title;
@@ -12,7 +11,6 @@ class WorksheetSummary {
     );
   }
 }
-
 
 class Worksheet {
   final int id;

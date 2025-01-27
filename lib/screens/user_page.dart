@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:plant_puzzle_app/screens/login_page.dart';
-import 'package:plant_puzzle_app/utilities/user_storage.dart';
+import '../utilities/user_storage.dart';
 import '../services/api_service_visitors.dart';
 import '../models/visitors.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'login_page.dart';
 
 class UserPage extends StatefulWidget {
   const UserPage({super.key});
@@ -14,47 +12,53 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-  final ApiService _apiService = ApiService();
-  Visitor? visitor;
-  bool isLoading = true;
+  final ApiService apiService = ApiService();
+  late Future<Visitor> visitor;
 
   @override
   void initState() {
     super.initState();
-    _fetchVisitorData();
+    visitor = _fetchVisitorData();
   }
 
-  Future<void> _fetchVisitorData() async {
-    try {
-      final visitorId = await getLoggedInUserId();
-      final fetchedVisitor = await _apiService.getVisitor(visitorId);
-      setState(() {
-        visitor = fetchedVisitor;
-        isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      _showErrorDialog('Chyba při načítání dat o uživateli. $e');
-    }
+  /// Fetch the visitor data for the logged-in user
+  Future<Visitor> _fetchVisitorData() async {
+    final visitorId = await getLoggedInUserId();
+    return await apiService.getVisitor(visitorId);
   }
 
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Chyba'),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
+  Future<void> _handleLogout(BuildContext context) async {
+  final confirm = await showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      content: const Text('Opravdu se chceš odhlásit?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false), 
+          child: const Text('Zrušit'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(context, true), 
+          child: const Text('Odhlásit se'),
+        ),
+      ],
+    ),
+  );
+  
+  if (confirm == true) {
+    logoutUser();
+
+    // Ensure the widget is still mounted before navigation
+    if (!mounted) return;
+
+    Navigator.pushReplacement(
+      // ignore: use_build_context_synchronously
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
     );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -70,15 +74,7 @@ class _UserPageState extends State<UserPage> {
             padding: const EdgeInsets.only(right: 12.0),
             child: IconButton(
               icon: const Icon(Icons.logout),
-              onPressed: () {
-                logoutUser();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LoginPage(),
-                  ),
-                );
-              },
+              onPressed: () => _handleLogout(context),
             ),
           ),
         ],
@@ -91,60 +87,53 @@ class _UserPageState extends State<UserPage> {
           ),
         ),
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : visitor == null
-              ? const Center(child: Text('Data o uživateli se nepodařilo načíst.'))
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Uživatelské jméno: ${visitor!.username}',
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Jméno: ${visitor!.firstName} ${visitor!.lastName}',
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      const SizedBox(height: 8),
-                      if (visitor!.schoolId != null)
-                        Text(
-                          'Škola ID: ${visitor!.schoolId}',
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                      const Spacer(),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EditUserPage(visitor: visitor!),
-                            ),
-                          );
-                        },
-                        child: const Text('Upravit údaje'),
-                      ),
-                    ],
+      body: FutureBuilder<Visitor>(
+          future: visitor,
+          builder: (context, snapshot) {
+            // Display loading indicator while waiting for data
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            // Display error message if an error occurs
+            else if (snapshot.hasError) {
+              return Center(
+                  child:
+                      Text('Stránku se nepodařilo načíst. Zkuste to znovu.'));
+            }
+
+            // Handle empty or missing data
+            else if (!snapshot.hasData) {
+              return const Center(child: Text('Uživatel nenalezen.'));
+            }
+
+            // Data successfully loaded
+            final visitor = snapshot.data!;
+
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Uživatelské jméno: ${visitor.username}',
+                    style: const TextStyle(fontSize: 18),
                   ),
-                ),
-    );
-  }
-}
-
-class EditUserPage extends StatelessWidget {
-  final Visitor visitor;
-
-  const EditUserPage({super.key, required this.visitor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Upravit profil')),
-      body: Center(
-        child: Text('Formulář pro úpravu uživatele (pracuje se na něm).'),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Jméno: ${visitor.firstName} ${visitor.lastName}',
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                  const SizedBox(height: 8),
+                  if (visitor.schoolId != null)
+                    Text(
+                      'Škola ID: ${visitor.schoolId}',
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                ],
+              ),
+            );
+          }
       ),
     );
   }

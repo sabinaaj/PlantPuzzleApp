@@ -6,11 +6,11 @@ class TextInput extends StatefulWidget {
   final Icon? icon;
 
   const TextInput({
-    Key? key,
+    super.key,
     required this.textController,
     required this.hintText,
     this.icon,
-  }) : super(key: key);
+  });
 
   @override
   State<TextInput> createState() => _TextInputState();

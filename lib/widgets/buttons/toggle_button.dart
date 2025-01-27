@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../utilities/worksheet.dart';
-import '../../../models/worksheet.dart';
+import '../../colors.dart';
+import '../../models/worksheet.dart';
+
 
 class ToggleButton extends StatefulWidget {
   final Option? option;
@@ -74,18 +76,18 @@ class ToggleButtonState extends State<ToggleButton> {
 
         if (pageState == PageState.evaluate && isSelected) {
           if (widget.option?.isCorrect ?? false) {
-            backgroundColor = const Color.fromARGB(230, 147, 197, 114);
+            backgroundColor = AppColors.primaryGreen;
             textColor = Colors.white;
-            borderColor = const Color.fromARGB(230, 106, 156, 73);
+            borderColor = AppColors.secondaryGreen;
           } else {
-            backgroundColor = const Color.fromARGB(230, 248, 113, 113);
+            backgroundColor = const Color(0xE6F87171);
             textColor = Colors.white;
-            borderColor = const Color.fromARGB(230, 239, 68, 68);
+            borderColor = const Color(0xE6EF4444);
           }
         } else if (widget.option != null && pageState == PageState.evaluate && widget.option!.isCorrect) {
-          backgroundColor = const Color.fromARGB(255, 159, 201, 131);
+          backgroundColor = AppColors.primaryGreen;
           textColor = Colors.white;
-          borderColor = const Color.fromARGB(255, 113, 170, 75);
+          borderColor = AppColors.secondaryGreen;
         } else {
           backgroundColor = isSelected ? Colors.grey.shade300 : Colors.white;
           textColor = Colors.black;

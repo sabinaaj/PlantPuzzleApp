@@ -1,54 +1,64 @@
 import 'package:flutter/material.dart';
+import 'school_group_selection_page.dart';
 import '../widgets/buttons/continue_button.dart';
 import '../widgets/text_input.dart';
 import '../widgets/border_container.dart';
+import '../widgets/error_message.dart';
+import '../widgets/radio_option_row.dart';
 import '../services/api_service_visitors.dart';
-import 'school_group_selection_page.dart';
 
 class RegistrationPage extends StatefulWidget {
+  const RegistrationPage({super.key});
+
   @override
-  _RegistrationPageState createState() => _RegistrationPageState();
+  State<RegistrationPage> createState() => _RegistrationPageState();
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
+  // Controllers for user input fields
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
-  final ApiService _apiService = ApiService();
 
-  String _selectedOption = 'Navštěvník botanického parku';
-  bool _isLoading = false;
+  final ApiService apiService = ApiService();
 
+  String selectedOption = 'Navštěvník botanického parku';
+
+  // Variables for error handling
+  String errorMessage = '';
+  bool errorVisibility = false;
+
+  // Function to validate input and navigate to the next page
   void _validateAndContinue() async {
     final username = usernameController.text.trim();
     final firstName = firstNameController.text.trim();
     final lastName = lastNameController.text.trim();
 
+    // Check if all fields are filled
     if (username.isEmpty || firstName.isEmpty || lastName.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Vyplňte všechna pole!')),
-      );
+      setState(() {
+        errorMessage = 'Vyplň všechna pole.'; // Display an error message
+        errorVisibility = true;
+      });
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
-
     try {
-      final isUsernameTaken = await _apiService.isUsernameTaken(username);
+      // Check if the username is already taken
+      final isUsernameTaken = await apiService.isUsernameTaken(username);
 
       if (isUsernameTaken) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Uživatelské jméno již existuje.')),
-        );
         setState(() {
-          _isLoading = false;
+          errorMessage = 'Vyber jiné uživatelské jméno.'; // Error for duplicate username
+          errorVisibility = true;
         });
         return;
       }
 
-      if (_selectedOption == 'Navštěvník botanického parku') {
+      // Ensure the widget is still mounted before navigating
+      if (!mounted) return;
+
+     if (selectedOption == 'Navštěvník botanického parku') {
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -70,12 +80,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
         );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Došlo k chybě. Zkuste to znovu. $e')),
-      );
-    } finally {
+      // Handle any unexpected errors
       setState(() {
-        _isLoading = false;
+        errorMessage = 'Došlo k chybě. Zkus to znovu.'; // Generic error message
+        errorVisibility = true;
       });
     }
   }
@@ -89,6 +97,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Page title
               Text(
                 'Registrace',
                 style: TextStyle(
@@ -98,92 +107,88 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
               ),
 
-              const SizedBox(height: 20.0),
+              const SizedBox(height: 10.0),
 
+              // Display error message if any
+              ErrorMessage(message: errorMessage, visibility: errorVisibility),
+
+              const SizedBox(height: 5.0),
+
+              // Input for username
               TextInput(
-                  hintText: 'Uživatelské jméno',
-                  textController: usernameController),
+                hintText: 'Uživatelské jméno',
+                textController: usernameController,
+              ),
 
               const SizedBox(height: 10.0),
 
+              // Input for first name
               TextInput(
-                  hintText: 'Křestní jméno',
-                  textController: firstNameController),
+                hintText: 'Křestní jméno',
+                textController: firstNameController,
+              ),
 
               const SizedBox(height: 10.0),
 
+              // Input for last name
               TextInput(
-                  hintText: 'Příjmení', textController: lastNameController),
+                hintText: 'Příjmení',
+                textController: lastNameController,
+              ),
+
               const SizedBox(height: 10.0),
 
+              // Container for radio button options
               BorderContainer(
                 padding: 10.0,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(left: 5.0),
+                    padding: const EdgeInsets.only(left: 5.0),
                     child: Text(
-                      'Jsem',
+                      'Jsem', 
                       style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey.shade800),
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey.shade800,
+                      ),
                     ),
                   ),
+
                   const SizedBox(height: 10.0),
-                  Row(children: [
-                    Radio<String>(
-                      groupValue: _selectedOption,
-                      value: 'Navštěvník botanického parku',
-                      fillColor: WidgetStateProperty.resolveWith<Color>(
-                          (Set<WidgetState> states) {
-                        if (states.contains(WidgetState.selected)) {
-                          return const Color(0xFF93C572);
-                        }
-                        return Colors.grey.shade400;
-                      }),
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedOption = value!;
-                        });
-                      },
-                    ),
-                    Text('Navštěvník botanického parku',
-                        style: TextStyle(
-                          fontSize: 16.0,
-                        )),
-                  ]),
 
-                  Row(children: [
-                    Radio<String>(
-                      groupValue: _selectedOption,
-                      value: 'Na školní exkurzi',
-                      fillColor: WidgetStateProperty.resolveWith<Color>(
-                          (Set<WidgetState> states) {
-                        if (states.contains(WidgetState.selected)) {
-                          return const Color(0xFF93C572);
-                        }
-                        return Colors.grey.shade400;
-                      }),
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedOption = value!;
-                        });
-                      },
-                    ),
-                    Text('Na školní exkurzi',
-                        style: TextStyle(
-                          fontSize: 16.0,
-                        )),
-                  ])
+                  // Option: Botanical park visitor
+                  OptionRow(
+                    label: 'Navštěvník botanického parku',
+                    value: 'Navštěvník botanického parku',
+                    groupValue: selectedOption,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedOption = value;
+                      });
+                    },
+                  ),
+
+                  // Option: School excursion visitor
+                  OptionRow(
+                    label: 'Na školní exkurzi',
+                    value: 'Na školní exkurzi',
+                    groupValue: selectedOption,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedOption = value;
+                      });
+                    },
+                  ),
                 ],
-
               ),
+
               const SizedBox(height: 20.0),
-              
+
+              // Continue button
               ContinueButton(
                 height: 55,
-                text: _isLoading ? 'Načítám...' : 'Přejít na další krok',
-                onPressed: _isLoading ? null : _validateAndContinue,
+                text: 'Přejít na další krok',
+                onPressed: _validateAndContinue, // Trigger validation and navigation
               ),
             ],
           ),

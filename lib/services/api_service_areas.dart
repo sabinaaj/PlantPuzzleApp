@@ -1,12 +1,19 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = "http://192.168.68.111:8001/areas/api"; 
+  final String baseUrl;
+  final String areaUrl;
 
+  ApiService()
+      : baseUrl = dotenv.env['BASE_URL'] ?? '',
+        areaUrl = '${dotenv.env['BASE_URL'] ?? ''}/areas/api';
+
+  /// Fetches the list of areas from the API.
   Future<List<dynamic>> getAreas() async {
-    final response = await http.get(Uri.parse('$baseUrl/areas/'));
-    
+    final response = await http.get(Uri.parse('$areaUrl/areas/'));
+
     if (response.statusCode == 200) {
       return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
@@ -14,9 +21,10 @@ class ApiService {
     }
   }
 
+  /// Fetches details of a specific area by its ID from the API.
   Future<Map<String, dynamic>> getAreaDetails(int areaId) async {
-    final response = await http.get(Uri.parse('$baseUrl/areas/$areaId/'));
-    
+    final response = await http.get(Uri.parse('$areaUrl/areas/$areaId/'));
+
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {

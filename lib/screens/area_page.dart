@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:plant_puzzle_app/widgets/navigation_app_bar.dart';
-import '../widgets/area_page_tabs.dart';
+import '../widgets/navigation_app_bar.dart';
+import '../widgets/areas/area_page_tabs.dart';
 import '../models/area.dart';
 import '../services/api_service_areas.dart';
-
 
 class AreaPage extends StatefulWidget {
   final Area area;
@@ -30,20 +29,18 @@ class _AreaPageState extends State<AreaPage> {
       appBar: NavigationAppBar(
         backgroundColor: Colors.grey.shade300,
       ),
-     body: FutureBuilder<Map<String, dynamic>>(
+      body: FutureBuilder<Map<String, dynamic>>(
         future: _areaDetailsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return Center(child: Text('Vyskytla se chyba.'));
           } else if (!snapshot.hasData) {
-            return const Center(child: Text('No details available'));
+            return const Center(child: Text('Něco se nepovedlo. Zkuste to znovu.'));
           }
 
           return AreaTabs(area: widget.area);
-
-          
         },
       ),
     );
