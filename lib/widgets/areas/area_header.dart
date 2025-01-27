@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/area.dart';
+import '../../models/area.dart';
 
 class AreaHeader extends StatelessWidget {
   final Area area;

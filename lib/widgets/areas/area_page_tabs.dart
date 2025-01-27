@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:plant_puzzle_app/widgets/area_header.dart';
-import 'package:plant_puzzle_app/widgets/worksheet_list.dart';
-import '../models/area.dart';
+import '../../widgets/areas/area_header.dart';
+import '../../widgets/worksheets/worksheet_list.dart';
+import '../../models/area.dart';
 
 class AreaTabs extends StatelessWidget {
   final Area area;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/api_service_areas.dart';  
-import '../models/area.dart';       
-import "../screens/area_page.dart";   
+import '../../services/api_service_areas.dart';  
+import '../../models/area.dart';       
+import "../../screens/area_page.dart";   
 
 class AreaList extends StatefulWidget {
   const AreaList({super.key});

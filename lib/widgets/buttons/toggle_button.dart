@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../utilities/worksheet.dart';
-import '../../../models/worksheet.dart';
+import '../../colors.dart';
+import '../../models/worksheet.dart';
+
 
 class ToggleButton extends StatefulWidget {
   final Option? option;
@@ -61,39 +63,42 @@ class ToggleButtonState extends State<ToggleButton> {
     return widget.option;
   }
   
-  @override
-  Widget build(BuildContext context) {
+@override
+Widget build(BuildContext context) {
+  return StreamBuilder<PageState>(
+    stream: stateManager.pageStateStream,
+    builder: (context, pageStateSnapshot) {
+      final pageState = pageStateSnapshot.data ?? PageState.answer;
+      Color backgroundColor;
+      Color textColor;
+      Color borderColor;
 
-    return StreamBuilder<PageState>(
-      stream: stateManager.pageStateStream,
-      builder: (context, pageStateSnapshot) {
-        final pageState = pageStateSnapshot.data ?? PageState.answer;
-        Color backgroundColor;
-        Color textColor;
-        Color borderColor;
-
-        if (pageState == PageState.evaluate && isSelected) {
-          if (widget.option?.isCorrect ?? false) {
-            backgroundColor = const Color.fromARGB(230, 147, 197, 114);
-            textColor = Colors.white;
-            borderColor = const Color.fromARGB(230, 106, 156, 73);
-          } else {
-            backgroundColor = const Color.fromARGB(230, 248, 113, 113);
-            textColor = Colors.white;
-            borderColor = const Color.fromARGB(230, 239, 68, 68);
-          }
-        } else if (widget.option != null && pageState == PageState.evaluate && widget.option!.isCorrect) {
-          backgroundColor = const Color.fromARGB(255, 159, 201, 131);
+      if (pageState == PageState.evaluate && isSelected) {
+        if (widget.option?.isCorrect ?? false) {
+          backgroundColor = AppColors.primaryGreen;
           textColor = Colors.white;
-          borderColor = const Color.fromARGB(255, 113, 170, 75);
+          borderColor = AppColors.secondaryGreen;
         } else {
-          backgroundColor = isSelected ? Colors.grey.shade300 : Colors.white;
-          textColor = Colors.black;
-          borderColor = isSelected ? Colors.grey.shade400 : Colors.grey.shade300;
+          backgroundColor = AppColors.primaryRed;
+          textColor = Colors.white;
+          borderColor = AppColors.secondaryRed;
         }
+      } else if (widget.option != null && pageState == PageState.evaluate && widget.option!.isCorrect) {
+        backgroundColor = AppColors.primaryGreen;
+        textColor = Colors.white;
+        borderColor = AppColors.secondaryGreen;
+      } else {
+        backgroundColor = isSelected ? Colors.grey.shade300 : Colors.white;
+        textColor = Colors.black;
+        borderColor = isSelected ? Colors.grey.shade400 : Colors.grey.shade300;
+      }
 
-        return Align(
-          alignment: Alignment.center,
+      return Align(
+        alignment: Alignment.center,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: 400,
+          ),
           child: Container(
             width: widget.width,
             height: widget.height,
@@ -114,9 +119,7 @@ class ToggleButtonState extends State<ToggleButton> {
                 ),
               ),
               onPressed: () {
-                pageState == PageState.answer
-                ? toggleSelection()
-                : null;
+                pageState == PageState.answer ? toggleSelection() : null;
               },
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
@@ -128,8 +131,10 @@ class ToggleButtonState extends State<ToggleButton> {
               ),
             ),
           ),
-        );
-      }
-    );
-  }
+        ),
+      );
+    },
+  );
+}
+
 }

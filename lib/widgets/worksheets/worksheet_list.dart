@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:plant_puzzle_app/widgets/worksheet_card.dart';
-import '../services/api_service_worksheets.dart';
-import '../models/worksheet.dart';
+import '../../widgets/worksheets/worksheet_card.dart';
+import '../../services/api_service_worksheets.dart';
+import '../../models/worksheet.dart';
 
 class WorksheetList extends StatefulWidget {
   final int areaId;

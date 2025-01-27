@@ -1,4 +1,3 @@
-// models/item.dart
 
 class Area {
   final int id;

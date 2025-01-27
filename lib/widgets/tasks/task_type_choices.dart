@@ -48,7 +48,7 @@ class TaskTypeChoicesState extends State<TaskTypeChoices> {
               widget.images[0].image ?? '',
               fit: BoxFit.contain,
               width: double.infinity,
-              height: 200,
+              height: 180,
             ),
           ),
         Column(

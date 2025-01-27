@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:plant_puzzle_app/models/worksheet.dart';
+import '../../models/worksheet.dart';
 import '../buttons/toggle_button.dart';
 
 class TaskType1 extends StatefulWidget {

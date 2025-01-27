@@ -1,69 +1,63 @@
 import 'package:flutter/material.dart';
 import '../widgets/buttons/continue_button.dart';
 import '../widgets/border_container.dart';
+import '../widgets/error_message.dart';
 import '../services/api_service_visitors.dart';
-import 'package:plant_puzzle_app/models/visitors.dart';
-
+import '../models/visitors.dart';
+import '../colors.dart';
 import 'area_list_page.dart';
+
 
 class SchoolGroupSelectionPage extends StatefulWidget {
   final String username;
   final String firstName;
   final String lastName;
 
-  SchoolGroupSelectionPage({
+  const SchoolGroupSelectionPage({
+    super.key,
     required this.username,
     required this.firstName,
     required this.lastName,
   });
 
   @override
-  _SchoolGroupSelectionPageState createState() =>
+  State<SchoolGroupSelectionPage> createState() =>
       _SchoolGroupSelectionPageState();
 }
 
 class _SchoolGroupSelectionPageState extends State<SchoolGroupSelectionPage> {
-  final ApiService _apiService = ApiService();
-  List<dynamic> schoolGroups = [];
+  final ApiService apiService = ApiService();
+  late Future<List<dynamic>> schoolGroups;
   List<int> selectedGroups = [];
-  bool isLoading = true;
+
+  // Variables for error handling
+  String errorMessage = '';
+  bool errorVisibility = false;
 
   @override
   void initState() {
     super.initState();
-    _fetchSchoolGroups();
+    schoolGroups = _fetchSchoolGroups(); 
   }
 
-  Future<void> _fetchSchoolGroups() async {
-    try {
-      final groups = await _apiService.getSchoolGroups();
-      setState(() {
-        schoolGroups = groups;
-        isLoading = false;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Nepodařilo se načíst školní skupiny.')),
-      );
-      setState(() {
-        isLoading = false;
-      });
-    }
+  /// Fetch school groups from the API
+  Future<List<dynamic>> _fetchSchoolGroups() async {
+    return await apiService.getSchoolGroups();
   }
 
+  /// Register the user with selected school groups
   void _register() async {
+    // Check if no groups are selected
     if (selectedGroups.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Vyberte alespoň jednu školní skupinu.')),
-      );
+      setState(() {
+        errorMessage = 'Vyber si alespoň jednu skupinu.';
+        errorVisibility = true;
+      });
       return;
     }
 
-    setState(() {
-      isLoading = true;
-    });
-
     try {
+      // Create a Visitor object
       final visitor = Visitor(
         username: widget.username,
         firstName: widget.firstName,
@@ -71,60 +65,84 @@ class _SchoolGroupSelectionPageState extends State<SchoolGroupSelectionPage> {
         schoolGroupIds: selectedGroups,
       );
 
-      await _apiService.registerUser(visitor);
+      await apiService.registerUser(visitor);
 
+      // Ensure the widget is still mounted before navigation
+      if (!mounted) return;
+
+      // Navigate to the AreaListPage and remove previous routes
       Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => AreaListPage()),
-          (route) => false);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registrace se nezdařila. Zkuste to znovu.')),
+        context,
+        MaterialPageRoute(builder: (context) => AreaListPage()),
+        (route) => false,
       );
-    } finally {
+    } catch (e) {
       setState(() {
-        isLoading = false;
+        errorMessage = 'Registrace se nezdařila.';
+        errorVisibility = true;
       });
     }
   }
 
- @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    body: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-      child: Center(
-        child: isLoading
-            ? CircularProgressIndicator()
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Vítej, ${widget.username}!',
-                    style: TextStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 10.0),
-                  Text(
-                    'Vyber do jaké věkové skupiny patříš:',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Text(
-                    'Skupin je možné vybrat víc. ',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  const SizedBox(height: 15.0),
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<dynamic>>(
+      future: schoolGroups,
+      builder: (context, snapshot) {
+        // Display loading indicator while waiting for data
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-                  BorderContainer(
-                  children: [ ListView.builder(
+        // Display error message if an error occurs
+        else if (snapshot.hasError) {
+          return Center(
+                child: Text('Stránku se nepodařilo načíst. Zkuste to znovu.'));
+        }
+
+        // Handle empty or missing data
+        else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('Stránka nenalezena.'));
+        }
+
+        // Data successfully loaded
+        final schoolGroups = snapshot.data!;
+
+        return Scaffold(
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+
+                // Greeting text
+                Text(
+                  'Vítej, ${widget.username}!',
+                  style: const TextStyle(fontSize: 24.0, fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 10.0),
+                const Text(
+                  'Vyber do jaké věkové skupiny patříš:',
+                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+                ),
+                const Text(
+                  'Skupin je možné vybrat víc.',
+                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400),
+                ),
+                const SizedBox(height: 15.0),
+
+                // Display error message
+                ErrorMessage(
+                  message: errorMessage,
+                   visibility: errorVisibility
+                  ),
+
+                const SizedBox(height: 5.0),
+
+                // Container for school group selection
+                BorderContainer(
+                  children: [
+                    ListView.builder(
                       padding: EdgeInsets.zero,
                       shrinkWrap: true,
                       itemCount: schoolGroups.length,
@@ -137,7 +155,7 @@ Widget build(BuildContext context) {
                           fillColor: WidgetStateProperty.resolveWith<Color>(
                               (Set<WidgetState> states) {
                             if (states.contains(WidgetState.selected)) {
-                              return const Color(0xFF93C572);
+                              return AppColors.primaryGreen;
                             }
                             return Colors.white;
                           }),
@@ -156,19 +174,19 @@ Widget build(BuildContext context) {
                     ),
                   ],
                 ),
+                const SizedBox(height: 10.0),
 
-                  const SizedBox(height: 10.0),
-
-                  ContinueButton(
-                    height: 55,
-                    text: isLoading ? 'Načítám...' : 'Registrovat se',
-                    onPressed: isLoading ? null : _register,
-                  ),
-                ],
-              ),
-      ),
-    ),
-  );
-}
-
+                // Register button
+                ContinueButton(
+                  height: 55,
+                  text: 'Registrovat se',
+                  onPressed: _register,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
