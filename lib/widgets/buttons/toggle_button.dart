@@ -63,39 +63,42 @@ class ToggleButtonState extends State<ToggleButton> {
     return widget.option;
   }
   
-  @override
-  Widget build(BuildContext context) {
+@override
+Widget build(BuildContext context) {
+  return StreamBuilder<PageState>(
+    stream: stateManager.pageStateStream,
+    builder: (context, pageStateSnapshot) {
+      final pageState = pageStateSnapshot.data ?? PageState.answer;
+      Color backgroundColor;
+      Color textColor;
+      Color borderColor;
 
-    return StreamBuilder<PageState>(
-      stream: stateManager.pageStateStream,
-      builder: (context, pageStateSnapshot) {
-        final pageState = pageStateSnapshot.data ?? PageState.answer;
-        Color backgroundColor;
-        Color textColor;
-        Color borderColor;
-
-        if (pageState == PageState.evaluate && isSelected) {
-          if (widget.option?.isCorrect ?? false) {
-            backgroundColor = AppColors.primaryGreen;
-            textColor = Colors.white;
-            borderColor = AppColors.secondaryGreen;
-          } else {
-            backgroundColor = const Color(0xE6F87171);
-            textColor = Colors.white;
-            borderColor = const Color(0xE6EF4444);
-          }
-        } else if (widget.option != null && pageState == PageState.evaluate && widget.option!.isCorrect) {
+      if (pageState == PageState.evaluate && isSelected) {
+        if (widget.option?.isCorrect ?? false) {
           backgroundColor = AppColors.primaryGreen;
           textColor = Colors.white;
           borderColor = AppColors.secondaryGreen;
         } else {
-          backgroundColor = isSelected ? Colors.grey.shade300 : Colors.white;
-          textColor = Colors.black;
-          borderColor = isSelected ? Colors.grey.shade400 : Colors.grey.shade300;
+          backgroundColor = AppColors.primaryRed;
+          textColor = Colors.white;
+          borderColor = AppColors.secondaryRed;
         }
+      } else if (widget.option != null && pageState == PageState.evaluate && widget.option!.isCorrect) {
+        backgroundColor = AppColors.primaryGreen;
+        textColor = Colors.white;
+        borderColor = AppColors.secondaryGreen;
+      } else {
+        backgroundColor = isSelected ? Colors.grey.shade300 : Colors.white;
+        textColor = Colors.black;
+        borderColor = isSelected ? Colors.grey.shade400 : Colors.grey.shade300;
+      }
 
-        return Align(
-          alignment: Alignment.center,
+      return Align(
+        alignment: Alignment.center,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: 400,
+          ),
           child: Container(
             width: widget.width,
             height: widget.height,
@@ -116,9 +119,7 @@ class ToggleButtonState extends State<ToggleButton> {
                 ),
               ),
               onPressed: () {
-                pageState == PageState.answer
-                ? toggleSelection()
-                : null;
+                pageState == PageState.answer ? toggleSelection() : null;
               },
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
@@ -130,8 +131,10 @@ class ToggleButtonState extends State<ToggleButton> {
               ),
             ),
           ),
-        );
-      }
-    );
-  }
+        ),
+      );
+    },
+  );
+}
+
 }

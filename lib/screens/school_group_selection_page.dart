@@ -4,6 +4,7 @@ import '../widgets/border_container.dart';
 import '../widgets/error_message.dart';
 import '../services/api_service_visitors.dart';
 import '../models/visitors.dart';
+import '../colors.dart';
 import 'area_list_page.dart';
 
 
@@ -154,7 +155,7 @@ class _SchoolGroupSelectionPageState extends State<SchoolGroupSelectionPage> {
                           fillColor: WidgetStateProperty.resolveWith<Color>(
                               (Set<WidgetState> states) {
                             if (states.contains(WidgetState.selected)) {
-                              return const Color(0xFF93C572);
+                              return AppColors.primaryGreen;
                             }
                             return Colors.white;
                           }),

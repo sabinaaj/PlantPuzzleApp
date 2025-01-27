@@ -31,6 +31,7 @@ class _UserPageState extends State<UserPage> {
   final confirm = await showDialog(
     context: context,
     builder: (context) => AlertDialog(
+      title: const Text('Odhlásit se'),
       content: const Text('Opravdu se chceš odhlásit?'),
       actions: [
         TextButton(

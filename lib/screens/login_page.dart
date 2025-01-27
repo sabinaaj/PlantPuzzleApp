@@ -24,7 +24,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    // Dispose the TextEditingController to free memory
     usernameController.dispose();
     super.dispose();
   }

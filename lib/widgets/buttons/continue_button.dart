@@ -24,25 +24,30 @@ class ContinueButton extends StatelessWidget {
       alignment: Alignment.center,
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: vPadding),
-        child: SizedBox(
-          width: width,
-          height: height,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              elevation: 2.0,
-              backgroundColor: AppColors.primaryGreen,
-              shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: 400,
+          ),
+          child: SizedBox(
+            width: width,
+            height: height,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                elevation: 2.0,
+                backgroundColor: AppColors.primaryGreen,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
               ),
-            ),
-            onPressed: onPressed,
-            child: Text(
-              text,
-              style: const TextStyle(fontSize: 16.0, color: Colors.white),
+              onPressed: onPressed,
+              child: Text(
+                text,
+                style: const TextStyle(fontSize: 16.0, color: Colors.white),
+              ),
             ),
           ),
         ),
-      )
+      ),
     );
   }
 }

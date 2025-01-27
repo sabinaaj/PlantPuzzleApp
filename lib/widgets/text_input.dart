@@ -36,7 +36,10 @@ class _TextInputState extends State<TextInput> {
               ? Colors.grey.shade400 
               : Colors.grey.shade300;
 
-    return SizedBox(
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxWidth: 400,
+      ),
       child: Container(
         decoration: BoxDecoration(
           border: Border(
@@ -49,8 +52,10 @@ class _TextInputState extends State<TextInput> {
         ),
         child: TextField(
           controller: widget.textController,
+          maxLength: 50,
           focusNode: _focusNode,
           decoration: InputDecoration(
+            counterText: '',
             prefixIcon: widget.icon,
             hintText: widget.hintText,
             hintStyle: TextStyle(

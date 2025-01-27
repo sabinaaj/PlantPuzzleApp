@@ -89,6 +89,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
   }
 
   @override
+  void dispose() {
+    usernameController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
