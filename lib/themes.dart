@@ -22,23 +22,3 @@ final ThemeData lightTheme = ThemeData(
   primarySwatch: MaterialColor(0xFF000000, blackColor),
   visualDensity: VisualDensity.adaptivePlatformDensity,
 );
-
-final ThemeData darkTheme = ThemeData(
-  useMaterial3: true,
-  brightness: Brightness.dark,
-  colorScheme: ColorScheme.dark(
-    primary: MaterialColor(0xFFFFFFFF, whiteColor),
-    secondary: Colors.lightBlue,
-    tertiary: Colors.lightBlue,
-  ),
-  tabBarTheme: TabBarTheme(
-    labelColor: MaterialColor(0xFFFFFFFF, whiteColor),
-  ),
-  appBarTheme: AppBarTheme(
-    iconTheme: IconThemeData(
-      color: MaterialColor(0xFFFFFFFF, whiteColor),
-    ),
-  ),
-  primarySwatch: MaterialColor(0xFFFFFFFF, whiteColor),
-  visualDensity: VisualDensity.adaptivePlatformDensity,
-);
