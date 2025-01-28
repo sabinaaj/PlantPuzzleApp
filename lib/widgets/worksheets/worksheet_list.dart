@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import '../../widgets/worksheets/worksheet_card.dart';
+import 'worksheet_card.dart';
 import '../../services/api_service_worksheets.dart';
-import '../../screens/worksheet_page.dart';
 import '../../models/worksheet.dart';
 
 class WorksheetList extends StatefulWidget {
   final int areaId;
 
-  const WorksheetList({super.key, required this.areaId});
+  WorksheetList({super.key, required this.areaId});
 
   @override
   State<WorksheetList> createState() => _WorksheetListState();
@@ -55,15 +54,7 @@ class _WorksheetListState extends State<WorksheetList> {
           itemBuilder: (context, index) {
             if (index < worksheets.length) {
               final worksheet = worksheets[index];
-              return WorksheetCard(
-                worksheet: worksheet,
-                onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => WorksheetPage(worksheetId: worksheet.id),
-                      ),
-                    ).then((value) => reloadData()),
-                    );
+              return WorksheetCard(worksheet: worksheet);  
             } else {
               return const SizedBox(height: 8);
             }

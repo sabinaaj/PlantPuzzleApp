@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import '../buttons/border_button.dart';
 import '../../models/worksheet.dart';
+import '../../screens/worksheet_page.dart';
 import '../../colors.dart';
+
 class WorksheetCard extends StatelessWidget {
   final WorksheetSummary worksheet;
-  final VoidCallback? onPressed;
 
-  const WorksheetCard({
-    super.key,
-    required this.worksheet,
-    this.onPressed,
-  });
+  const WorksheetCard({super.key, required this.worksheet});
 
   @override
   Widget build(BuildContext context) {
@@ -48,27 +45,27 @@ class WorksheetCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4.0),
-
                     worksheet.successRate != null
-                    ? RichText(
+                      ? RichText(
                         text: TextSpan(
                           style: const TextStyle(
-                            color: Colors.black, // Barva textu
+                            color: Colors.black,
                           ),
                           children: [
                             TextSpan(
-                              text: '${worksheet.successRate}%', // Tučné zobrazení rate
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              text: '${worksheet.successRate}%',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold),
                             ),
                             const TextSpan(
-                              text: ' úspěšnost', // Normální text
+                              text: ' úspěšnost',
                             ),
                           ],
                         ),
                       )
                     : const Text(
                         'Tento test ještě nebyl dokončen.',
-                    )
+                      )
                   ],
                 ),
               ],
@@ -79,8 +76,14 @@ class WorksheetCard extends StatelessWidget {
               width: MediaQuery.of(context).size.width * 0.85,
               backgroundColor: AppColors.primaryGreen,
               borderColor: AppColors.secondaryGreen,
-              onPressed: onPressed,
-            ),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      WorksheetPage(worksheetId: worksheet.id),
+                ),
+              )
+            )
           ],
         ),
       ),

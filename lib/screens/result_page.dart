@@ -103,8 +103,7 @@ class ResultPage extends StatelessWidget {
               onPressed: () async {
                 // Submit responses and navigate back to the main screen
                 await worksheetStateManager.submitResponses();
-                Navigator.of(context).pop();
-                Navigator.of(context).pop(true);
+                Navigator.of(context).popUntil((route) => route.isFirst);
               },
             ),
           ],
