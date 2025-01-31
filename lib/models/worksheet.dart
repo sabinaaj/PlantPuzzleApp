@@ -1,13 +1,15 @@
 class WorksheetSummary {
   final int id;
   final String title;
+  final int? successRate;
 
-  WorksheetSummary({required this.id, required this.title});
+  WorksheetSummary({required this.id, required this.title, this.successRate});
 
   factory WorksheetSummary.fromJson(Map<String, dynamic> json) {
     return WorksheetSummary(
       id: json['id'],
       title: json['title'],
+      successRate: json['success_rate'],
     );
   }
 }

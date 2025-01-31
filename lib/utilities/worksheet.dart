@@ -290,10 +290,12 @@ class WorksheetStateManager {
     return successRate;
   }
 
-  void submitResponses() async {
+  Future<bool> submitResponses() async {
     final ApiService apiService = ApiService();
     await apiService.submitResponses(responses);
     await apiService.submitSuccessRate(getSuccessRate());
+
+    return true;
   }
 
   /// Disposes all the state controllers

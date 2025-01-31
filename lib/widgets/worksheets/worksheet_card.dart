@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../buttons/border_button.dart';
-import '../../screens/worksheet_page.dart';
 import '../../models/worksheet.dart';
+import '../../screens/worksheet_page.dart';
 import '../../colors.dart';
 
 class WorksheetCard extends StatelessWidget {
@@ -14,6 +14,7 @@ class WorksheetCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
       decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(15.0),
         border: Border.all(
           color: Colors.grey.shade300,
@@ -37,19 +38,34 @@ class WorksheetCard extends StatelessWidget {
                         worksheet.title,
                         maxLines: 4,
                         style: const TextStyle(
-                          fontSize: 16.0,
+                          fontSize: 18.0,
                           fontWeight: FontWeight.bold,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ),
                     const SizedBox(height: 4.0),
-                    const Text(
-                      'Další info',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                      ),
-                    ),
+                    worksheet.successRate != null
+                      ? RichText(
+                        text: TextSpan(
+                          style: const TextStyle(
+                            color: Colors.black,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: '${worksheet.successRate}%',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            const TextSpan(
+                              text: ' úspěšnost',
+                            ),
+                          ],
+                        ),
+                      )
+                    : const Text(
+                        'Tento test ještě nebyl dokončen.',
+                      )
                   ],
                 ),
               ],
@@ -61,12 +77,13 @@ class WorksheetCard extends StatelessWidget {
               backgroundColor: AppColors.primaryGreen,
               borderColor: AppColors.secondaryGreen,
               onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => WorksheetPage(worksheetId: worksheet.id),
-                      ),
-                    ),
-            ),
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      WorksheetPage(worksheetId: worksheet.id),
+                ),
+              )
+            )
           ],
         ),
       ),

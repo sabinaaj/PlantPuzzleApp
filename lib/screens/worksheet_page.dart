@@ -63,7 +63,6 @@ class _WorksheetPageState extends State<WorksheetPage> {
                 progressValue: currentPageIndex / totalPages,
                 onClose: () {
                   Navigator.of(context).pop(); // Close dialog
-                  Navigator.of(context).pop(); // Go back
                 },),
               body: StateManagerProvider(
                 stateManager: stateManager,
