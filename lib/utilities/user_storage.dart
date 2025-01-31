@@ -1,7 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Saves the user ID of the logged-in visitor in local storage.
-Future<void> saveUser(int visitorId) async {
+Future<void> saveUserId(int visitorId) async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.setInt('visitor_id', visitorId);
 }

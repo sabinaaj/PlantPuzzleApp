@@ -1,31 +1,20 @@
 import 'package:flutter/material.dart';
 import '../widgets/buttons/continue_button.dart';
-import '../widgets/border_container.dart';
+import '../widgets/school_group_selection.dart';
 import '../widgets/error_message.dart';
 import '../services/api_service_visitors.dart';
 import '../models/visitors.dart';
-import '../colors.dart';
 import 'area_list_page.dart';
 
+class WelcomePage extends StatefulWidget {
 
-class SchoolGroupSelectionPage extends StatefulWidget {
-  final String username;
-  final String firstName;
-  final String lastName;
-
-  const SchoolGroupSelectionPage({
-    super.key,
-    required this.username,
-    required this.firstName,
-    required this.lastName,
-  });
+  const WelcomePage({super.key});
 
   @override
-  State<SchoolGroupSelectionPage> createState() =>
-      _SchoolGroupSelectionPageState();
+  State<WelcomePage> createState() => _WelcomePageState();
 }
 
-class _SchoolGroupSelectionPageState extends State<SchoolGroupSelectionPage> {
+class _WelcomePageState extends State<WelcomePage> {
   final ApiService apiService = ApiService();
   late Future<List<dynamic>> schoolGroups;
   List<int> selectedGroups = [];
@@ -46,7 +35,7 @@ class _SchoolGroupSelectionPageState extends State<SchoolGroupSelectionPage> {
   }
 
   /// Register the user with selected school groups
-  void _register() async {
+  void _save() async {
     // Check if no groups are selected
     if (selectedGroups.isEmpty) {
       setState(() {
@@ -59,13 +48,10 @@ class _SchoolGroupSelectionPageState extends State<SchoolGroupSelectionPage> {
     try {
       // Create a Visitor object
       final visitor = Visitor(
-        username: widget.username,
-        firstName: widget.firstName,
-        lastName: widget.lastName,
         schoolGroupIds: selectedGroups,
       );
 
-      await apiService.registerUser(visitor);
+      await apiService.saveUser(visitor);
 
       // Ensure the widget is still mounted before navigation
       if (!mounted) return;
@@ -115,21 +101,39 @@ class _SchoolGroupSelectionPageState extends State<SchoolGroupSelectionPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
 
-                // Greeting text
-                Text(
-                  'Vítej, ${widget.username}!',
-                  style: const TextStyle(fontSize: 24.0, fontWeight: FontWeight.w500),
+              const SizedBox(height: 6.0),
+
+                // Logo image
+              Image.asset(
+                'assets/images/logo.png',
+                height: 125,
+                width: 125,
+              ),
+
+              const SizedBox(height: 6.0),
+
+              // App title
+              const Text(
+                'Vítej v PlantPuzzle',
+                style: TextStyle(
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
                 ),
-                const SizedBox(height: 10.0),
+              ),
+
+                // Greeting text
                 const Text(
                   'Vyber do jaké věkové skupiny patříš:',
                   style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
                 ),
                 const Text(
-                  'Skupin je možné vybrat víc.',
-                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w400),
+                  'Výběr skupin ovlivní obtížnost testů.\nSkupin je možné vybrat víc.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.w400),
                 ),
-                const SizedBox(height: 15.0),
+
+                const SizedBox(height: 10.0),
 
                 // Display error message
                 ErrorMessage(
@@ -140,47 +144,27 @@ class _SchoolGroupSelectionPageState extends State<SchoolGroupSelectionPage> {
                 const SizedBox(height: 5.0),
 
                 // Container for school group selection
-                BorderContainer(
-                  children: [
-                    ListView.builder(
-                      padding: EdgeInsets.zero,
-                      shrinkWrap: true,
-                      itemCount: schoolGroups.length,
-                      itemBuilder: (context, index) {
-                        final group = schoolGroups[index];
-
-                        return CheckboxListTile(
-                          title: Text(group['group']),
-                          value: selectedGroups.contains(group['id']),
-                          fillColor: WidgetStateProperty.resolveWith<Color>(
-                              (Set<WidgetState> states) {
-                            if (states.contains(WidgetState.selected)) {
-                              return AppColors.primaryGreen;
-                            }
-                            return Colors.white;
-                          }),
-                          side: BorderSide(color: Colors.grey.shade400),
-                          onChanged: (bool? value) {
-                            setState(() {
-                              if (value == true) {
-                                selectedGroups.add(group['id']);
-                              } else {
-                                selectedGroups.remove(group['id']);
-                              }
-                            });
-                          },
-                        );
-                      },
-                    ),
-                  ],
+                SchoolGroupSelection(
+                  schoolGroups: schoolGroups,
+                  selectedGroups: selectedGroups,
+                  onGroupSelectionChanged: (int groupId, bool isSelected) {
+                  setState(() {
+                      if (isSelected) {
+                        selectedGroups.add(groupId);
+                      } else {
+                        selectedGroups.remove(groupId);
+                      }
+                    });
+                  },
                 ),
-                const SizedBox(height: 10.0),
+
+                const SizedBox(height: 5.0),
 
                 // Register button
                 ContinueButton(
                   height: 55,
-                  text: 'Registrovat se',
-                  onPressed: _register,
+                  text: 'Pokračovat',
+                  onPressed: _save,
                 ),
               ],
             ),

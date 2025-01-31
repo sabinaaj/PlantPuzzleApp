@@ -26,10 +26,8 @@ class UserOverviewContainer extends StatelessWidget {
           ),
         ),
 
-        // Mřížka pro 4 karty
         GridView.builder(
-          shrinkWrap:
-              true, // Zajistí, že GridView nebude zabírat více místa než potřebuje
+          shrinkWrap: true, 
           physics:
               NeverScrollableScrollPhysics(), // Zakáže scrollování uvnitř GridView
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -53,7 +51,7 @@ class UserOverviewContainer extends StatelessWidget {
                       ),
                     ),
                     // Přidejte další informace podle potřeby
-                    Text('Počet návštěv: ${visitor.firstName}'),
+                    Text('Počet návštěv:'),
                   ],
                 ),
               ]),

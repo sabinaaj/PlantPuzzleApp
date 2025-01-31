@@ -26,7 +26,6 @@ class _AreaHeaderState extends State<AreaHeader> {
   void _loadAreaStats() async {
   try {
     final stats = await _apiService.getAreaStats(widget.area.id);
-    print(stats);
 
     setState(() {
       worksheetCount = stats['worksheet_count'] ?? 0;

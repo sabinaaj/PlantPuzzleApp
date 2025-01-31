@@ -6,7 +6,7 @@ import '../../models/worksheet.dart';
 class WorksheetList extends StatefulWidget {
   final int areaId;
 
-  WorksheetList({super.key, required this.areaId});
+  const WorksheetList({super.key, required this.areaId});
 
   @override
   State<WorksheetList> createState() => _WorksheetListState();

@@ -37,7 +37,6 @@ class ApiService {
     final visitorId = await getLoggedInUserId();
 
     final response = await http.get(Uri.parse('$areaUrl/$areaId/$visitorId/get-area-stats/'));
-    print(response.body);
 
     if (response.statusCode == 200) {
       return json.decode(response.body);

@@ -19,24 +19,22 @@ class AreaTabs extends StatelessWidget {
           children: [
             AreaHeader(area: area),
 
-            Container(
-              child: TabBar(
-                dividerHeight: 2.0,
-                dividerColor: Colors.grey.shade400,
-                indicatorColor: AppColors.secondaryGreen,
-                labelStyle: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                unselectedLabelStyle: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
-                ),
-                tabs: [
-                  Tab(text: "Pracovní listy"),
-                  Tab(text: "Rostliny"),
-                ],
+            TabBar(
+              dividerHeight: 2.0,
+              dividerColor: Colors.grey.shade400,
+              indicatorColor: AppColors.secondaryGreen,
+              labelStyle: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
               ),
+              unselectedLabelStyle: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.normal,
+              ),
+              tabs: [
+                Tab(text: "Pracovní listy"),
+                Tab(text: "Rostliny"),
+              ],
             ),
 
             Expanded(

@@ -24,58 +24,40 @@ class ApiService {
     }
   }
 
-  /// Logs in a user with the given username.
-  /// Saves the visitor ID locally on successful login.
-  Future<void> loginUser(String username) async {
+  /// Saves a new user with the provided visitor information.
+  /// Saves the visitor ID locally.
+  Future<void> saveUser(Visitor visitor) async {
     final response = await http.post(
-      Uri.parse('$visitorUrl/login/'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'username': username}),
-    );
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      await saveUser(data['visitor_id']);
-    } else {
-      throw Exception('Login failed');
-    }
-  }
-
-  /// Registers a new user with the provided visitor information.
-  /// Saves the visitor ID locally on successful registration.
-  Future<void> registerUser(Visitor visitor) async {
-    final response = await http.post(
-      Uri.parse('$visitorUrl/register/'),
+      Uri.parse('$visitorUrl/create/'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(visitor.toJson()),
     );
 
     if (response.statusCode == 201) {
       final data = jsonDecode(response.body);
-      await saveUser(data['visitor_id']);
+      await saveUserId(data['visitor_id']);
     } else {
       throw Exception('Registration failed.');
     }
   }
 
-  /// Checks if a username is already taken.
-  /// Returns true if the username is unavailable.
-  Future<bool> isUsernameTaken(String username) async {
-    final response = await http.get(
-      Uri.parse('$visitorUrl/username-check/$username'),
-    );
+  Future<void> updateVisitor(Visitor visitor) async {
+    try {
+      final url = Uri.parse('$visitorUrl/${visitor.id}/update/');
+      await http.put(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(visitor.toJson()),
+      );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return data['is_taken'];
-    } else {
-      throw Exception('Error checking username availability.');
+    } catch (e) {
+      throw Exception('Failed to update visitor: $e');
     }
   }
 
   /// Retrieves a list of school groups from the API.
   Future<List<dynamic>> getSchoolGroups() async {
-    final response = await http.get(Uri.parse('$visitorUrl/school-groups'));
+    final response = await http.get(Uri.parse('$visitorUrl/school-groups/'));
 
     if (response.statusCode == 200) {
       return jsonDecode(utf8.decode(response.bodyBytes));

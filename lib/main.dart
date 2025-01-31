@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'screens/area_list_page.dart';
-import 'screens/login_page.dart';
+import 'screens/welcome_page.dart';
 import '../utilities/user_storage.dart';
 import 'themes.dart';
 
@@ -41,7 +41,7 @@ class SplashScreen extends StatelessWidget {
 
         // If the user is not logged in, show the login page
         if (snapshot.hasData && !snapshot.data!) {
-          return LoginPage();
+          return WelcomePage();
         }
 
         // If the user is logged in, show the home page
