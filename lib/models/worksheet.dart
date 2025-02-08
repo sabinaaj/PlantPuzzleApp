@@ -5,7 +5,7 @@ class WorksheetSummary {
 
   WorksheetSummary({required this.id, required this.title, this.successRate});
 
-  factory WorksheetSummary.fromJson(Map<String, dynamic> json) {
+  factory WorksheetSummary.fromJson(Map<dynamic, dynamic> json) {
     return WorksheetSummary(
       id: json['id'],
       title: json['title'],
@@ -25,7 +25,7 @@ class Worksheet {
     required this.tasks,
   });
 
-  factory Worksheet.fromJson(Map<String, dynamic> json) {
+  factory Worksheet.fromJson(Map<dynamic, dynamic> json) {
     return Worksheet(
       id: json['id'],
       title: json['title'],
@@ -40,6 +40,14 @@ class Worksheet {
       'id': id,
       'tasks': tasks.map((task) => task.toJson()).toList(),
     };
+  }
+
+  factory Worksheet.empty() {
+    return Worksheet(
+      id: 0,
+      title: '',
+      tasks: [],
+    );
   }
 }
 
@@ -58,7 +66,7 @@ class Task {
     required this.images,
   });
 
-  factory Task.fromJson(Map<String, dynamic> json) {
+  factory Task.fromJson(Map<dynamic, dynamic> json) {
     return Task(
       id: json['id'],
       text: json['text'],
@@ -94,7 +102,7 @@ class Question {
     required this.options,
   });
 
-  factory Question.fromJson(Map<String, dynamic> json) {
+  factory Question.fromJson(Map<dynamic, dynamic> json) {
     return Question(
       id: json['id'],
       text: json['text'],
@@ -124,7 +132,7 @@ class Option {
     required this.isCorrect,
   });
 
-  factory Option.fromJson(Map<String, dynamic> json) {
+  factory Option.fromJson(Map<dynamic, dynamic> json) {
     return Option(
       id: json['id'],
       text: json['text'],
@@ -150,7 +158,7 @@ class TaskImage {
     required this.image,
   });
 
-  factory TaskImage.fromJson(Map<String, dynamic> json) {
+  factory TaskImage.fromJson(Map<dynamic, dynamic> json) {
     return TaskImage(
       id: json['id'],
       image: json['image_url'],

@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import '../utilities/user_storage.dart';
+import '../services/data_service_visitors.dart';
 
 class ApiService {
+  final DataServiceVisitors dataService = DataServiceVisitors();
   final String baseUrl;
   final String worksheetUrl;
 
@@ -13,7 +14,7 @@ class ApiService {
 
   /// Fetches the list of worksheets associated with a specific area by its ID.
   Future<List<dynamic>> getWorksheetsByArea(int areaId) async {
-    final visitorId = await getLoggedInUserId();
+    final visitorId = dataService.getLoggedInUserId();
     final response = await http.get(Uri.parse('$worksheetUrl/$areaId/$visitorId/worksheets/'));
 
     if (response.statusCode == 200) {

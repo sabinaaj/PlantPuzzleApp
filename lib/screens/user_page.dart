@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:plant_puzzle_app/screens/welcome_page.dart';
 import '../widgets/user_school_container.dart';
 import '../widgets/user_overview_container.dart';
-import '../utilities/user_storage.dart';
+import '../services/data_service_visitors.dart';
 import '../services/api_service_visitors.dart';
 import '../models/visitors.dart';
 
@@ -15,6 +15,7 @@ class UserPage extends StatefulWidget {
 
 class _UserPageState extends State<UserPage> {
   final ApiService apiService = ApiService();
+  final DataServiceVisitors dataService = DataServiceVisitors();
   late Future<Visitor> visitor;
 
   @override
@@ -25,7 +26,7 @@ class _UserPageState extends State<UserPage> {
 
   /// Fetch the visitor data for the logged-in user
   Future<Visitor> _fetchVisitorData() async {
-    final visitorId = await getLoggedInUserId();
+    final visitorId = dataService.getLoggedInUserId();
     return await apiService.getVisitor(visitorId);
   }
 
@@ -49,7 +50,7 @@ class _UserPageState extends State<UserPage> {
     );
 
     if (confirm == true) {
-      logoutUser();
+      dataService.logoutUser();
 
       // Ensure the widget is still mounted before navigation
       if (!mounted) return;

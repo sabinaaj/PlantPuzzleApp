@@ -2,13 +2,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/visitors.dart';
-import '../utilities/user_storage.dart';
-import 'data_service.dart';
+import 'data_service_visitors.dart';
 
 class ApiService {
   final String baseUrl;
   final String visitorUrl;
-  final DataService dataService = DataService();
+  final DataServiceVisitors dataService = DataServiceVisitors();
 
   ApiService()
       : baseUrl = dotenv.env['BASE_URL'] ?? '',
@@ -37,7 +36,7 @@ class ApiService {
 
     if (response.statusCode == 201) {
       final data = jsonDecode(response.body);
-      await dataService.saveUserId(data['visitor_id']);
+      dataService.saveUserId(data['visitor_id']);
     } else {
       throw Exception('Registration failed.');
     }
@@ -72,7 +71,7 @@ class ApiService {
   /// Associates the responses with the logged-in user.
   Future<void> submitResponses(List<VisitorResponse> responses) async {
     final url = Uri.parse('$visitorUrl/submit-responses/');
-    final visitorId = await getLoggedInUserId();
+    final visitorId = dataService.getLoggedInUserId();
 
     final response = await http.post(
       url,
@@ -104,7 +103,7 @@ class ApiService {
       },
       body: jsonEncode({
         ...rate.toJson(),
-        'visitor': await getLoggedInUserId(),
+        'visitor': dataService.getLoggedInUserId(),
       }),
     );
 

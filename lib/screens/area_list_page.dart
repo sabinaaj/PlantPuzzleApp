@@ -36,7 +36,7 @@ class AreaListPage extends StatelessWidget {
       ),
 
       // Area list
-      body: const AreaList(),
+      body: AreaList(),
     );
   }
 }

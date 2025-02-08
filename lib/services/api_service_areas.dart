@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
-import '../utilities/user_storage.dart';
+import 'data_service_visitors.dart';
 
 class ApiService {
+  final DataServiceVisitors dataService = DataServiceVisitors();
   final String baseUrl;
   final String areaUrl;
 
@@ -50,7 +51,7 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> getAreaStats(int areaId) async {
-    final visitorId = await getLoggedInUserId();
+    final visitorId = dataService.getLoggedInUserId();
 
     final response = await http.get(Uri.parse('$areaUrl/$areaId/$visitorId/get-area-stats/'));
 

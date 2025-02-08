@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'api_service_areas.dart';
+import '../models/area.dart';
 
 class DataService {
 
@@ -12,11 +13,6 @@ class DataService {
     print('Areas: $responseAreas');
     box.put('areas', responseAreas);
     box.put('userSchoolGroups', schoolGroupsIds);
-  }
-
-  Future<void> saveUserId(int userId) async {
-    var box = Hive.box('appData');
-    box.put('userId', userId);
   }
 
   /*Future<void> syncPendingChanges() async {
