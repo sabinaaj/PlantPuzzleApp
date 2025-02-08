@@ -72,13 +72,24 @@ class _UserSchoolContainerState extends State<UserSchoolContainer> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  const Text(
-                    'Školní skupiny',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.w500,
+                  Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/school.png',
+                      width: 30.0,
+                      height: 30.0,
                     ),
+                    const SizedBox(width: 8.0),
+                    Text(
+                  'Školní skupiny',
+                  style: const TextStyle(
+                    fontSize: 22.0,
+                    fontWeight: FontWeight.w500,
                   ),
+                ),
+                  ],
+                ),
                   isEditing
                     ? Row(
                       children: [

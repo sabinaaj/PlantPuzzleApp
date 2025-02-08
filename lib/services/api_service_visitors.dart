@@ -3,10 +3,12 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/visitors.dart';
 import '../utilities/user_storage.dart';
+import 'data_service.dart';
 
 class ApiService {
   final String baseUrl;
   final String visitorUrl;
+  final DataService dataService = DataService();
 
   ApiService()
       : baseUrl = dotenv.env['BASE_URL'] ?? '',
@@ -35,7 +37,7 @@ class ApiService {
 
     if (response.statusCode == 201) {
       final data = jsonDecode(response.body);
-      await saveUserId(data['visitor_id']);
+      await dataService.saveUserId(data['visitor_id']);
     } else {
       throw Exception('Registration failed.');
     }

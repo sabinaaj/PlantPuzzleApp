@@ -11,6 +11,22 @@ class ApiService {
       : baseUrl = dotenv.env['BASE_URL'] ?? '',
         areaUrl = '${dotenv.env['BASE_URL'] ?? ''}/areas/api';
 
+
+  /// Fetches a list of all areas and their details from the API.
+  Future<List<dynamic>> getAllAreas(List<int> schoolGroupIds) async {
+    final response = await http.post(
+      Uri.parse('$areaUrl/areas-all/'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'school_groups': schoolGroupIds}),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(utf8.decode(response.bodyBytes));
+    } else {
+      throw Exception('Failed to load areas');
+    }
+  }
+
   /// Fetches the list of areas from the API.
   Future<List<dynamic>> getAreas() async {
     final response = await http.get(Uri.parse('$areaUrl/areas/'));
@@ -27,7 +43,7 @@ class ApiService {
     final response = await http.get(Uri.parse('$areaUrl/areas/$areaId/'));
 
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       throw Exception('Failed to load area details');
     }

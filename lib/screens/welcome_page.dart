@@ -3,6 +3,7 @@ import '../widgets/buttons/continue_button.dart';
 import '../widgets/school_group_selection.dart';
 import '../widgets/error_message.dart';
 import '../services/api_service_visitors.dart';
+import '../services/data_service.dart';
 import '../models/visitors.dart';
 import 'area_list_page.dart';
 
@@ -16,6 +17,7 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage> {
   final ApiService apiService = ApiService();
+  final DataService dataService = DataService();
   late Future<List<dynamic>> schoolGroups;
   List<int> selectedGroups = [];
 
@@ -50,8 +52,10 @@ class _WelcomePageState extends State<WelcomePage> {
       final visitor = Visitor(
         schoolGroupIds: selectedGroups,
       );
-
+      print('Visitor: $visitor');
       await apiService.saveUser(visitor);
+      print('User saved successfully');
+      await dataService.fetchAndCacheData(selectedGroups);
 
       // Ensure the widget is still mounted before navigation
       if (!mounted) return;
@@ -82,13 +86,21 @@ class _WelcomePageState extends State<WelcomePage> {
 
         // Display error message if an error occurs
         else if (snapshot.hasError) {
-          return Center(
-                child: Text('Stránku se nepodařilo načíst. Zkuste to znovu.'));
+          print('Error: ${snapshot.error}');
+          return Scaffold(
+            body: Center(
+              child: Text('Vyskytla se chyba. Zkuste to znovu.'),
+            ),
+          );
         }
 
         // Handle empty or missing data
         else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('Stránka nenalezena.'));
+          return Scaffold(
+            body: Center(
+              child: Text('Stránka nenalezena.'),
+            ),
+          );
         }
 
         // Data successfully loaded
