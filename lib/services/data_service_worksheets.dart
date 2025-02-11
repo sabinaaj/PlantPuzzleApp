@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:plant_puzzle_app/models/visitors.dart';
 import 'package:plant_puzzle_app/models/worksheet.dart';
 
 class DataServiceWorksheets {
@@ -41,5 +42,33 @@ class DataServiceWorksheets {
     return Worksheet.empty();
   }
 
+  void saveWorksheetResult(int worksheetId, SuccessRate successRate, List<VisitorResponse> responses) async {
+    var box = Hive.box('appData');
+    
+    final worksheetResults = box.get('worksheetResults') ?? [];
 
+    worksheetResults.add({
+      'worksheetId': worksheetId,
+      'successRate': successRate.toJson(),
+      'responses': responses.map((response) => response.toJson()).toList(),
+      'is_synced': false
+    });
+
+    box.put('worksheetResults', worksheetResults);
+
+  }
+
+  Future<void> syncWorksheetResults() async {
+    var box = Hive.box('appData');
+    final worksheetResults = box.get('worksheetResults') ?? [];
+
+    for (var result in worksheetResults) {
+      if (result['is_synced'] == false) {
+        // Send result to server
+        result['is_synced'] = true;
+      }
+    }
+
+    box.put('worksheetResults', worksheetResults);
+  }
 }

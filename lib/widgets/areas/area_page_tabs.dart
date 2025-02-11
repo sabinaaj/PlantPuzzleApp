@@ -3,11 +3,13 @@ import '../../widgets/areas/area_header.dart';
 import '../../widgets/worksheets/worksheet_list.dart';
 import '../../models/area.dart';
 import '../../colors.dart';
+import '../../services/data_service.dart';
 
 class AreaTabs extends StatelessWidget {
+  final DataService dataService = DataService();
   final Area area;
 
-  const AreaTabs({super.key, required this.area});
+  AreaTabs({super.key, required this.area});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +42,17 @@ class AreaTabs extends StatelessWidget {
             Expanded(
               child: TabBarView(
                 children: [
-                  WorksheetList(areaId: area.id),
+                  RefreshIndicator(
+                    onRefresh: () async {
+                      final result = await dataService.fetchAndCacheData();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(result ? "Data úspěšně aktualizována." : "Není dostupné připojení k internetu. Aktualizace se nezdařila."),
+                          ),
+                        );
+                      } ,
+                    child: WorksheetList(areaId: area.id),
+                  ),
 
                   const Center(child: Text("Obsah pro záložku Rostliny")),
                 ],

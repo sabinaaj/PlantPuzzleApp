@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/data_service_worksheets.dart';
 import '../widgets/buttons/continue_button.dart';
 import '../widgets/worksheets/worksheet_app_bar.dart';
-import '../services/api_service_worksheets.dart';
-import '../utilities/worksheet.dart';
+import '../utilities/worksheet_state_manager.dart';
 import '../models/worksheet.dart';
 
 class WorksheetPage extends StatelessWidget {
@@ -12,13 +11,6 @@ class WorksheetPage extends StatelessWidget {
   final int worksheetId;
 
   WorksheetPage({super.key, required this.worksheetId});
-
-  /// Fetches a worksheet from the API based on the provided worksheet ID.
-  Future<Worksheet> _loadWorksheet(int worksheetId) async {
-    final ApiService apiService = ApiService();
-    final data = await apiService.getWorksheet(worksheetId);
-    return Worksheet.fromJson(data);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +50,7 @@ class WorksheetPage extends StatelessWidget {
                   Expanded(
                     child: worksheetStateManager.getWidgetForTask(),
                   ),
-                  
+
                   // Add a "Continue" button to evaluate answers.
                   ContinueButton(
                     text: 'Vyhodnotit',

@@ -55,7 +55,7 @@ class _WelcomePageState extends State<WelcomePage> {
       print('Visitor: $visitor');
       await apiService.saveUser(visitor);
       print('User saved successfully');
-      await dataService.fetchAndCacheData(selectedGroups);
+      await dataService.fetchAndCacheDataNewUser(selectedGroups);
 
       // Ensure the widget is still mounted before navigation
       if (!mounted) return;
