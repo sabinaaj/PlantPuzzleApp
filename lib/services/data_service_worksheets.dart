@@ -42,16 +42,48 @@ class DataServiceWorksheets {
     return Worksheet.empty();
   }
 
+  int? getWorksheetSuccessRate(int worksheetId) {
+    var box = Hive.box('appData');
+    final worksheetResults = box.get('worksheetResults', defaultValue: []);
+
+    // Filter results by worksheetId
+    final filteredResults = worksheetResults
+        .where((result) => result['worksheetId'] == worksheetId)
+        .toList();
+
+    if (filteredResults.isEmpty) return null;
+
+    // Sort results by createdAt
+    filteredResults.sort((a, b) {
+      final dateA = (a['createdAt'] is String) 
+          ? DateTime.tryParse(a['createdAt']) ?? DateTime.fromMillisecondsSinceEpoch(0)
+          : (a['createdAt'] is DateTime) 
+              ? a['createdAt'] as DateTime 
+              : DateTime.fromMillisecondsSinceEpoch(0);
+
+      final dateB = (b['createdAt'] is String) 
+          ? DateTime.tryParse(b['createdAt']) ?? DateTime.fromMillisecondsSinceEpoch(0)
+          : (b['createdAt'] is DateTime) 
+              ? b['createdAt'] as DateTime 
+              : DateTime.fromMillisecondsSinceEpoch(0);
+
+      return dateB.compareTo(dateA); // Seřazení sestupně (nejnovější první)
+    });
+
+
+    return filteredResults.first['successRate']['rate'];
+}
+
   void saveWorksheetResult(int worksheetId, SuccessRate successRate, List<VisitorResponse> responses) async {
     var box = Hive.box('appData');
-    
     final worksheetResults = box.get('worksheetResults') ?? [];
 
     worksheetResults.add({
       'worksheetId': worksheetId,
       'successRate': successRate.toJson(),
       'responses': responses.map((response) => response.toJson()).toList(),
-      'is_synced': false
+      'createdAt': DateTime.now(),
+      'isSynced': false
     });
 
     box.put('worksheetResults', worksheetResults);

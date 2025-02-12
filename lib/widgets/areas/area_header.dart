@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/data_service_areas.dart';
 import '../../models/area.dart';
+import 'dart:io';
 
 class AreaHeader extends StatelessWidget {
   final DataServiceAreas dataService = DataServiceAreas();
@@ -22,8 +23,8 @@ class AreaHeader extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
             child: area.iconUrl != null
-                ? Image.network(
-                    area.iconUrl!,
+                ? Image.file(
+                    File(area.iconUrl!),
                     height: 115,
                     fit: BoxFit.cover,
                   )

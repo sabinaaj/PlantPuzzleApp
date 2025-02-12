@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import '../../services/data_service_areas.dart';
 import '../../models/area.dart';
 import "../../screens/area_page.dart";
@@ -31,8 +32,8 @@ class AreaList extends StatelessWidget {
             ),
             child: ListTile(
               leading: area.iconUrl != null
-                  ? Image.network(
-                      area.iconUrl!,
+                  ? Image.file(
+                      File(area.iconUrl!),
                       height: 75,
                       width: 60,
                     )
