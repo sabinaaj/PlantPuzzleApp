@@ -17,28 +17,38 @@ class UserOverviewContainer extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 4.0),
-          child: Text(
+          child: 
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/images/graph.png',
+                width: 28.0,
+                height: 28.0,
+              ),
+              const SizedBox(width: 8.0),
+              Text(
             'Přehled',
             style: const TextStyle(
-              fontSize: 18.0,
+              fontSize: 22.0,
               fontWeight: FontWeight.w500,
             ),
           ),
+            ],
+          )
         ),
 
-        // Mřížka pro 4 karty
         GridView.builder(
-          shrinkWrap:
-              true, // Zajistí, že GridView nebude zabírat více místa než potřebuje
+          shrinkWrap: true, 
           physics:
-              NeverScrollableScrollPhysics(), // Zakáže scrollování uvnitř GridView
+              NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, // 2 sloupce v mřížce
-            crossAxisSpacing: 8.0, // Mezery mezi sloupci
-            mainAxisSpacing: 8.0, // Mezery mezi řádky
-            childAspectRatio: 1.0, // Poměr výšky a šířky jednotlivých karet
+            crossAxisCount: 2,
+            crossAxisSpacing: 8.0,
+            mainAxisSpacing: 8.0,
+            childAspectRatio: 1.05,
           ),
-          itemCount: 4, // Počet kartiček v mřížce
+          itemCount: 4, 
           itemBuilder: (context, index) {
             return Card(
               child: BorderContainer(padding: 16, children: [
@@ -46,14 +56,12 @@ class UserOverviewContainer extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Uživatelský výkon ${index + 1}',
+                      '${index + 1}',
                       style: const TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    // Přidejte další informace podle potřeby
-                    Text('Počet návštěv: ${visitor.firstName}'),
                   ],
                 ),
               ]),

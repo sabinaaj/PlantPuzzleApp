@@ -1,26 +1,17 @@
 class Visitor {
-  final String username;
-  final String firstName;
-  final String lastName;
-  final int? schoolId;
-  final List<int>? schoolGroupIds;
-  final List<int>? achievementIds;
+  final int? id;
+  List<int>? schoolGroupIds;
+  List<int>? achievementIds;
 
   Visitor({
-    required this.username,
-    required this.firstName,
-    required this.lastName,
-    this.schoolId,
+    this.id,
     this.schoolGroupIds,
     this.achievementIds,
   });
 
   factory Visitor.fromJson(Map<String, dynamic> json) {
     return Visitor(
-      username: json['username'],
-      firstName: json['first_name'],
-      lastName: json['last_name'],
-      schoolId: json['school'],
+      id: json['id'] ?? 0,
       schoolGroupIds: List<int>.from(json['school_group'] ?? []),
       achievementIds: List<int>.from(json['achievements'] ?? []),
     );
@@ -28,10 +19,7 @@ class Visitor {
 
   Map<String, dynamic> toJson() {
     return {
-      'username': username,
-      'first_name': firstName,
-      'last_name': lastName,
-      'school': schoolId,
+      'id': id ?? 0,
       'school_group': schoolGroupIds,
       'achievements': achievementIds,
     };
@@ -85,6 +73,31 @@ class SuccessRate {
     return {
       'rate': rate,
       'worksheet': worksheetId,
+    };
+  }
+}
+
+
+class SchoolGroup {
+  final int id;
+  final String name;
+
+  SchoolGroup({
+    required this.id,
+    required this.name,
+  });  
+
+  factory SchoolGroup.fromJson(Map<String, dynamic> json) {
+    return SchoolGroup(
+      id: json['id'],
+      name: json['group'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'group': name,
     };
   }
 }

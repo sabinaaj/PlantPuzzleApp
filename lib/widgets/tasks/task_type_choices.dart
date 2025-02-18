@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../buttons/toggle_button.dart';
 import '../../models/worksheet.dart';
+import 'dart:io';
 
 class TaskTypeChoices extends StatefulWidget {
   final Question question;
@@ -44,8 +45,8 @@ class TaskTypeChoicesState extends State<TaskTypeChoices> {
         else
           Align(
             alignment: Alignment.center,
-            child: Image.network(
-              widget.images[0].image ?? '',
+            child: Image.file(
+              File(widget.images[0].image ?? ''),
               fit: BoxFit.contain,
               width: double.infinity,
               height: 180,

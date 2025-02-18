@@ -2,11 +2,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/visitors.dart';
-import '../utilities/user_storage.dart';
+import 'data_service_visitors.dart';
 
 class ApiService {
   final String baseUrl;
   final String visitorUrl;
+  final DataServiceVisitors dataService = DataServiceVisitors();
 
   ApiService()
       : baseUrl = dotenv.env['BASE_URL'] ?? '',
@@ -24,108 +25,70 @@ class ApiService {
     }
   }
 
-  /// Logs in a user with the given username.
-  /// Saves the visitor ID locally on successful login.
-  Future<void> loginUser(String username) async {
+  /// Saves a new user with the provided visitor information.
+  /// Saves the visitor ID locally.
+  Future<void> saveUser(Visitor visitor) async {
     final response = await http.post(
-      Uri.parse('$visitorUrl/login/'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'username': username}),
-    );
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      await saveUser(data['visitor_id']);
-    } else {
-      throw Exception('Login failed');
-    }
-  }
-
-  /// Registers a new user with the provided visitor information.
-  /// Saves the visitor ID locally on successful registration.
-  Future<void> registerUser(Visitor visitor) async {
-    final response = await http.post(
-      Uri.parse('$visitorUrl/register/'),
+      Uri.parse('$visitorUrl/create/'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(visitor.toJson()),
     );
 
     if (response.statusCode == 201) {
       final data = jsonDecode(response.body);
-      await saveUser(data['visitor_id']);
+      dataService.saveUserId(data['visitor_id']);
     } else {
       throw Exception('Registration failed.');
     }
   }
 
-  /// Checks if a username is already taken.
-  /// Returns true if the username is unavailable.
-  Future<bool> isUsernameTaken(String username) async {
-    final response = await http.get(
-      Uri.parse('$visitorUrl/username-check/$username'),
-    );
+  Future<void> updateVisitor(Visitor visitor) async {
+    try {
+      final url = Uri.parse('$visitorUrl/${visitor.id}/update/');
+      await http.put(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(visitor.toJson()),
+      );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return data['is_taken'];
-    } else {
-      throw Exception('Error checking username availability.');
+    } catch (e) {
+      throw Exception('Failed to update visitor: $e');
     }
   }
 
   /// Retrieves a list of school groups from the API.
-  Future<List<dynamic>> getSchoolGroups() async {
-    final response = await http.get(Uri.parse('$visitorUrl/school-groups'));
+  Future<List<SchoolGroup>> getSchoolGroups() async {
+    final response = await http.get(Uri.parse('$visitorUrl/school-groups/'));
 
     if (response.statusCode == 200) {
-      return jsonDecode(utf8.decode(response.bodyBytes));
+      List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
+      
+      // Map JSON data to a list of SchoolGroup instances
+      List<SchoolGroup> schoolGroups = data.map((item) => SchoolGroup.fromJson(item)).toList();
+
+      dataService.saveSchoolGroups(schoolGroups);
+
+      return schoolGroups;
     } else {
       throw Exception('Error loading school groups.');
     }
   }
 
-  /// Submits visitor responses for a worksheet.
-  /// Associates the responses with the logged-in user.
-  Future<void> submitResponses(List<VisitorResponse> responses) async {
-    final url = Uri.parse('$visitorUrl/submit-responses/');
-    final visitorId = await getLoggedInUserId();
-
+  Future<void> submitResults(List<dynamic> results) async {
+    final visitorId = dataService.getLoggedInUserId();
+    final url = Uri.parse('$visitorUrl/$visitorId/submit-results/');
+    
     final response = await http.post(
       url,
       headers: {
         'Content-Type': 'application/json',
       },
-      body: jsonEncode({
-        'responses': responses.map((response) {
-          return {
-            ...response.toJson(),
-            'visitor': visitorId,
-          };
-        }).toList()
-      }),
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception('Failed to submit responses for worksheet');
-    }
-  }
-
-  /// Submits the success rate for a worksheet.
-  Future<void> submitSuccessRate(SuccessRate rate) async {
-    final url = Uri.parse('$visitorUrl/submit-success-rate/');
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        ...rate.toJson(),
-        'visitor': await getLoggedInUserId(),
-      }),
+      body: jsonEncode(results),
     );
 
     if (response.statusCode != 201) {
-      throw Exception('Failed to submit success rate');
+      print(response.body);
+      throw Exception('Failed to submit results for worksheet');
     }
   }
 }

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import '../widgets/areas/area_list.dart';
 import '../widgets/navigation_app_bar.dart';
+import '../services/data_service.dart';
 
 class AreaListPage extends StatelessWidget {
-  const AreaListPage({super.key});
+  final DataService dataService = DataService();
+
+  AreaListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +39,17 @@ class AreaListPage extends StatelessWidget {
       ),
 
       // Area list
-      body: const AreaList(),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          final result = await dataService.fetchAndCacheData();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(result ? "Data úspěšně aktualizována." : "Není dostupné připojení k internetu. Aktualizace se nezdařila."),
+              ),
+            );
+          } ,
+        child: AreaList(),
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../services/data_service_worksheets.dart';
 import '../buttons/border_button.dart';
 import '../../models/worksheet.dart';
 import '../../screens/worksheet_page.dart';
@@ -6,11 +7,14 @@ import '../../colors.dart';
 
 class WorksheetCard extends StatelessWidget {
   final WorksheetSummary worksheet;
+  final DataServiceWorksheets dataService = DataServiceWorksheets();
 
-  const WorksheetCard({super.key, required this.worksheet});
+  WorksheetCard({super.key, required this.worksheet});
 
   @override
   Widget build(BuildContext context) {
+    final successRate = dataService.getWorksheetSuccessRate(worksheet.id);
+
     return Container(
       margin: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
       decoration: BoxDecoration(
@@ -45,7 +49,7 @@ class WorksheetCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4.0),
-                    worksheet.successRate != null
+                    successRate != null
                       ? RichText(
                         text: TextSpan(
                           style: const TextStyle(
@@ -53,7 +57,7 @@ class WorksheetCard extends StatelessWidget {
                           ),
                           children: [
                             TextSpan(
-                              text: '${worksheet.successRate}%',
+                              text: '${successRate}%',
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold),
                             ),

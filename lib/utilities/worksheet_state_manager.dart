@@ -8,7 +8,7 @@ import '../widgets/tasks/task_type_5.dart';
 import '../widgets/buttons/toggle_button.dart';
 import '../widgets/buttons/continue_button.dart';
 import '../screens/result_page.dart';
-import '../services/api_service_visitors.dart';
+import '../services/data_service_worksheets.dart';
 
 
 /// Enum representing the state of the current page (answering or evaluation)
@@ -291,9 +291,10 @@ class WorksheetStateManager {
   }
 
   Future<bool> submitResponses() async {
-    final ApiService apiService = ApiService();
-    await apiService.submitResponses(responses);
-    await apiService.submitSuccessRate(getSuccessRate());
+    final DataServiceWorksheets dataService = DataServiceWorksheets();
+    final SuccessRate successRate = getSuccessRate();
+
+    dataService.saveWorksheetResult(worksheet.id, successRate, responses);
 
     return true;
   }

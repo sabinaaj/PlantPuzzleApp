@@ -1,64 +1,30 @@
 import 'package:flutter/material.dart';
-import '../../services/api_service_areas.dart';
+import '../../services/data_service_areas.dart';
 import '../../models/area.dart';
+import 'dart:io';
 
-class AreaHeader extends StatefulWidget {
+class AreaHeader extends StatelessWidget {
+  final DataServiceAreas dataService = DataServiceAreas();
   final Area area;
 
-  const AreaHeader({super.key, required this.area});
-
-  @override
-  State<AreaHeader> createState() => _AreaHeaderState();
-}
-
-class _AreaHeaderState extends State<AreaHeader> {
-  final ApiService _apiService = ApiService();
-  int worksheetCount = 0;
-  int doneWorksheetCount = 0;
-  int avgSuccessRate = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadAreaStats();
-  }
-
-  void _loadAreaStats() async {
-  try {
-    final stats = await _apiService.getAreaStats(widget.area.id);
-    print(stats);
-
-    setState(() {
-      worksheetCount = stats['worksheet_count'] ?? 0;
-      doneWorksheetCount = stats['done_worksheet_count'] ?? 0;
-      avgSuccessRate = stats['average_success_rate'].toInt() ?? 0;
-    });
-
-  } catch (e) {
-    setState(() {
-      worksheetCount = 0;
-      doneWorksheetCount = 0;
-      avgSuccessRate = 0;
-    });
-  }
-}
-
-void reloadData() {
-    _loadAreaStats();
-  }
-
+  AreaHeader({super.key, required this.area});
 
   @override
   Widget build(BuildContext context) {
+    final areaStats = dataService.getAreaStats(area.id);
+    final worksheetCount = areaStats['worksheet_count'] ?? 0;
+    final doneWorksheetCount = areaStats['done_worksheet_count'] ?? 0;
+    final avgSuccessRate = areaStats['average_success_rate'].toInt() ?? 0;
+
     return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 20.0, bottom: 20.0),
-            child: widget.area.iconUrl != null
-                ? Image.network(
-                    widget.area.iconUrl!,
+            child: area.iconUrl != null
+                ? Image.file(
+                    File(area.iconUrl!),
                     height: 115,
                     fit: BoxFit.cover,
                   )
@@ -75,7 +41,7 @@ void reloadData() {
                   width: 215.0,
                   child: Center(
                     child: Text(
-                      widget.area.title,
+                      area.title,
                       maxLines: 4,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
