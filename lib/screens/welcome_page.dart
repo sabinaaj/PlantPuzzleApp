@@ -18,7 +18,7 @@ class WelcomePage extends StatefulWidget {
 class _WelcomePageState extends State<WelcomePage> {
   final ApiService apiService = ApiService();
   final DataService dataService = DataService();
-  late Future<List<dynamic>> schoolGroups;
+  late Future<List<SchoolGroup>> schoolGroups;
   List<int> selectedGroups = [];
 
   // Variables for error handling
@@ -32,7 +32,7 @@ class _WelcomePageState extends State<WelcomePage> {
   }
 
   /// Fetch school groups from the API
-  Future<List<dynamic>> _fetchSchoolGroups() async {
+  Future<List<SchoolGroup>> _fetchSchoolGroups() async {
     return await apiService.getSchoolGroups();
   }
 
@@ -76,7 +76,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<dynamic>>(
+    return FutureBuilder<List<SchoolGroup>>(
       future: schoolGroups,
       builder: (context, snapshot) {
         // Display loading indicator while waiting for data

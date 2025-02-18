@@ -76,3 +76,28 @@ class SuccessRate {
     };
   }
 }
+
+
+class SchoolGroup {
+  final int id;
+  final String name;
+
+  SchoolGroup({
+    required this.id,
+    required this.name,
+  });  
+
+  factory SchoolGroup.fromJson(Map<String, dynamic> json) {
+    return SchoolGroup(
+      id: json['id'],
+      name: json['group'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'group': name,
+    };
+  }
+}

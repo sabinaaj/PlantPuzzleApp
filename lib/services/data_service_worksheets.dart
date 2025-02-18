@@ -1,6 +1,8 @@
 import 'package:hive/hive.dart';
-import 'package:plant_puzzle_app/models/visitors.dart';
-import 'package:plant_puzzle_app/models/worksheet.dart';
+import '../models/visitors.dart';
+import '../models/worksheet.dart';
+import 'api_service_visitors.dart';
+
 
 class DataServiceWorksheets {
 
@@ -47,43 +49,34 @@ class DataServiceWorksheets {
     final worksheetResults = box.get('worksheetResults', defaultValue: []);
 
     // Filter results by worksheetId
-    final filteredResults = worksheetResults
-        .where((result) => result['worksheetId'] == worksheetId)
-        .toList();
+    final filteredResults = worksheetResults.where((result) {
+      return result['success_rate']['worksheet'] == worksheetId;
+    }).toList();
 
     if (filteredResults.isEmpty) return null;
 
     // Sort results by createdAt
-    filteredResults.sort((a, b) {
-      final dateA = (a['createdAt'] is String) 
-          ? DateTime.tryParse(a['createdAt']) ?? DateTime.fromMillisecondsSinceEpoch(0)
-          : (a['createdAt'] is DateTime) 
-              ? a['createdAt'] as DateTime 
-              : DateTime.fromMillisecondsSinceEpoch(0);
+    filteredResults.sort((a, b) => DateTime.parse(b['created_at'])
+    .compareTo(DateTime.parse(a['created_at'])));
 
-      final dateB = (b['createdAt'] is String) 
-          ? DateTime.tryParse(b['createdAt']) ?? DateTime.fromMillisecondsSinceEpoch(0)
-          : (b['createdAt'] is DateTime) 
-              ? b['createdAt'] as DateTime 
-              : DateTime.fromMillisecondsSinceEpoch(0);
-
-      return dateB.compareTo(dateA); // Seřazení sestupně (nejnovější první)
-    });
+    // Get the latest success rate
+    int? latestRate = filteredResults.isNotEmpty
+    ? filteredResults.first['success_rate']['rate']
+    : null;
 
 
-    return filteredResults.first['successRate']['rate'];
-}
+    return latestRate;
+  }
 
   void saveWorksheetResult(int worksheetId, SuccessRate successRate, List<VisitorResponse> responses) async {
     var box = Hive.box('appData');
     final worksheetResults = box.get('worksheetResults') ?? [];
 
     worksheetResults.add({
-      'worksheetId': worksheetId,
-      'successRate': successRate.toJson(),
+      'success_rate': successRate.toJson(),
       'responses': responses.map((response) => response.toJson()).toList(),
-      'createdAt': DateTime.now(),
-      'isSynced': false
+      'created_at': DateTime.now().toIso8601String(),
+      'is_synced': false
     });
 
     box.put('worksheetResults', worksheetResults);
@@ -94,11 +87,12 @@ class DataServiceWorksheets {
     var box = Hive.box('appData');
     final worksheetResults = box.get('worksheetResults') ?? [];
 
-    for (var result in worksheetResults) {
-      if (result['is_synced'] == false) {
-        // Send result to server
-        result['is_synced'] = true;
-      }
+    final unsyncedResults = worksheetResults.where((result) => result['is_synced'] == false).toList();
+    final ApiService apiService = ApiService();
+    await apiService.submitResults(unsyncedResults);
+
+    for (var result in unsyncedResults) {
+      result['is_synced'] = true;
     }
 
     box.put('worksheetResults', worksheetResults);

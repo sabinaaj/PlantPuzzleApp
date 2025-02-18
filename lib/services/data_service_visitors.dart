@@ -26,4 +26,9 @@ class DataServiceVisitors {
     return box.containsKey('userId');
   }
 
+  void saveSchoolGroups(List<dynamic> schoolGroups) {
+    var box = Hive.box('appData');
+    box.put('SchoolGroups', schoolGroups);
+  }
+
 }

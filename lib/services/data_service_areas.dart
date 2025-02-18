@@ -18,9 +18,10 @@ class DataServiceAreas {
   }
 
   Map<String, dynamic> getAreaStats(int areaId) {
+    // Load data from Hive
     var box = Hive.box('appData');
-    var areasData = box.get('areas', defaultValue: []);
-    var worksheetResults = box.get('worksheetResults', defaultValue: []);
+    List<dynamic> areasData = box.get('areas', defaultValue: []);
+    List<dynamic> worksheetResults = box.get('worksheetResults', defaultValue: []);
 
     Map<dynamic, dynamic> areaData = areasData.firstWhere(
       (area) => area['id'] == areaId,
@@ -35,40 +36,47 @@ class DataServiceAreas {
       };
     }
 
+    // Get the list of worksheets in the area
     List<dynamic> worksheets = areaData['worksheets'] ?? [];
     int worksheetCount = worksheets.length;
 
-    // Najít výsledky odpovídající worksheets v této oblasti
-    Map<int, dynamic> latestResults = {};
+    // Extract worksheet IDs
+    List<int> worksheetIds = worksheets
+        .map<int>((worksheet) => worksheet['id'] as int)
+        .toList();
+
+    // Group results by worksheet ID
+    Map<int, List<Map<String, dynamic>>> groupedResults = {};
 
     for (var result in worksheetResults) {
-      int worksheetId = result['worksheetId'];
-      if (worksheets.any((ws) => ws['id'] == worksheetId)) {
-        DateTime resultDate = (result['createdAt'] is String && result['createdAt'] != null) 
-          ? DateTime.tryParse(result['createdAt'] as String) ?? DateTime.fromMillisecondsSinceEpoch(0)
-          : DateTime.fromMillisecondsSinceEpoch(0);
-
-        if (!latestResults.containsKey(worksheetId) || 
-          resultDate.isAfter(
-            (latestResults[worksheetId]?['createdAt'] is String) 
-              ? DateTime.tryParse(latestResults[worksheetId]['createdAt']) ?? DateTime.fromMillisecondsSinceEpoch(0)
-              : DateTime.fromMillisecondsSinceEpoch(0)
-          )
-        ) {
-          latestResults[worksheetId] = result;
-        }
+      Map<String, dynamic> resultMap = Map<String, dynamic>.from(result);
+      int worksheetId = resultMap['success_rate']['worksheet'];
+      
+      // If the result belongs to a worksheet in the area
+      if (worksheetIds.contains(worksheetId)) {
+        groupedResults.putIfAbsent(worksheetId, () => []).add(resultMap);
       }
     }
 
+    // Get the latest results for each worksheet
+    List<Map<String, dynamic>> latestResults = groupedResults.entries.map((entry) {
+      // Sort by creation date (newest first)
+      entry.value.sort((a, b) =>
+          DateTime.parse(b['created_at']).compareTo(DateTime.parse(a['created_at'])));
+      return entry.value.first;
+    }).toList();
+
     int doneWorksheetCount = latestResults.length;
 
+    // Calculate average success rate
     double averageSuccessRate = doneWorksheetCount > 0
-        ? latestResults.values
-            .map((result) => (result['successRate']['rate'] as num).toDouble())
-            .reduce((a, b) => a + b) /
-            doneWorksheetCount
+        ? latestResults
+                .map((result) => result['success_rate']['rate'])
+                .reduce((a, b) => a + b) /
+            latestResults.length
         : 0.0;
 
+    // Return the calculated statistics
     return {
       'worksheet_count': worksheetCount,
       'done_worksheet_count': doneWorksheetCount,

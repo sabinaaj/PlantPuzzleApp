@@ -19,7 +19,7 @@ class UserSchoolContainer extends StatefulWidget {
 
 class _UserSchoolContainerState extends State<UserSchoolContainer> {
   final ApiService apiService = ApiService();
-  late Future<List<dynamic>> schoolGroups;
+  late Future<List<SchoolGroup>> schoolGroups;
   List<int> selectedGroups = [];
   bool isEditing = false;
 
@@ -35,13 +35,13 @@ class _UserSchoolContainerState extends State<UserSchoolContainer> {
   }
 
   /// Fetch school groups from the API
-  Future<List<dynamic>> _fetchSchoolGroups() async {
+  Future<List<SchoolGroup>> _fetchSchoolGroups() async {
     return await apiService.getSchoolGroups();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<dynamic>>(
+    return FutureBuilder<List<SchoolGroup>>(
       future: schoolGroups,
       builder: (context, snapshot) {
         // Display loading indicator while waiting for data
@@ -156,9 +156,9 @@ class _UserSchoolContainerState extends State<UserSchoolContainer> {
                         final group = schoolGroups[index];
 
                         return ListTile(
-                          title: Text(group['group']),
+                          title: Text(group.name),
                           trailing: widget.visitor.schoolGroupIds
-                                      ?.contains(group['id']) ??
+                                      ?.contains(group.id) ??
                                   false
                               ? Padding(
                                   padding: const EdgeInsets.only(right: 8.0),

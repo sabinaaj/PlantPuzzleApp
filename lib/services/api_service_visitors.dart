@@ -57,58 +57,38 @@ class ApiService {
   }
 
   /// Retrieves a list of school groups from the API.
-  Future<List<dynamic>> getSchoolGroups() async {
+  Future<List<SchoolGroup>> getSchoolGroups() async {
     final response = await http.get(Uri.parse('$visitorUrl/school-groups/'));
 
     if (response.statusCode == 200) {
-      return jsonDecode(utf8.decode(response.bodyBytes));
+      List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
+      
+      // Map JSON data to a list of SchoolGroup instances
+      List<SchoolGroup> schoolGroups = data.map((item) => SchoolGroup.fromJson(item)).toList();
+
+      dataService.saveSchoolGroups(schoolGroups);
+
+      return schoolGroups;
     } else {
       throw Exception('Error loading school groups.');
     }
   }
 
-  /// Submits visitor responses for a worksheet.
-  /// Associates the responses with the logged-in user.
-  Future<void> submitResponses(List<VisitorResponse> responses) async {
-    final url = Uri.parse('$visitorUrl/submit-responses/');
+  Future<void> submitResults(List<dynamic> results) async {
     final visitorId = dataService.getLoggedInUserId();
-
+    final url = Uri.parse('$visitorUrl/$visitorId/submit-results/');
+    
     final response = await http.post(
       url,
       headers: {
         'Content-Type': 'application/json',
       },
-      body: jsonEncode({
-        'responses': responses.map((response) {
-          return {
-            ...response.toJson(),
-            'visitor': visitorId,
-          };
-        }).toList()
-      }),
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception('Failed to submit responses for worksheet');
-    }
-  }
-
-  /// Submits the success rate for a worksheet.
-  Future<void> submitSuccessRate(SuccessRate rate) async {
-    final url = Uri.parse('$visitorUrl/submit-success-rate/');
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        ...rate.toJson(),
-        'visitor': dataService.getLoggedInUserId(),
-      }),
+      body: jsonEncode(results),
     );
 
     if (response.statusCode != 201) {
-      throw Exception('Failed to submit success rate');
+      print(response.body);
+      throw Exception('Failed to submit results for worksheet');
     }
   }
 }
