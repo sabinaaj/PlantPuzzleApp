@@ -57,7 +57,7 @@ class WorksheetCard extends StatelessWidget {
                           ),
                           children: [
                             TextSpan(
-                              text: '${successRate}%',
+                              text: '$successRate%',
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold),
                             ),

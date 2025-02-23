@@ -14,17 +14,6 @@ class ApiService {
         visitorUrl = '${dotenv.env['BASE_URL'] ?? ''}/visitors/api';
 
   
-  /// Fetches a visitor by their ID from the API.
-  /// Throws an exception if the request fails.
-  Future<Visitor> getVisitor(int visitorId) async {
-    final response = await http.get(Uri.parse('$visitorUrl/$visitorId/'));
-    if (response.statusCode == 200) {
-      return Visitor.fromJson(jsonDecode(utf8.decode(response.bodyBytes)));
-    } else {
-      throw Exception('Failed to load visitor');
-    }
-  }
-
   /// Saves a new user with the provided visitor information.
   /// Saves the visitor ID locally.
   Future<void> saveUser(Visitor visitor) async {
@@ -63,7 +52,6 @@ class ApiService {
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
       
-      // Map JSON data to a list of SchoolGroup instances
       List<SchoolGroup> schoolGroups = data.map((item) => SchoolGroup.fromJson(item)).toList();
 
       dataService.saveSchoolGroups(schoolGroups);
@@ -87,7 +75,6 @@ class ApiService {
     );
 
     if (response.statusCode != 201) {
-      print(response.body);
       throw Exception('Failed to submit results for worksheet');
     }
   }

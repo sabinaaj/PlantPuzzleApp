@@ -1,17 +1,94 @@
 import 'package:flutter/material.dart';
+import '../services/data_service_visitors.dart';
 import '../widgets/border_container.dart';
 import '../../models/visitors.dart';
 
 class UserOverviewContainer extends StatelessWidget {
+  final DataServiceVisitors dataService = DataServiceVisitors();
   final Visitor visitor;
 
-  const UserOverviewContainer({
+  UserOverviewContainer({
     super.key,
     required this.visitor,
   });
 
-  @override
+  List<Widget> _getCardContent(int index) {
+    final visitorStats = dataService.getVisitorStats(visitor.id?? 0);
+    final worksheetCount = visitorStats['worksheet_count'] ?? 0;
+    final doneWorksheetCount = visitorStats['done_worksheet_count'] ?? 0;
+    final avgSuccessRate = visitorStats['average_success_rate'].toInt() ?? 0;
+
+    switch (index){
+      case 0:
+        return [
+          Text(
+            '$doneWorksheetCount/$worksheetCount',
+            style: const TextStyle(
+                fontSize: 19, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            'Hotových \n testů',
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 14, height: 1.1),
+          ),
+        ];
+
+      case 1:
+        return [
+          Text(
+            avgSuccessRate > 0 ? '$avgSuccessRate %' : '- %',
+            style: const TextStyle(
+                fontSize: 19, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            'Průměrná \n úspěšnost',
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 14, height: 1.1),
+          )
+        ];
+
+      case 2:
+        return [
+          Text(
+            '$doneWorksheetCount/$worksheetCount',
+            style: const TextStyle(
+                fontSize: 19, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            'Získaných \n pohárů',
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 14, height: 1.1),
+          )
+        ];
+
+      case 3:
+        return [
+          Text(
+            'Jsi lepší než',
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 14, height: 1.1),
+          ),
+          Text(
+            avgSuccessRate > 0 ? '$avgSuccessRate %' : '- %',
+            style: const TextStyle(
+                fontSize: 19, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            'uživatelů',
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 14, height: 1.1),
+          )
+        ];
+
+      default:
+        return [];
+    } 
+      
+  }
+
+ @override
   Widget build(BuildContext context) {
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -46,7 +123,7 @@ class UserOverviewContainer extends StatelessWidget {
             crossAxisCount: 2,
             crossAxisSpacing: 8.0,
             mainAxisSpacing: 8.0,
-            childAspectRatio: 1.05,
+            childAspectRatio: 1.5,
           ),
           itemCount: 4, 
           itemBuilder: (context, index) {
@@ -54,15 +131,7 @@ class UserOverviewContainer extends StatelessWidget {
               child: BorderContainer(padding: 16, children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${index + 1}',
-                      style: const TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
+                  children: _getCardContent(index)
                 ),
               ]),
             );

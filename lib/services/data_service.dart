@@ -6,7 +6,6 @@ class DataService {
 
   Future<void> fetchAndCacheDataNewUser(List<int> schoolGroupsIds) async {
     var apiService = ApiService();
-    print('School groups: $schoolGroupsIds');
     var responseAreas = await apiService.getAllAreas(schoolGroupsIds);
 
     var box = Hive.box('appData');
@@ -19,7 +18,6 @@ class DataService {
         String fileName = imageUrl.split('/').last;
         String localPath = await apiService.downloadAndSaveImage(imageUrl, fileName);
         area['icon_url'] = localPath;
-        print("aaaaaaaaaaaaaaaaaaa");
       }
 
       // 2. save task images
@@ -42,7 +40,6 @@ class DataService {
       }
     }
 
-    print('Areas: $responseAreas');
     box.put('areas', responseAreas);
     box.put('userSchoolGroups', schoolGroupsIds);
   }
