@@ -17,6 +17,8 @@ class UserOverviewContainer extends StatelessWidget {
     final worksheetCount = visitorStats['worksheet_count'] ?? 0;
     final doneWorksheetCount = visitorStats['done_worksheet_count'] ?? 0;
     final avgSuccessRate = visitorStats['average_success_rate'].toInt() ?? 0;
+    final achievementsCount = visitorStats['achievements_count'] ?? 0;
+    final achievementsUnlocked = visitorStats['achievements_unlocked'] ?? 0;
 
     switch (index){
       case 0:
@@ -50,7 +52,7 @@ class UserOverviewContainer extends StatelessWidget {
       case 2:
         return [
           Text(
-            '$doneWorksheetCount/$worksheetCount',
+            '$achievementsUnlocked/$achievementsCount',
             style: const TextStyle(
                 fontSize: 19, fontWeight: FontWeight.bold),
           ),
@@ -74,7 +76,7 @@ class UserOverviewContainer extends StatelessWidget {
                 fontSize: 19, fontWeight: FontWeight.bold),
           ),
           Text(
-            'uživatelů',
+            'hráčů',
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 14, height: 1.1),
           )

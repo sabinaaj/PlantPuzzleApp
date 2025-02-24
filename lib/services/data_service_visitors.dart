@@ -61,11 +61,23 @@ class DataServiceVisitors {
     box.put('achievements', jsonList);
   }
 
+  List<Achievement> getAchievements() {
+    var box = Hive.box('appData');
+    final jsonList = box.get('achievements', defaultValue: []);
+
+    final achievements = (jsonList as List)
+        .map((json) => Achievement.fromJson(Map<String, dynamic>.from(json as Map)))
+        .toList();
+
+    return achievements;
+  }
+
 
   Map<String, dynamic> getVisitorStats(int visitorId) {
     var box = Hive.box('appData');
     List<dynamic> areasData = box.get('areas', defaultValue: []);
     List<dynamic> worksheetResults = box.get('worksheetResults', defaultValue: []);
+    List<dynamic> achievements = box.get('achievements', defaultValue: []);
 
 
     if (areasData.isEmpty) {
@@ -73,6 +85,8 @@ class DataServiceVisitors {
         'worksheet_count': 0,
         'done_worksheet_count': 0,
         'average_success_rate': 0.0,
+        'achievements_count': 0,
+        'achievements_unlocked': 0
       };
     }
 
@@ -111,11 +125,16 @@ class DataServiceVisitors {
             latestResults.length
         : 0.0;
 
+    int achievementsCount = achievements.length;
+    int achievementsUnlocked = achievements.where((achievement) => achievement['unlocked']).length;
+
     // Return the calculated statistics
     return {
       'worksheet_count': worksheetCount,
       'done_worksheet_count': doneWorksheetCount,
       'average_success_rate': averageSuccessRate,
+      'achievements_count': achievementsCount,
+      'achievements_unlocked': achievementsUnlocked
     };
 
   }
