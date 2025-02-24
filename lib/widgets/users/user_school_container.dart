@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import '../widgets/school_group_selection.dart';
-import '../widgets/border_container.dart';
-import '../models/visitors.dart';
-import '../services/data_service_visitors.dart';
-import '../services/api_service_visitors.dart';
-import '../colors.dart';
+import '../school_group_selection.dart';
+import '../border_container.dart';
+import '../../models/visitors.dart';
+import '../../services/data_service_visitors.dart';
+import '../../services/api_service_visitors.dart';
+import '../../colors.dart';
 
 class UserSchoolContainer extends StatefulWidget {
   final Visitor visitor;

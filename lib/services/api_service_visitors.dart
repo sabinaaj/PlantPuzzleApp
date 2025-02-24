@@ -62,6 +62,19 @@ class ApiService {
     }
   }
 
+  Future<List<Achievement>> getAchievements() async {
+    final response = await http.get(Uri.parse('$visitorUrl/achievements/'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
+      List<Achievement> achievements = data.map((item) => Achievement.fromJson(item)).toList();
+      
+      return achievements;
+    } else {
+      throw Exception('Error loading achievements.');
+    }
+  }
+
   Future<void> submitResults(List<dynamic> results) async {
     final visitorId = dataService.getLoggedInUserId();
     final url = Uri.parse('$visitorUrl/$visitorId/submit-results/');
@@ -73,6 +86,8 @@ class ApiService {
       },
       body: jsonEncode(results),
     );
+
+    print(response.body);
 
     if (response.statusCode != 201) {
       throw Exception('Failed to submit results for worksheet');

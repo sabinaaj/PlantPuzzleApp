@@ -55,6 +55,12 @@ class DataServiceVisitors {
     return schoolGroups;
   }
 
+  void saveAchievements(List<Achievement> achievements) {
+    var box = Hive.box('appData');
+    var jsonList = achievements.map((achievement) => achievement.toJson()).toList();
+    box.put('achievements', jsonList);
+  }
+
 
   Map<String, dynamic> getVisitorStats(int visitorId) {
     var box = Hive.box('appData');

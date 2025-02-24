@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:plant_puzzle_app/screens/welcome_page.dart';
-import '../widgets/user_school_container.dart';
-import '../widgets/user_overview_container.dart';
+import '../screens/welcome_page.dart';
+import '../widgets/users/user_school_container.dart';
+import '../widgets/users/user_overview_container.dart';
+import '../widgets/users/user_achievements_container.dart';
 import '../services/data_service_visitors.dart';
 
 class UserPage extends StatelessWidget {
@@ -67,6 +68,8 @@ class UserPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               UserOverviewContainer(visitor: visitor),
+              const SizedBox(height: 20.0),
+              UserAchievementsContainer(visitor: visitor),
               const SizedBox(height: 20.0),
               UserSchoolContainer(visitor: visitor),
             ],

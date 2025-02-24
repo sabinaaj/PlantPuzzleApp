@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/data_service_visitors.dart';
-import '../widgets/border_container.dart';
-import '../../models/visitors.dart';
+import '../../services/data_service_visitors.dart';
+import '../border_container.dart';
+import '../../../models/visitors.dart';
 
 class UserOverviewContainer extends StatelessWidget {
   final DataServiceVisitors dataService = DataServiceVisitors();
