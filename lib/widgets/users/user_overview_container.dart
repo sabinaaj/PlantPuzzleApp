@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../services/data_service_visitors.dart';
 import '../border_container.dart';
-import '../../../models/visitors.dart';
 
 class UserOverviewContainer extends StatelessWidget {
   final DataServiceVisitors dataService = DataServiceVisitors();
-  final Visitor visitor;
 
   UserOverviewContainer({
     super.key,
-    required this.visitor,
   });
 
   List<Widget> _getCardContent(int index) {
-    final visitorStats = dataService.getVisitorStats(visitor.id?? 0);
+    final visitorStats = dataService.getVisitorStats();
     final worksheetCount = visitorStats['worksheet_count'] ?? 0;
     final doneWorksheetCount = visitorStats['done_worksheet_count'] ?? 0;
     final avgSuccessRate = visitorStats['average_success_rate'].toInt() ?? 0;

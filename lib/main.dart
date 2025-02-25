@@ -14,7 +14,7 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
   await Hive.initFlutter();
   await Hive.openBox('appData');
-  AchievementManager();
+  AchievementManager().loadAchievements();
   SyncService().startSync();
 
   runApp(AppLifecycleManager(

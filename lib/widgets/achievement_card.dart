@@ -16,16 +16,14 @@ class AchievementCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.all(6.0),
-        child: Row(
+    return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Flexible(
               flex: 3,
               child: Image.asset(
                 imageUrl,
-                height: 90.0,
+                height: 95.0,
               ),
             ),
             const SizedBox(width: 20.0),
@@ -64,7 +62,6 @@ class AchievementCard extends StatelessWidget {
               ),
             ),
           ],
-        ),
     );
   }
 }

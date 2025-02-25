@@ -67,7 +67,7 @@ class UserPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              UserOverviewContainer(visitor: visitor),
+              UserOverviewContainer(),
               const SizedBox(height: 12.0),
               UserAchievementsContainer(visitor: visitor),
               const SizedBox(height: 20.0),

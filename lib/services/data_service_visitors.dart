@@ -72,8 +72,7 @@ class DataServiceVisitors {
     return achievements;
   }
 
-
-  Map<String, dynamic> getVisitorStats(int visitorId) {
+  Map<String, dynamic> getVisitorStats() {
     var box = Hive.box('appData');
     List<dynamic> areasData = box.get('areas', defaultValue: []);
     List<dynamic> worksheetResults = box.get('worksheetResults', defaultValue: []);
@@ -140,4 +139,86 @@ class DataServiceVisitors {
   }
 
 
+  bool isAnyAreaDone() {
+    var box = Hive.box('appData');
+    List<dynamic> areasData = box.get('areas', defaultValue: []);
+    List<dynamic> worksheetResults = box.get('worksheetResults', defaultValue: []);
+
+    if (areasData.isEmpty) {
+      return false;
+    }
+
+    // Group results by worksheet ID
+    Set<dynamic> completedWorksheets = worksheetResults
+        .map((result) => result['success_rate']['worksheet'])
+        .toSet();
+
+    // Check if any area has all worksheets completed
+    for (var area in areasData) {
+      List<dynamic> worksheets = area['worksheets'] ?? [];
+      if (worksheets.isNotEmpty &&
+          worksheets.every((worksheet) => completedWorksheets.contains(worksheet['id']))) {
+        return true; // At least one area has all worksheets completed
+      }
+    }
+
+    return false;
+  }
+
+  bool areAllWorksheetsDone() {
+    var box = Hive.box('appData');
+    List<dynamic> areasData = box.get('areas', defaultValue: []);
+    List<dynamic> worksheetResults = box.get('worksheetResults', defaultValue: []);
+
+    if (areasData.isEmpty) {
+      return false;
+    }
+
+    Set<dynamic> allWorksheets = areasData
+        .expand((area) => area['worksheets'] ?? [])
+        .map((worksheet) => worksheet['id'])
+        .toSet();
+
+    Set<dynamic> completedWorksheets = worksheetResults
+        .map((result) => result['success_rate']['worksheet'])
+        .toSet();
+
+    return allWorksheets.every((id) => completedWorksheets.contains(id));
+  }
+
+  bool isHalfOfWorksheetsDone() {
+    var box = Hive.box('appData');
+    List<dynamic> areasData = box.get('areas', defaultValue: []);
+    List<dynamic> worksheetResults = box.get('worksheetResults', defaultValue: []);
+
+    if (areasData.isEmpty) {
+      return false;
+    }
+
+    Set<dynamic> allWorksheets = areasData
+        .expand((area) => area['worksheets'] ?? [])
+        .map((worksheet) => worksheet['id'])
+        .toSet();
+
+    Set<dynamic> completedWorksheets = worksheetResults
+        .map((result) => result['success_rate']['worksheet'])
+        .toSet();
+
+    return completedWorksheets.length >= (allWorksheets.length / 2);
+  }
+
+  double getSuccessRate() {
+    var box = Hive.box('appData');
+    List<dynamic> worksheetResults = box.get('worksheetResults', defaultValue: []);
+
+    if (worksheetResults.isEmpty) {
+      return 0.0;
+    }
+
+    int totalSuccessRate = worksheetResults
+        .map((result) => result['success_rate']['rate'])
+        .reduce((a, b) => a + b);
+
+    return totalSuccessRate / worksheetResults.length;
+  }
 }

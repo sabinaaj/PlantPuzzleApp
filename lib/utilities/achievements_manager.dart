@@ -10,13 +10,14 @@ class AchievementManager {
   AchievementManager._internal();
 
   final DataServiceVisitors dataService = DataServiceVisitors();
+  static List<Achievement> _achievements = [];
 
-final List<Achievement> _achievements = [
+final List<Achievement> _defaultAchievements = [
   Achievement(
     id: 'first_login',
     title: 'První přihlášení',
     description: 'Gratuluju! Máš první trofej. Pokračuj dál a odemkni další trofeje!',
-    imageUrl: 'trophy',
+    imageUrl: 'plant_trophy',
     cardTitle: 'Průzkumník',
     cardDescription: 'Trofej získaná za první přihlášení.',
     level: 1
@@ -26,7 +27,7 @@ final List<Achievement> _achievements = [
     id: 'first_worksheet',
     title: 'První test',
     description: 'Paráda! Vyplnil jsi svůj první test. To byl jen začátek, zvládneš jich víc?',
-    imageUrl: 'trophy',
+    imageUrl: 'silver_trophy',
     cardTitle: 'Skleníkový nadšenec',
     cardDescription: 'Trofej získaná za první vyplněný pracovní list. Pro další úroveň vyplň všechny testy v jedné oblasti!',
     level: 1
@@ -46,7 +47,7 @@ final List<Achievement> _achievements = [
     id: 'all_worksheets',
     title: 'Všechny testy hotové!',
     description: 'Jsi opravdu znalec! Dokončil jsi všechny testy. Jsi připraven na další výzvy?',
-    imageUrl: 'trophy',
+    imageUrl: 'diamond_trophy',
     cardTitle: 'Vědomostní mistr',
     cardDescription: 'Trofej získaná za dokončení všech testů. Teď už jsi opravdu expert!',
     level: 3
@@ -56,7 +57,7 @@ final List<Achievement> _achievements = [
     id: 'success_rate_50',
     title: 'Půlka správně!',
     description: 'Dobrá práce! Tvůj průměr úspěšnosti je nad 50 %. Jen tak dál!',
-    imageUrl: 'trophy',
+    imageUrl: 'silver_trophy',
     cardTitle: 'Rostoucí hvězda',
     cardDescription: 'Trofej získaná za průměrnou úspěšnost nad 50 %. Pro další úroveň dosáhni 75 %!',
     level: 1
@@ -76,7 +77,7 @@ final List<Achievement> _achievements = [
     id: 'success_rate_100',
     title: 'Mistr testů!',
     description: 'Neuvěřitelné! Máš 100% úspěšnost. Jsi opravdu expert!',
-    imageUrl: 'trophy',
+    imageUrl: 'diamond_trophy',
     cardTitle: 'Nedostižný mistr',
     cardDescription: 'Trofej získaná za 100% úspěšnost. To je absolutní vrchol!',
     level: 3
@@ -86,7 +87,7 @@ final List<Achievement> _achievements = [
     id: 'better_than_25',
     title: 'Lepší než čtvrtina hráčů!',
     description: 'Už jsi překonal 25 % hráčů. Pokračuj a posuň se ještě výš!',
-    imageUrl: 'trophy',
+    imageUrl: 'silver_trophy',
     cardTitle: 'Slibný talent',
     cardDescription: 'Trofej získaná za překonání 25 % hráčů. Pro další úroveň buď lepší než 50 %!',
     level: 1
@@ -106,7 +107,7 @@ final List<Achievement> _achievements = [
     id: 'better_than_75',
     title: 'Mezi nejlepšími!',
     description: 'Wow! Jsi lepší než 75 % hráčů. Už jen kousek do absolutní špičky!',
-    imageUrl: 'trophy',
+    imageUrl: 'diamond_trophy',
     cardTitle: 'Elitní hráč',
     cardDescription: 'Trofej získaná za překonání 75 % hráčů.',
     level: 3
@@ -116,14 +117,22 @@ final List<Achievement> _achievements = [
     id: 'completion',
     title: 'Vše splněno!',
     description: 'Dokázal jsi to! Získal jsi všechny trofeje a splnil všechny výzvy.',
-    imageUrl: 'trophy',
+    imageUrl: 'diamond_trophy',
     cardTitle: 'Legenda',
     cardDescription: 'Trofej získaná za splnění všech výzev. Jsi absolutní šampion!',
     level: 1
   ),
 ];
 
-  List<Achievement> get achievements => _achievements;
+  void loadAchievements() {
+    List<Achievement> fetchedAchievements = dataService.getAchievements();
+
+    if (fetchedAchievements.isEmpty) {
+      _achievements = fetchedAchievements;
+    } else {
+      _achievements = _defaultAchievements;
+    }
+  }
 
   Widget getCardContent(int index) {
     final achievements = dataService.getAchievements();
@@ -253,15 +262,79 @@ final List<Achievement> _achievements = [
             cardDescription: '',
             imageUrl: '',
             level: 0));
+            
     if (achievement.id.isNotEmpty && !achievement.unlocked) {
       achievement.unlocked = true;
       dataService.saveAchievements(_achievements);
       _showAchievementDialog(
-          context, achievement.title, achievement.description);
+          context, achievement.title, achievement.description, achievement.imageUrl);
     }
   }
 
-  void _showAchievementDialog(BuildContext context, String title, String description) {
+  void unlockAchievementsAfterWorksheet(BuildContext context) {
+    final lockedAchievements = _achievements.where((ach) => !ach.unlocked);
+
+    if (lockedAchievements.isEmpty) return;
+  
+    for (var ach in lockedAchievements) {
+      
+      if (ach.id == 'first_worksheet') {
+        unlockAchievement('first_worksheet', context);
+      }
+
+      if (ach.id == 'area_worksheets') {
+        if (dataService.isAnyAreaDone()) {
+          unlockAchievement('area_worksheets', context);
+        }
+      }
+
+      if (ach.id == 'all_worksheets') {
+        if (dataService.areAllWorksheetsDone()) {
+          unlockAchievement('all_worksheets', context);
+        }
+      }
+
+      if (ach.id == 'success_rate_50') {
+        if (dataService.isHalfOfWorksheetsDone()){
+          var successRate = dataService.getSuccessRate();
+
+          if (successRate >= 50) {
+            unlockAchievement('success_rate_50', context);
+          }
+        }
+      }
+      
+      if (ach.id == 'success_rate_75') {
+        if (dataService.isHalfOfWorksheetsDone()){
+          var successRate = dataService.getSuccessRate();
+
+          if (successRate >= 75) {
+            unlockAchievement('success_rate_75', context);
+          }
+        }
+      }
+
+      if (ach.id == 'success_rate_100') {
+        if (dataService.isHalfOfWorksheetsDone()){
+          var successRate = dataService.getSuccessRate();
+
+          if (successRate >= 100) {
+            unlockAchievement('success_rate_100', context);
+          }
+        }
+      }
+
+      if (ach.id == 'completion') {
+        if (_achievements.where((ach) => !ach.unlocked).length == 1) {
+          unlockAchievement('completion', context);
+        }
+      }
+      
+    }
+  }
+
+
+  void _showAchievementDialog(BuildContext context, String title, String description, String imageUrl) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -273,7 +346,7 @@ final List<Achievement> _achievements = [
           title: Column(
             children: [
               Image.asset(
-                'assets/images/trophy.png',
+                'assets/images/$imageUrl.png',
                 height: 100.0,
               ),
               const SizedBox(height: 10.0),

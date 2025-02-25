@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../utilities/worksheet_state_manager.dart';
+import '../utilities/achievements_manager.dart';
 import '../widgets/buttons/continue_button.dart';
 
 class ResultPage extends StatelessWidget {
@@ -46,6 +47,10 @@ class ResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AchievementManager().unlockAchievementsAfterWorksheet(context);
+    });
+
     // Calculate success rate and other stats from the worksheet state
     final successRate = worksheetStateManager.getSuccessRate();
     final correctAnswers = worksheetStateManager.getCorrectAnswers();
