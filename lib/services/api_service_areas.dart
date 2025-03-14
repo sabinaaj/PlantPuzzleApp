@@ -44,7 +44,6 @@ class ApiService {
     }
 
     final response = await http.get(Uri.parse(imageUrl));
-    print(response.statusCode);
     if (response.statusCode == 200) {
       final file = File(filePath);
       await file.writeAsBytes(response.bodyBytes);

@@ -30,9 +30,6 @@ class SyncService {
     final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult.contains(ConnectivityResult.mobile) || connectivityResult.contains(ConnectivityResult.wifi)) {
       await _dataServiceWorksheets.syncWorksheetResults();
-      print("Results synchronized successfully.");
-    } else {
-      print("No internet connection. Skipping sync.");
     }
   }
 
@@ -40,9 +37,6 @@ class SyncService {
     final List<ConnectivityResult> connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult.contains(ConnectivityResult.mobile) || connectivityResult.contains(ConnectivityResult.wifi)) {
       await _dataService.fetchAndCacheData();
-      print("Data synchronized successfully.");
-    } else {
-      print("No internet connection. Skipping sync.");
     }
   }
 

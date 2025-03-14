@@ -5,6 +5,7 @@ import 'screens/area_list_page.dart';
 import 'screens/welcome_page.dart';
 import 'services/data_service_visitors.dart';
 import 'utilities/lifecycle_manager.dart';
+import 'utilities/achievements_manager.dart';
 import 'services/sync_service.dart';
 import 'themes.dart';
 
@@ -13,6 +14,7 @@ Future<void> main() async {
   await dotenv.load(fileName: ".env");
   await Hive.initFlutter();
   await Hive.openBox('appData');
+  AchievementManager().loadAchievements();
   SyncService().startSync();
 
   runApp(AppLifecycleManager(

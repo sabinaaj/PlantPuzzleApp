@@ -2,14 +2,20 @@ import 'package:flutter/material.dart';
 import '../widgets/areas/area_list.dart';
 import '../widgets/navigation_app_bar.dart';
 import '../services/data_service.dart';
+import '../utilities/achievements_manager.dart';
 
 class AreaListPage extends StatelessWidget {
   final DataService dataService = DataService();
 
   AreaListPage({super.key});
 
+
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AchievementManager().unlockAchievement('first_login', context);
+    });
+
     return Scaffold(
 
       // AppBar

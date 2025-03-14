@@ -27,10 +27,8 @@ class _AppLifecycleManagerState extends State<AppLifecycleManager> with WidgetsB
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused || state == AppLifecycleState.detached) {
-      print("App paused or detached. Stopping sync.");
       SyncService().stopSync();
     } else if (state == AppLifecycleState.resumed) {
-      print("App resumed. Starting sync.");
       SyncService().startSync();
     }
   }
