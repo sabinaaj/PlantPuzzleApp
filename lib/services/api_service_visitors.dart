@@ -13,7 +13,6 @@ class ApiService {
       : baseUrl = dotenv.env['BASE_URL'] ?? '',
         visitorUrl = '${dotenv.env['BASE_URL'] ?? ''}/visitors/api';
 
-  
   /// Saves a new user with the provided visitor information.
   /// Saves the visitor ID locally.
   Future<void> saveUser(Visitor visitor) async {
@@ -31,7 +30,7 @@ class ApiService {
     }
   }
 
-  Future<void> updateVisitor(Visitor visitor) async {
+  Future<bool> updateVisitor(Visitor visitor) async {
     try {
       final url = Uri.parse('$visitorUrl/${visitor.id}/update/');
       await http.put(
@@ -40,8 +39,9 @@ class ApiService {
         body: jsonEncode(visitor.toJson()),
       );
 
+      return true;
     } catch (e) {
-      throw Exception('Failed to update visitor: $e');
+      return false;
     }
   }
 
@@ -51,8 +51,9 @@ class ApiService {
 
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
-      
-      List<SchoolGroup> schoolGroups = data.map((item) => SchoolGroup.fromJson(item)).toList();
+
+      List<SchoolGroup> schoolGroups =
+          data.map((item) => SchoolGroup.fromJson(item)).toList();
 
       dataService.saveSchoolGroups(schoolGroups);
 
@@ -62,35 +63,39 @@ class ApiService {
     }
   }
 
-  Future<List<Achievement>> getAchievements() async {
-    final response = await http.get(Uri.parse('$visitorUrl/achievements/'));
+  Future<bool> submitResults(List<dynamic> results) async {
+    try {
+      final visitorId = dataService.getLoggedInUserId();
+      final url = Uri.parse('$visitorUrl/$visitorId/submit-results/');
 
-    if (response.statusCode == 200) {
-      List<dynamic> data = jsonDecode(utf8.decode(response.bodyBytes));
-      List<Achievement> achievements = data.map((item) => Achievement.fromJson(item)).toList();
-      
-      return achievements;
-    } else {
-      throw Exception('Error loading achievements.');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(results),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true; // Úspěšné odeslání
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
     }
   }
 
-  Future<void> submitResults(List<dynamic> results) async {
+  Future<int?> getBetterThan() async {
     final visitorId = dataService.getLoggedInUserId();
-    final url = Uri.parse('$visitorUrl/$visitorId/submit-results/');
-    
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(results),
-    );
+    final url = Uri.parse('$visitorUrl/$visitorId/better-than/');
 
-    print(response.body);
+    final response = await http.get(url);
 
-    if (response.statusCode != 201) {
-      throw Exception('Failed to submit results for worksheet');
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+
+      return data['better_than'];
+    } else {
+      return null;
     }
   }
 }

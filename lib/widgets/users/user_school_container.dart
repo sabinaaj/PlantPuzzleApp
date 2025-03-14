@@ -10,10 +10,7 @@ import '../../colors.dart';
 class UserSchoolContainer extends StatefulWidget {
   final Visitor visitor;
 
-  const UserSchoolContainer({
-    super.key,
-    required this.visitor,
-  });
+  const UserSchoolContainer({super.key, required this.visitor});
 
   @override
   State<UserSchoolContainer> createState() => _UserSchoolContainerState();
@@ -26,29 +23,37 @@ class _UserSchoolContainerState extends State<UserSchoolContainer> {
   List<int> selectedGroups = [];
   bool isEditing = false;
   bool isConnected = false;
-
-  // Variables for error handling
-  String errorMessage = '';
-  bool errorVisibility = false;
+  bool serverAvailable = false; 
 
   @override
   void initState() {
     super.initState();
-    _checkConnectivity();
     schoolGroups = _fetchSchoolGroups();
     selectedGroups = widget.visitor.schoolGroupIds ?? [];
   }
 
-  /// Fetch school groups from the API
+  /// Fetch school groups either from API or local storage
   Future<List<SchoolGroup>> _fetchSchoolGroups() async {
+    await _checkConnectivity();
+
     if (isConnected) {
-      return await apiService.getSchoolGroups();
+      try {
+        final groups = await apiService.getSchoolGroups();
+        setState(() => serverAvailable = true);
+        print("here");
+        return groups;
+      } catch (e) {
+        print(e);
+        setState(() => serverAvailable = false);
+        return dataService.getSchoolGroups();
+      }
     } else {
+      print("there");
       return dataService.getSchoolGroups();
     }
   }
 
-  /// Check connectivity
+  /// Check connectivity status
   Future<void> _checkConnectivity() async {
     final List<ConnectivityResult> connectivityResult =
         await (Connectivity().checkConnectivity());
@@ -92,7 +97,7 @@ class _UserSchoolContainerState extends State<UserSchoolContainer> {
                       ),
                       const SizedBox(width: 8.0),
                       const Text(
-                        'Školní skupiny',
+                        'School Groups',
                         style: TextStyle(
                           fontSize: 22.0,
                           fontWeight: FontWeight.w500,
@@ -109,13 +114,11 @@ class _UserSchoolContainerState extends State<UserSchoolContainer> {
                                 size: 25.0,
                                 color: AppColors.secondaryGreen,
                               ),
-                              onPressed: isConnected
+                              onPressed: (isConnected && serverAvailable)
                                   ? () => setState(() {
                                         if (selectedGroups.isNotEmpty) {
-                                          widget.visitor.schoolGroupIds =
-                                              selectedGroups;
-                                          apiService
-                                              .updateVisitor(widget.visitor);
+                                          widget.visitor.schoolGroupIds = selectedGroups;
+                                          apiService.updateVisitor(widget.visitor);
                                         }
                                         isEditing = !isEditing;
                                       })
@@ -127,8 +130,7 @@ class _UserSchoolContainerState extends State<UserSchoolContainer> {
                                 size: 25.0,
                                 color: AppColors.secondaryRed,
                               ),
-                              onPressed: () =>
-                                  setState(() => isEditing = !isEditing),
+                              onPressed: () => setState(() => isEditing = !isEditing),
                             ),
                           ],
                         )
@@ -136,11 +138,11 @@ class _UserSchoolContainerState extends State<UserSchoolContainer> {
                           icon: Icon(
                             Icons.edit_outlined,
                             size: 25.0,
-                            color: isConnected
+                            color: (isConnected && serverAvailable)
                                 ? AppColors.secondaryGreen
                                 : Colors.grey,
                           ),
-                          onPressed: isConnected
+                          onPressed: (isConnected && serverAvailable)
                               ? () => setState(() => isEditing = !isEditing)
                               : () {
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -180,17 +182,15 @@ class _UserSchoolContainerState extends State<UserSchoolContainer> {
                           final group = schoolGroups[index];
                           return ListTile(
                             title: Text(group.name),
-                            trailing: widget.visitor.schoolGroupIds
-                                        ?.contains(group.id) ??
-                                    false
+                            trailing: widget.visitor.schoolGroupIds?.contains(group.id) ?? false
                                 ? const Padding(
                                     padding: EdgeInsets.only(right: 8.0),
-                                    child: Icon(Icons.check,
-                                        color: AppColors.primaryGreen))
+                                    child: Icon(Icons.check, color: AppColors.primaryGreen),
+                                  )
                                 : const Padding(
                                     padding: EdgeInsets.only(right: 8.0),
-                                    child: Icon(Icons.check,
-                                        color: Colors.transparent)),
+                                    child: Icon(Icons.check, color: Colors.transparent),
+                                  ),
                           );
                         },
                       ),

@@ -61,21 +61,26 @@ class UserPage extends StatelessWidget {
             ),
           ],
         ),
-        body: SingleChildScrollView(
-            child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              UserOverviewContainer(),
-              const SizedBox(height: 12.0),
-              UserAchievementsContainer(visitor: visitor),
-              const SizedBox(height: 20.0),
-              UserSchoolContainer(visitor: visitor),
-            ],
+        body: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    UserOverviewContainer(),
+                    const SizedBox(height: 12.0),
+                    UserAchievementsContainer(visitor: visitor),
+                    const SizedBox(height: 20.0),
+                    UserSchoolContainer(visitor: visitor),
+                  ],
+                ),
+              ),
+            ),
           ),
-        )
-      )
+        ),
     );
   }
 }

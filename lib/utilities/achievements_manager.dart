@@ -127,7 +127,7 @@ final List<Achievement> _defaultAchievements = [
   void loadAchievements() {
     List<Achievement> fetchedAchievements = dataService.getAchievements();
 
-    if (fetchedAchievements.isEmpty) {
+    if (fetchedAchievements.isNotEmpty) {
       _achievements = fetchedAchievements;
     } else {
       _achievements = _defaultAchievements;
@@ -181,14 +181,14 @@ final List<Achievement> _defaultAchievements = [
           levelText: '${testAchievement.level} ze 3 trofejí');
 
       case 2:
-        Achievement successRateAchievement = achievements.firstWhere((achievement) => achievement.id == 'success_rate_50');
+        Achievement successRateAchievement = achievements.firstWhere((achievement) => achievement.id == 'success_rate_100');
 
         if (!successRateAchievement.unlocked) {
           successRateAchievement = achievements.firstWhere((achievement) => achievement.id == 'success_rate_75'); 
         }
 
         if (!successRateAchievement.unlocked) {
-          successRateAchievement = achievements.firstWhere((achievement) => achievement.id == 'success_rate_100'); 
+          successRateAchievement = achievements.firstWhere((achievement) => achievement.id == 'success_rate_50'); 
         }
 
         if (!successRateAchievement.unlocked) {
@@ -206,14 +206,14 @@ final List<Achievement> _defaultAchievements = [
           levelText: '${successRateAchievement.level} ze 3 trofejí');
 
       case 3:
-        Achievement betterThanAchievement = achievements.firstWhere((achievement) => achievement.id == 'better_than_25');
+        Achievement betterThanAchievement = achievements.firstWhere((achievement) => achievement.id == 'better_than_75');
 
           if (!betterThanAchievement.unlocked) {
             betterThanAchievement = achievements.firstWhere((achievement) => achievement.id == 'better_than_50'); 
           }
 
           if (!betterThanAchievement.unlocked) {
-            betterThanAchievement = achievements.firstWhere((achievement) => achievement.id == 'better_than_75'); 
+            betterThanAchievement = achievements.firstWhere((achievement) => achievement.id == 'better_than_25'); 
           }
 
           if (!betterThanAchievement.unlocked) {
@@ -330,6 +330,34 @@ final List<Achievement> _defaultAchievements = [
         }
       }
       
+    }
+  }
+
+  void unlockBetterThanAchievements(int betterThan, BuildContext context) {
+
+    if (betterThan < 25) return;
+
+    final betterThan25 = _achievements.firstWhere((ach) => ach.id == 'better_than_25');
+    if (!betterThan25.unlocked) {
+      unlockAchievement('better_than_25', context);
+    }
+
+    if (betterThan < 50) return;
+
+    final betterThan50 = _achievements.firstWhere((ach) => ach.id == 'better_than_50');
+    if (!betterThan50.unlocked) {
+      unlockAchievement('better_than_50', context);
+    }
+
+    if (betterThan < 75) return;
+
+    final betterThan75 = _achievements.firstWhere((ach) => ach.id == 'better_than_75');
+    if (!betterThan75.unlocked) {
+      unlockAchievement('better_than_75', context);
+    }
+
+    if (_achievements.where((ach) => !ach.unlocked).length == 1) {
+      unlockAchievement('completion', context);
     }
   }
 

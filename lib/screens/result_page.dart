@@ -47,8 +47,10 @@ class ResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      AchievementManager().unlockAchievementsAfterWorksheet(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (ModalRoute.of(context)?.isCurrent == true) {
+        AchievementManager().unlockAchievementsAfterWorksheet(context);
+      };
     });
 
     // Calculate success rate and other stats from the worksheet state

@@ -49,11 +49,7 @@ class UserAchievementsContainer extends StatelessWidget {
             controller: _pageController,
             itemCount: 5,
             itemBuilder: (context, index) {
-              return Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: BorderContainer(
+              return BorderContainer(
                   padding: 20,
                   children: [
                     Column(
@@ -61,7 +57,6 @@ class UserAchievementsContainer extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [AchievementManager().getCardContent(index)]),
                   ],
-                ),
               );
             },
           ),

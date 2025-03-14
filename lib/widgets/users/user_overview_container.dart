@@ -1,13 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import '../../services/data_service_visitors.dart';
+import '../../services/api_service_visitors.dart';
+import '../../utilities/achievements_manager.dart';
 import '../border_container.dart';
 
-class UserOverviewContainer extends StatelessWidget {
-  final DataServiceVisitors dataService = DataServiceVisitors();
-
-  UserOverviewContainer({
+class UserOverviewContainer extends StatefulWidget {
+  
+  const UserOverviewContainer({
     super.key,
   });
+
+  @override
+  State<UserOverviewContainer> createState() => _UserOverviewContainerState();
+}
+
+class _UserOverviewContainerState extends State<UserOverviewContainer> {
+  final DataServiceVisitors dataService = DataServiceVisitors();
+  final ApiService apiService = ApiService();
+  late Future<int?> futureBetterThan;
+  bool isConnected = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkConnectivity();
+    futureBetterThan = _fetchBetterThan();
+  }
+
+  /// Fetch 'better than' from the API
+  Future<int?> _fetchBetterThan() async {
+    if (isConnected) {
+      return await apiService.getBetterThan();
+    } else {
+      return null;
+    }
+  }
+
+  /// Check connectivity
+  Future<void> _checkConnectivity() async {
+    final List<ConnectivityResult> connectivityResult =
+        await (Connectivity().checkConnectivity());
+    setState(() {
+      isConnected = connectivityResult.contains(ConnectivityResult.mobile) ||
+          connectivityResult.contains(ConnectivityResult.wifi);
+    });
+  }
 
   List<Widget> _getCardContent(int index) {
     final visitorStats = dataService.getVisitorStats();
@@ -23,11 +61,10 @@ class UserOverviewContainer extends StatelessWidget {
           Text(
             '$doneWorksheetCount/$worksheetCount',
             style: const TextStyle(
-                fontSize: 19, fontWeight: FontWeight.bold),
+                fontSize: 22, fontWeight: FontWeight.bold),
           ),
           Text(
-            'Hotových \n testů',
-            textAlign: TextAlign.center,
+            'Hotových \ntestů',
             style: const TextStyle(fontSize: 14, height: 1.1),
           ),
         ];
@@ -37,11 +74,10 @@ class UserOverviewContainer extends StatelessWidget {
           Text(
             avgSuccessRate > 0 ? '$avgSuccessRate %' : '- %',
             style: const TextStyle(
-                fontSize: 19, fontWeight: FontWeight.bold),
+                fontSize: 22, fontWeight: FontWeight.bold),
           ),
           Text(
-            'Průměrná \n úspěšnost',
-            textAlign: TextAlign.center,
+            'Průměrná \núspěšnost',
             style: const TextStyle(fontSize: 14, height: 1.1),
           )
         ];
@@ -51,32 +87,44 @@ class UserOverviewContainer extends StatelessWidget {
           Text(
             '$achievementsUnlocked/$achievementsCount',
             style: const TextStyle(
-                fontSize: 19, fontWeight: FontWeight.bold),
+                fontSize: 22, fontWeight: FontWeight.bold),
           ),
           Text(
-            'Získaných \n pohárů',
-            textAlign: TextAlign.center,
+            'Získaných \npohárů',
             style: const TextStyle(fontSize: 14, height: 1.1),
           )
         ];
 
       case 3:
         return [
-          Text(
+          const Text(
             'Jsi lepší než',
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 14, height: 1.1),
+            style: TextStyle(fontSize: 14, height: 1.1),
           ),
-          Text(
-            avgSuccessRate > 0 ? '$avgSuccessRate %' : '- %',
-            style: const TextStyle(
-                fontSize: 19, fontWeight: FontWeight.bold),
+          FutureBuilder<int?>(
+            future: futureBetterThan,
+            builder: (context, snapshot) {
+          
+              if (snapshot.hasError || snapshot.data == null || snapshot.connectionState == ConnectionState.waiting) {
+                return const Text(
+                  '- %',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                );
+              } else {
+                final betterThan = snapshot.data; 
+                AchievementManager().unlockBetterThanAchievements(betterThan ?? 0, context);
+
+                return Text(
+                  '$betterThan %',
+                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                );
+              }
+            },
           ),
-          Text(
+          const Text(
             'hráčů',
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 14, height: 1.1),
-          )
+            style: TextStyle(fontSize: 14, height: 1.1),
+          ),
         ];
 
       default:
@@ -92,7 +140,7 @@ class UserOverviewContainer extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 4.0),
+          padding: const EdgeInsets.only(left: 4.0, bottom: 6.0),
           child: 
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -126,14 +174,12 @@ class UserOverviewContainer extends StatelessWidget {
           ),
           itemCount: 4, 
           itemBuilder: (context, index) {
-            return Card(
-              child: BorderContainer(padding: 16, children: [
+            return BorderContainer(padding: 16, children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: _getCardContent(index)
                 ),
-              ]),
-            );
+              ]);
           },
         ),
       ],

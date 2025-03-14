@@ -215,10 +215,34 @@ class DataServiceVisitors {
       return 0.0;
     }
 
-    int totalSuccessRate = worksheetResults
-        .map((result) => result['success_rate']['rate'])
-        .reduce((a, b) => a + b);
+    // Group results by worksheet ID
+    Map<int, List<Map<String, dynamic>>> groupedResults = {};
 
-    return totalSuccessRate / worksheetResults.length;
+    for (var result in worksheetResults) {
+      Map<String, dynamic> resultMap = Map<String, dynamic>.from(result);
+      int worksheetId = resultMap['success_rate']['worksheet'];
+      
+      groupedResults.putIfAbsent(worksheetId, () => []).add(resultMap);
+    }
+
+    // Get the latest results for each worksheet
+    List<Map<String, dynamic>> latestResults = groupedResults.entries.map((entry) {
+      // Sort by creation date (newest first)
+      entry.value.sort((a, b) =>
+          DateTime.parse(b['created_at']).compareTo(DateTime.parse(a['created_at'])));
+      return entry.value.first;
+    }).toList();
+
+    int doneWorksheetCount = latestResults.length;
+
+    // Calculate average success rate
+    double averageSuccessRate = doneWorksheetCount > 0
+        ? latestResults
+                .map((result) => result['success_rate']['rate'])
+                .reduce((a, b) => a + b) /
+            latestResults.length
+        : 0.0;
+
+    return averageSuccessRate;
   }
 }

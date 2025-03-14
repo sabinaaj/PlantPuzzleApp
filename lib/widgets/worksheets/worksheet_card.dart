@@ -26,7 +26,7 @@ class WorksheetCard extends StatelessWidget {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(14.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -74,7 +74,7 @@ class WorksheetCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 8.0),
+            const SizedBox(height: 12.0),
             BorderButton(
               text: 'Spustit test',
               width: MediaQuery.of(context).size.width * 0.85,
