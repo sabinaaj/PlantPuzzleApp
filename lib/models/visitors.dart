@@ -101,3 +101,49 @@ class SchoolGroup {
     };
   }
 }
+
+
+class Achievement {
+  final String id;
+  final String title;
+  final String description;
+
+  final String imageUrl;
+  final String cardTitle;
+  final String cardDescription;
+  final int level;
+  bool unlocked;
+
+  Achievement({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.imageUrl,
+    required this.cardTitle,
+    required this.cardDescription,
+    required this.level,
+    this.unlocked = false,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'description': description,
+        'unlocked': unlocked,
+        'image_url': imageUrl,
+        'card_title': cardTitle,
+        'card_description': cardDescription,
+        'level': level
+      };
+
+  static Achievement fromJson(Map<String, dynamic> json) => Achievement(
+        id: json['id'],
+        title: json['title'],
+        description: json['description'],
+        unlocked: json['unlocked'],
+        imageUrl: json['image_url'],
+        cardTitle: json['card_title'],
+        cardDescription: json['card_description'],
+        level: json['level'],
+      );
+}
