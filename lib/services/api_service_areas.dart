@@ -27,8 +27,7 @@ class ApiService {
       if (response.statusCode == 200) {
         return jsonDecode(utf8.decode(response.bodyBytes));
       } else {
-        throw HttpException(
-            'Failed to load areas (Status: ${response.statusCode})');
+        throw HttpException( 'Failed to load areas (Status: ${response.statusCode})');
       }
     } on SocketException {
       throw Exception('No internet connection or server is unreachable');
