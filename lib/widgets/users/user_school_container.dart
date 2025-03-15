@@ -40,15 +40,12 @@ class _UserSchoolContainerState extends State<UserSchoolContainer> {
       try {
         final groups = await apiService.getSchoolGroups();
         setState(() => serverAvailable = true);
-        print("here");
         return groups;
       } catch (e) {
-        print(e);
         setState(() => serverAvailable = false);
         return dataService.getSchoolGroups();
       }
     } else {
-      print("there");
       return dataService.getSchoolGroups();
     }
   }
