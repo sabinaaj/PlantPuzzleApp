@@ -29,11 +29,24 @@ class DataService {
                 for (var image in task['images']) {
                   String imageUrl = image['image_url'];
                   String fileName = imageUrl.split('/').last;
-                  String localPath =
-                      await apiService.downloadAndSaveImage(imageUrl, fileName);
+                  String localPath = await apiService.downloadAndSaveImage(imageUrl, fileName);
                   image['image_url'] = localPath;
                 }
               }
+            }
+          }
+        }
+      }
+    
+      // 3. save plant images
+      if (area['plants'] != null) {
+        for (var plant in area['plants']) {
+          if (plant['images'] != null && plant['images'].isNotEmpty) {
+            for (var image in plant['images']) {
+              String imageUrl = image['image_url'];
+              String fileName = imageUrl.split('/').last;
+              String localPath = await apiService.downloadAndSaveImage(imageUrl, fileName);
+              image['image_url'] = localPath;
             }
           }
         }

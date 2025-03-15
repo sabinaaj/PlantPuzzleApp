@@ -3,7 +3,6 @@ import '../models/area.dart';
 
 class DataServiceAreas {
 
-
   List<Area> getAreas() {
     var box = Hive.box('appData');
     var areasJson = box.get('areas', defaultValue: []);
@@ -83,5 +82,23 @@ class DataServiceAreas {
       'average_success_rate': averageSuccessRate,
     };
   }
+
+  List<Plant> getPlants(int areaId) {
+    var box = Hive.box('appData');
+    var areasData = box.get('areas', defaultValue: []);
+
+    Map<dynamic, dynamic> areaData = areasData.firstWhere(
+      (area) => area['id'] == areaId,
+      orElse: () => {},
+    );
+
+    if (areaData.isEmpty) {
+      return [];
+    }
+
+    List<dynamic> plants = areaData['plants'] ?? [];
+    return plants.map<Plant>((json) => Plant.fromJson(json)).toList();
+  }
+
 
 }
