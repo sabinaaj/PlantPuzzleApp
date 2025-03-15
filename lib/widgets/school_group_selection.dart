@@ -21,6 +21,7 @@ class SchoolGroupSelection extends StatelessWidget {
       children: [
         ListView.builder(
           padding: EdgeInsets.zero,
+          physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
           itemCount: schoolGroups.length,
           itemBuilder: (context, index) {

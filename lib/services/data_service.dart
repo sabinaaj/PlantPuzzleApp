@@ -6,7 +6,6 @@ class DataService {
 
   Future<void> fetchAndCacheDataNewUser(List<int> schoolGroupsIds) async {
     var apiService = ApiService();
-    print('School groups: $schoolGroupsIds');
     var responseAreas = await apiService.getAllAreas(schoolGroupsIds);
 
     var box = Hive.box('appData');
@@ -53,7 +52,7 @@ class DataService {
         }
       }
     }
-      
+
     box.put('areas', responseAreas);
     box.put('userSchoolGroups', schoolGroupsIds);
   }

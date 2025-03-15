@@ -38,7 +38,7 @@ class WorksheetPage extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 16.0,
-                vertical: 6.0,
+                vertical: 12.0,
               ),
 
               child: Column(

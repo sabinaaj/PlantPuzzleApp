@@ -3,9 +3,7 @@ import '../models/visitors.dart';
 import '../models/worksheet.dart';
 import 'api_service_visitors.dart';
 
-
 class DataServiceWorksheets {
-
   List<WorksheetSummary> getWorksheets(int areaId) {
     var box = Hive.box('appData');
     var areasData = box.get('areas', defaultValue: []);
@@ -20,7 +18,9 @@ class DataServiceWorksheets {
     }
 
     List<dynamic> worksheets = areaData['worksheets'] ?? [];
-    return worksheets.map<WorksheetSummary>((json) => WorksheetSummary.fromJson(json)).toList();
+    return worksheets
+        .map<WorksheetSummary>((json) => WorksheetSummary.fromJson(json))
+        .toList();
   }
 
   Worksheet getWorksheet(int worksheetId) {
@@ -28,8 +28,7 @@ class DataServiceWorksheets {
     var areasData = box.get('areas', defaultValue: []);
 
     List<Map<String, dynamic>> areas = List<Map<String, dynamic>>.from(
-      areasData.map((e) => Map<String, dynamic>.from(e))
-    );
+        areasData.map((e) => Map<String, dynamic>.from(e)));
 
     for (var area in areas) {
       var worksheets = area['worksheets'] ?? [];
@@ -57,18 +56,18 @@ class DataServiceWorksheets {
 
     // Sort results by createdAt
     filteredResults.sort((a, b) => DateTime.parse(b['created_at'])
-    .compareTo(DateTime.parse(a['created_at'])));
+        .compareTo(DateTime.parse(a['created_at'])));
 
     // Get the latest success rate
     int? latestRate = filteredResults.isNotEmpty
-    ? filteredResults.first['success_rate']['rate']
-    : null;
-
+        ? filteredResults.first['success_rate']['rate']
+        : null;
 
     return latestRate;
   }
 
-  void saveWorksheetResult(int worksheetId, SuccessRate successRate, List<VisitorResponse> responses) async {
+  void saveWorksheetResult(int worksheetId, SuccessRate successRate,
+      List<VisitorResponse> responses) async {
     var box = Hive.box('appData');
     final worksheetResults = box.get('worksheetResults') ?? [];
 
@@ -80,19 +79,22 @@ class DataServiceWorksheets {
     });
 
     box.put('worksheetResults', worksheetResults);
-
   }
 
   Future<void> syncWorksheetResults() async {
     var box = Hive.box('appData');
     final worksheetResults = box.get('worksheetResults') ?? [];
 
-    final unsyncedResults = worksheetResults.where((result) => result['is_synced'] == false).toList();
+    final unsyncedResults = worksheetResults
+        .where((result) => result['is_synced'] == false)
+        .toList();
     final ApiService apiService = ApiService();
-    await apiService.submitResults(unsyncedResults);
+    final status = await apiService.submitResults(unsyncedResults);
 
-    for (var result in unsyncedResults) {
-      result['is_synced'] = true;
+    if (status) {
+      for (var result in unsyncedResults) {
+        result['is_synced'] = true;
+      }
     }
 
     box.put('worksheetResults', worksheetResults);

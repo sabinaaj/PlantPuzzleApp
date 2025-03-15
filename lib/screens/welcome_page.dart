@@ -52,9 +52,7 @@ class _WelcomePageState extends State<WelcomePage> {
       final visitor = Visitor(
         schoolGroupIds: selectedGroups,
       );
-      print('Visitor: $visitor');
       await apiService.saveUser(visitor);
-      print('User saved successfully');
       await dataService.fetchAndCacheDataNewUser(selectedGroups);
 
       // Ensure the widget is still mounted before navigation
@@ -86,7 +84,6 @@ class _WelcomePageState extends State<WelcomePage> {
 
         // Display error message if an error occurs
         else if (snapshot.hasError) {
-          print('Error: ${snapshot.error}');
           return Scaffold(
             body: Center(
               child: Text('Vyskytla se chyba. Zkuste to znovu.'),
