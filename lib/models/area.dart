@@ -26,7 +26,7 @@ class Plant {
     this.images = const [],
   });
 
-  factory Plant.fromJson(Map<String, dynamic> json) {
+  factory Plant.fromJson(Map<dynamic, dynamic> json) {
     return Plant(
       id: json['id'],
       name: json['name'],
