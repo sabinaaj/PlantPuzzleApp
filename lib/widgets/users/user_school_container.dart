@@ -23,13 +23,13 @@ class _UserSchoolContainerState extends State<UserSchoolContainer> {
   List<int> selectedGroups = [];
   bool isEditing = false;
   bool isConnected = false;
-  bool serverAvailable = false; 
+  bool serverAvailable = false;
 
   @override
   void initState() {
     super.initState();
     schoolGroups = _fetchSchoolGroups();
-    selectedGroups = widget.visitor.schoolGroupIds ?? [];
+    selectedGroups = List<int>.from(widget.visitor.schoolGroupIds ?? []);
   }
 
   /// Fetch school groups either from API or local storage
@@ -94,7 +94,7 @@ class _UserSchoolContainerState extends State<UserSchoolContainer> {
                       ),
                       const SizedBox(width: 8.0),
                       const Text(
-                        'School Groups',
+                        'Školní skupiny',
                         style: TextStyle(
                           fontSize: 22.0,
                           fontWeight: FontWeight.w500,
@@ -113,11 +113,9 @@ class _UserSchoolContainerState extends State<UserSchoolContainer> {
                               ),
                               onPressed: (isConnected && serverAvailable)
                                   ? () => setState(() {
-                                        if (selectedGroups.isNotEmpty) {
-                                          widget.visitor.schoolGroupIds = selectedGroups;
-                                          apiService.updateVisitor(widget.visitor);
-                                        }
-                                        isEditing = !isEditing;
+                                        widget.visitor.schoolGroupIds = List<int>.from(selectedGroups);
+                                        apiService.updateVisitor(widget.visitor);
+                                        isEditing = false;
                                       })
                                   : null,
                             ),
@@ -127,7 +125,10 @@ class _UserSchoolContainerState extends State<UserSchoolContainer> {
                                 size: 25.0,
                                 color: AppColors.secondaryRed,
                               ),
-                              onPressed: () => setState(() => isEditing = !isEditing),
+                              onPressed: () => setState(() {
+                                selectedGroups = List<int>.from(widget.visitor.schoolGroupIds ?? []);
+                                isEditing = false;
+                              } ),
                             ),
                           ],
                         )
@@ -140,7 +141,7 @@ class _UserSchoolContainerState extends State<UserSchoolContainer> {
                                 : Colors.grey,
                           ),
                           onPressed: (isConnected && serverAvailable)
-                              ? () => setState(() => isEditing = !isEditing)
+                              ? () => setState(() => isEditing = true)
                               : () {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
