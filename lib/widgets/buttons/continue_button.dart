@@ -12,7 +12,7 @@ class ContinueButton extends StatelessWidget {
   const ContinueButton({
     super.key,
     this.text = 'Pokračovat',
-    this.height = 50.0,
+    this.height = 55.0,
     this.width = double.infinity, // Default width
     this.vPadding = 14.0,
     this.onPressed,

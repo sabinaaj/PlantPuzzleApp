@@ -13,7 +13,7 @@ class ToggleButton extends StatefulWidget {
   const ToggleButton({
     super.key,
     this.option,
-    this.height = 50.0,
+    this.height = 55.0,
     this.width,
     this.multipleSelection = false,
   });

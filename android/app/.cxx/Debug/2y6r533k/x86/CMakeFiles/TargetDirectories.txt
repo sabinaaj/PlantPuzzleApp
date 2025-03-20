@@ -1,0 +1,2 @@
+/home/sabinaaj/PlantPuzzleApp/plant_puzzle_app/android/app/.cxx/Debug/2y6r533k/x86/CMakeFiles/edit_cache.dir
+/home/sabinaaj/PlantPuzzleApp/plant_puzzle_app/android/app/.cxx/Debug/2y6r533k/x86/CMakeFiles/rebuild_cache.dir
