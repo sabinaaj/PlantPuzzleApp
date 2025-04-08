@@ -4,15 +4,38 @@ import '../../services/data_service_areas.dart';
 import '../../models/area.dart';
 import "../../screens/area_page.dart";
 
-class AreaList extends StatelessWidget {
-  AreaList({super.key});
+class AreaList extends StatefulWidget {
+  const AreaList({super.key});
 
+  @override
+  State<AreaList> createState() => _AreaListState();
+}
+
+class _AreaListState extends State<AreaList> {
   final DataServiceAreas dataService = DataServiceAreas();
+  late List<Area> areas;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAreas();
+  }
+
+  void _loadAreas() {
+    setState(() {
+      areas = dataService.getAreas();
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant AreaList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Pokud došlo k rebuildu (např. klíč se změnil), znovu načti data
+    _loadAreas();
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<Area> areas = dataService.getAreas();
-
     return SafeArea(
       top: true,
       child: ListView.builder(
@@ -25,10 +48,11 @@ class AreaList extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15.0),
               border: Border(
-                  top: BorderSide(width: 2.0, color: Colors.grey.shade300),
-                  left: BorderSide(width: 2.0, color: Colors.grey.shade300),
-                  right: BorderSide(width: 2.0, color: Colors.grey.shade300),
-                  bottom: BorderSide(width: 4.0, color: Colors.grey.shade300)),
+                top: BorderSide(width: 2.0, color: Colors.grey.shade300),
+                left: BorderSide(width: 2.0, color: Colors.grey.shade300),
+                right: BorderSide(width: 2.0, color: Colors.grey.shade300),
+                bottom: BorderSide(width: 4.0, color: Colors.grey.shade300),
+              ),
             ),
             child: ListTile(
               leading: area.iconUrl != null
