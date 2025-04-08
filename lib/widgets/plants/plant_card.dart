@@ -2,15 +2,24 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../models/area.dart';
+import '../../colors.dart';
 
-class PlantCard extends StatelessWidget {
+class PlantCard extends StatefulWidget {
   final Plant plant;
 
   const PlantCard({super.key, required this.plant});
 
   @override
+  State<PlantCard> createState() => _PlantCardState();
+}
+
+class _PlantCardState extends State<PlantCard> {
+  final PageController pageController = PageController();
+  bool isExpanded = false;
+
+  @override
   Widget build(BuildContext context) {
-    final PageController pageController = PageController();
+    final plant = widget.plant;
 
     return Container(
       margin: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0),
@@ -38,7 +47,46 @@ class PlantCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8.0),
-            if (plant.images.isNotEmpty) 
+            if (plant.description != null && plant.description!.isNotEmpty)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  plant.description!,
+                  maxLines: isExpanded ? null : 3,
+                  overflow: isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 14.0, color: Colors.black87),
+                ),
+                const SizedBox(height: 4.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton.icon(
+                      style: TextButton.styleFrom(
+                        minimumSize: const Size(50, 30),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        visualDensity: VisualDensity.compact,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          isExpanded = !isExpanded;
+                        });
+                      },
+                      icon: Icon(
+                        isExpanded ? Icons.expand_less : Icons.expand_more,
+                        size: 18,
+                        color: AppColors.secondaryGreen,
+                      ),
+                      label: Text(
+                        isExpanded ? 'Méně' : 'Více',
+                        style: const TextStyle(fontSize: 14.0, color: AppColors.secondaryGreen),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            if (plant.images.isNotEmpty)
               Column(
                 children: [
                   SizedBox(
@@ -57,7 +105,7 @@ class PlantCard extends StatelessWidget {
                       },
                     ),
                   ),
-                  if (plant.images.length > 1) 
+                  if (plant.images.length > 1)
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: SmoothPageIndicator(
@@ -73,7 +121,7 @@ class PlantCard extends StatelessWidget {
                     ),
                 ],
               )
-            else 
+            else
               Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),

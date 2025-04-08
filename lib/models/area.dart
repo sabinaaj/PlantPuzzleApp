@@ -18,11 +18,13 @@ class Area {
 class Plant {
   final int id;
   final String name;
+  final String? description;
   final List<PlantImage> images; 
 
   Plant({
     required this.id,
     required this.name,
+    this.description = '',
     this.images = const [],
   });
 
@@ -30,6 +32,7 @@ class Plant {
     return Plant(
       id: json['id'],
       name: json['name'],
+      description: json['description'],
       images: (json['images'] as List)
           .map((imageJson) => PlantImage.fromJson(imageJson))
           .toList(),
@@ -40,6 +43,7 @@ class Plant {
     return {
       'id': id,
       'name': name,
+      'description': description,
       'images': images.map((img) => img.toJson()).toList(),
     };
   }

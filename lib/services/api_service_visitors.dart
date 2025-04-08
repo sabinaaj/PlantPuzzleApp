@@ -92,8 +92,7 @@ class ApiService {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-
-      return data['better_than'];
+      return data['better_than'].toInt();
     } else {
       return null;
     }
