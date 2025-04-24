@@ -36,7 +36,6 @@ class _UserOverviewContainerState extends State<UserOverviewContainer> {
     setState(() {
       futureBetterThan = isConnected ? apiService.getBetterThan() : Future.value(null);
     });
-    print(futureBetterThan);
   }
 
   /// Check connectivity
