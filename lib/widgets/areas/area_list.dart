@@ -55,7 +55,10 @@ class _AreaListState extends State<AreaList> {
               ),
             ),
             child: ListTile(
-              leading: area.iconUrl != null
+              leading: SizedBox(
+                height: 75,
+                width: 60,
+                child: area.iconUrl != null
                   ? Image.file(
                       File(area.iconUrl!),
                       height: 75,
@@ -66,6 +69,7 @@ class _AreaListState extends State<AreaList> {
                       height: 75,
                       width: 60,
                     ),
+              ), 
               title: Text(area.title),
               onTap: () {
                 Navigator.push(

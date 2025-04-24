@@ -56,10 +56,13 @@ class DataService {
   Future<dynamic> _saveImages(dynamic area) async {
     final Set<String> usedImagePaths = {};
 
+    print("here");
+
     // 1. save icon_url
     if (area['icon_url'] != null) {
       final imageUrl = area['icon_url'];
       final fileName = imageUrl.split('/').last;
+      print(imageUrl);
       final localPath = await _apiService.downloadAndSaveImage(imageUrl, fileName);
       area['icon_url'] = localPath;
       usedImagePaths.add(localPath);
@@ -99,13 +102,13 @@ class DataService {
       }
     }
 
-    await _cleanupUnusedImages(usedImagePaths);
+    //await _cleanupUnusedImages(usedImagePaths);
 
     return area;
   }
 
-  Future<void> _cleanupUnusedImages(Set<String> usedPaths) async {
-    final directory = await getApplicationDocumentsDirectory();
+  /*Future<void> _cleanupUnusedImages(Set<String> usedPaths) async {
+    final directory = await getLibraryDirectory();
     final files = Directory(directory.path).listSync();
 
     for (var file in files) {
@@ -115,5 +118,5 @@ class DataService {
         } catch (e) {}
       }
     }
-  }
+  }*/
 }
