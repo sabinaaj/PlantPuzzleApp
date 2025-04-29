@@ -38,6 +38,11 @@ class DataServiceVisitors {
     return box.containsKey('userId');
   }
 
+  void saveUserSchoolGroups(List<Object> schoolGroupsIds) {
+    var box = Hive.box('appData');
+    box.put('userSchoolGroups', schoolGroupsIds);
+  }
+
   void saveSchoolGroups(List<SchoolGroup> schoolGroups) {
     var box = Hive.box('appData');
     var jsonList = schoolGroups.map((group) => group.toJson()).toList();
@@ -154,6 +159,8 @@ class DataServiceVisitors {
     Set<dynamic> completedWorksheets = worksheetResults
         .map((result) => result['success_rate']['worksheet'])
         .toSet();
+
+    print(areasData);
 
     // Check if any area has all worksheets completed
     for (var area in areasData) {

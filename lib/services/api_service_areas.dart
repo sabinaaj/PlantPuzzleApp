@@ -35,7 +35,7 @@ class ApiService {
   }
 
   Future<String> downloadAndSaveImage(String imageUrl, String fileName) async {
-    final directory = await getLibraryDirectory();
+    final directory = await getApplicationDocumentsDirectory();
     final filePath = '${directory.path}/$fileName';
 
     if (File(filePath).existsSync()) {

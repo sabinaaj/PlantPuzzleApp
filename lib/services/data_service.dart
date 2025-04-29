@@ -1,8 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:hive/hive.dart';
 import 'api_service_areas.dart';
-import 'dart:io';
 
 class DataService {
   final ApiService _apiService;
@@ -29,6 +27,8 @@ class DataService {
     var box = Hive.box('appData');
     var schoolGroupsIds = box.get('userSchoolGroups');
     var responseAreas = box.get('areas');
+
+    print(schoolGroupsIds);
 
     final List<ConnectivityResult> connectivityResult =
         await (Connectivity().checkConnectivity());
@@ -108,7 +108,7 @@ class DataService {
   }
 
   /*Future<void> _cleanupUnusedImages(Set<String> usedPaths) async {
-    final directory = await getLibraryDirectory();
+    final directory = await getApplicationDocumentsDirectory();
     final files = Directory(directory.path).listSync();
 
     for (var file in files) {
