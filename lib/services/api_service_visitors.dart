@@ -41,7 +41,6 @@ class ApiService {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(visitor.toJson()),
       );
-      print(visitor.schoolGroupIds);
       dataServiceVisitors.saveUserSchoolGroups(visitor.schoolGroupIds ?? []);
       await dataService.fetchAndCacheData();
 

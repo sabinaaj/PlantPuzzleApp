@@ -28,8 +28,6 @@ class DataService {
     var schoolGroupsIds = box.get('userSchoolGroups');
     var responseAreas = box.get('areas');
 
-    print(schoolGroupsIds);
-
     final List<ConnectivityResult> connectivityResult =
         await (Connectivity().checkConnectivity());
     if (connectivityResult.contains(ConnectivityResult.mobile) ||
@@ -56,13 +54,10 @@ class DataService {
   Future<dynamic> _saveImages(dynamic area) async {
     final Set<String> usedImagePaths = {};
 
-    print("here");
-
     // 1. save icon_url
     if (area['icon_url'] != null) {
       final imageUrl = area['icon_url'];
       final fileName = imageUrl.split('/').last;
-      print(imageUrl);
       final localPath = await _apiService.downloadAndSaveImage(imageUrl, fileName);
       area['icon_url'] = localPath;
       usedImagePaths.add(localPath);

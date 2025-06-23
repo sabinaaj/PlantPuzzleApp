@@ -160,8 +160,6 @@ class DataServiceVisitors {
         .map((result) => result['success_rate']['worksheet'])
         .toSet();
 
-    print(areasData);
-
     // Check if any area has all worksheets completed
     for (var area in areasData) {
       List<dynamic> worksheets = area['worksheets'] ?? [];

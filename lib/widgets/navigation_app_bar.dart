@@ -24,10 +24,6 @@ class NavigationAppBar extends StatelessWidget implements PreferredSizeWidget {
       leadingWidth: leadingWidth,
       leading: leading,
       actions: [
-        IconButton(
-          icon: Image.asset('assets/images/map.png', height: 30),
-          onPressed: () {},
-        ),
         Padding(
           padding: const EdgeInsets.only(right: 12.0),
           child: IconButton(
