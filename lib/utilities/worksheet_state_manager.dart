@@ -243,7 +243,7 @@ class WorksheetStateManager {
       ),
       builder: (BuildContext context) {
         return Padding(
-          padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0, bottom: 6.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

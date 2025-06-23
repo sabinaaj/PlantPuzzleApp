@@ -54,6 +54,7 @@ class _WelcomePageState extends State<WelcomePage> {
       );
       await apiService.saveUser(visitor);
       await dataService.fetchAndCacheDataNewUser(selectedGroups);
+      await Future.delayed(Duration(seconds: 1));
 
       // Ensure the widget is still mounted before navigation
       if (!mounted) return;

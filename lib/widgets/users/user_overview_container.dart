@@ -18,29 +18,31 @@ class UserOverviewContainer extends StatefulWidget {
 class _UserOverviewContainerState extends State<UserOverviewContainer> {
   final DataServiceVisitors dataService = DataServiceVisitors();
   final ApiService apiService = ApiService();
-  late Future<int?> futureBetterThan;
+  Future<int?>? futureBetterThan;
   bool isConnected = false;
 
   @override
   void initState() {
     super.initState();
-    _checkConnectivity();
-    futureBetterThan = _fetchBetterThan();
+    _initializeBetterThan();
   }
 
   /// Fetch 'better than' from the API
-  Future<int?> _fetchBetterThan() async {
-    if (isConnected) {
-      return await apiService.getBetterThan();
-    } else {
-      return null;
-    }
+  void _initializeBetterThan() async {
+    await _checkConnectivity();
+
+    if (!mounted) return;
+
+    setState(() {
+      futureBetterThan = isConnected ? apiService.getBetterThan() : Future.value(null);
+    });
   }
 
   /// Check connectivity
   Future<void> _checkConnectivity() async {
     final List<ConnectivityResult> connectivityResult =
         await (Connectivity().checkConnectivity());
+
     setState(() {
       isConnected = connectivityResult.contains(ConnectivityResult.mobile) ||
           connectivityResult.contains(ConnectivityResult.wifi);
@@ -102,7 +104,7 @@ class _UserOverviewContainerState extends State<UserOverviewContainer> {
             style: TextStyle(fontSize: 14, height: 1.1),
           ),
           FutureBuilder<int?>(
-            future: futureBetterThan,
+            future: futureBetterThan ?? Future.value(null),
             builder: (context, snapshot) {
           
               if (snapshot.hasError || snapshot.data == null || snapshot.connectionState == ConnectionState.waiting) {
@@ -112,6 +114,7 @@ class _UserOverviewContainerState extends State<UserOverviewContainer> {
                 );
               } else {
                 final betterThan = snapshot.data; 
+
                 AchievementManager().unlockBetterThanAchievements(betterThan ?? 0, context);
 
                 return Text(

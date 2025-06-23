@@ -1,17 +1,43 @@
 import 'package:flutter/material.dart';
 import 'plant_card.dart';
 import '../../services/data_service_areas.dart';
+import '../../models/area.dart';
 
-class PlantList extends StatelessWidget {
-  final DataServiceAreas dataService = DataServiceAreas();
+class PlantList extends StatefulWidget {
   final int areaId;
 
-  PlantList({super.key, required this.areaId});
+  const PlantList({super.key, required this.areaId});
+
+  @override
+  State<PlantList> createState() => _PlantListState();
+}
+
+class _PlantListState extends State<PlantList> {
+  final DataServiceAreas dataService = DataServiceAreas();
+  late List<Plant> plants;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPlants();
+  }
+
+  void _loadPlants() {
+    setState(() {
+      plants = dataService.getPlants(widget.areaId);
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant PlantList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.areaId != widget.areaId) {
+      _loadPlants();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final plants = dataService.getPlants(areaId);
-
     return Container(
       color: Colors.grey.shade100,
       child: ListView.builder(

@@ -52,6 +52,7 @@ class DataService {
   }
 
   Future<dynamic> _saveImages(dynamic area) async {
+    final Set<String> usedImagePaths = {};
 
     // 1. save icon_url
     if (area['icon_url'] != null) {
@@ -59,6 +60,7 @@ class DataService {
       final fileName = imageUrl.split('/').last;
       final localPath = await _apiService.downloadAndSaveImage(imageUrl, fileName);
       area['icon_url'] = localPath;
+      usedImagePaths.add(localPath);
     }
 
     // 2. Save task images
@@ -70,31 +72,46 @@ class DataService {
               for (var image in task['images']) {
                 String imageUrl = image['image_url'];
                 String fileName = imageUrl.split('/').last;
-                String localPath = await _apiService.downloadAndSaveImage( imageUrl, fileName);
+                String localPath = await _apiService.downloadAndSaveImage(imageUrl, fileName);
                 image['image_url'] = localPath;
+                usedImagePaths.add(localPath);
               }
             }
           }
         }
       }
     }
-    
+
     // 3. save plant images
     if (area['plants'] != null) {
       for (var plant in area['plants']) {
         if (plant['images'] != null && plant['images'].isNotEmpty) {
-           for (var image in plant['images']) {
+          for (var image in plant['images']) {
             String imageUrl = image['image_url'];
             String fileName = imageUrl.split('/').last;
             String localPath = await _apiService.downloadAndSaveImage(imageUrl, fileName);
             image['image_url'] = localPath;
+            usedImagePaths.add(localPath);
           }
         }
       }
     }
 
+    //await _cleanupUnusedImages(usedImagePaths);
+
     return area;
-}
+  }
 
+  /*Future<void> _cleanupUnusedImages(Set<String> usedPaths) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final files = Directory(directory.path).listSync();
 
+    for (var file in files) {
+      if (!usedPaths.contains(file.path)) {
+        try {
+          await file.delete();
+        } catch (e) {}
+      }
+    }
+  }*/
 }

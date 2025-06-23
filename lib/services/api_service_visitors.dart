@@ -3,11 +3,14 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/visitors.dart';
 import 'data_service_visitors.dart';
+import 'data_service.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class ApiService {
   final String baseUrl;
   final String visitorUrl;
-  final DataServiceVisitors dataService = DataServiceVisitors();
+  final DataServiceVisitors dataServiceVisitors = DataServiceVisitors();
+  final DataService dataService = DataService();
 
   ApiService()
       : baseUrl = dotenv.env['BASE_URL'] ?? '',
@@ -24,7 +27,7 @@ class ApiService {
 
     if (response.statusCode == 201) {
       final data = jsonDecode(response.body);
-      dataService.saveUserId(data['visitor_id']);
+      dataServiceVisitors.saveUserId(data['visitor_id']);
     } else {
       throw Exception('Registration failed.');
     }
@@ -38,6 +41,8 @@ class ApiService {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(visitor.toJson()),
       );
+      dataServiceVisitors.saveUserSchoolGroups(visitor.schoolGroupIds ?? []);
+      await dataService.fetchAndCacheData();
 
       return true;
     } catch (e) {
@@ -55,7 +60,7 @@ class ApiService {
       List<SchoolGroup> schoolGroups =
           data.map((item) => SchoolGroup.fromJson(item)).toList();
 
-      dataService.saveSchoolGroups(schoolGroups);
+      dataServiceVisitors.saveSchoolGroups(schoolGroups);
 
       return schoolGroups;
     } else {
@@ -65,7 +70,7 @@ class ApiService {
 
   Future<bool> submitResults(List<dynamic> results) async {
     try {
-      final visitorId = dataService.getLoggedInUserId();
+      final visitorId = dataServiceVisitors.getLoggedInUserId();
       final url = Uri.parse('$visitorUrl/$visitorId/submit-results/');
 
       final response = await http.post(
@@ -85,17 +90,26 @@ class ApiService {
   }
 
   Future<int?> getBetterThan() async {
-    final visitorId = dataService.getLoggedInUserId();
+    final visitorId = dataServiceVisitors.getLoggedInUserId();
     final url = Uri.parse('$visitorUrl/$visitorId/better-than/');
 
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-
-      return data['better_than'];
-    } else {
-      return null;
+    final List<ConnectivityResult> connectivityResult =
+        await (Connectivity().checkConnectivity());
+    if (connectivityResult.contains(ConnectivityResult.mobile) ||
+        connectivityResult.contains(ConnectivityResult.wifi)) {
+      try {
+        final response = await http.get(url);
+        if (response.statusCode == 200) {
+          final data = jsonDecode(response.body);
+          return data['better_than'].toInt();
+        } else {
+          return null;
+        }
+      }
+      catch (e) {
+        return null;
+      }
     }
+    return null;
   }
 }

@@ -266,8 +266,9 @@ final List<Achievement> _defaultAchievements = [
     if (achievement.id.isNotEmpty && !achievement.unlocked) {
       achievement.unlocked = true;
       dataService.saveAchievements(_achievements);
-      _showAchievementDialog(
-          context, achievement.title, achievement.description, achievement.imageUrl);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showAchievementDialog(context, achievement.title, achievement.description, achievement.imageUrl);
+    });
     }
   }
 
@@ -389,6 +390,7 @@ final List<Achievement> _defaultAchievements = [
             BorderButton(
               text: 'OK, díky',
               width: MediaQuery.of(context).size.width * 0.85,
+              height: 50.0,
               onPressed: () {
                 Navigator.of(context).pop();
               },

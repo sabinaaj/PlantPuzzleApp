@@ -66,7 +66,7 @@ class UserPage extends StatelessWidget {
             constraints: const BoxConstraints(maxWidth: 400),
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+                padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 10.0, bottom: 20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/home/sabinaaj/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/home/sabinaaj/Android/Sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/home/sabinaaj/PlantPuzzleApp/plant_puzzle_app/android/app/.cxx/Debug/2y6r533k/armeabi-v7a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/home/sabinaaj/Android/Sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/home/sabinaaj/PlantPuzzleApp/plant_puzzle_app/android/app/.cxx/Debug/2y6r533k/armeabi-v7a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

@@ -38,6 +38,11 @@ class DataServiceVisitors {
     return box.containsKey('userId');
   }
 
+  void saveUserSchoolGroups(List<Object> schoolGroupsIds) {
+    var box = Hive.box('appData');
+    box.put('userSchoolGroups', schoolGroupsIds);
+  }
+
   void saveSchoolGroups(List<SchoolGroup> schoolGroups) {
     var box = Hive.box('appData');
     var jsonList = schoolGroups.map((group) => group.toJson()).toList();
@@ -101,9 +106,11 @@ class DataServiceVisitors {
 
     for (var result in worksheetResults) {
       Map<String, dynamic> resultMap = Map<String, dynamic>.from(result);
-      int worksheetId = resultMap['success_rate']['worksheet'];
-      
-      groupedResults.putIfAbsent(worksheetId, () => []).add(resultMap);
+      if (resultMap.isNotEmpty){
+        int worksheetId = resultMap['success_rate']['worksheet'];
+
+        groupedResults.putIfAbsent(worksheetId, () => []).add(resultMap);
+      }
     }
 
     // Get the latest results for each worksheet
