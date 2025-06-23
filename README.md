@@ -1,16 +1,14 @@
-# plant_puzzle_app
+# 🌱 PlantPuzzleApp
 
-A new Flutter project.
+**PlantPuzzle** je mobilní edukační aplikace vytvořená pro Naučný botanický park UJEP. Umožňuje žákům interaktivně řešit pracovní listy při výuce v přírodě a motivuje je pomocí jednoduché gamifikace. Aplikace je napsaná ve Flutteru.
 
-## Getting Started
+## Spuštění
 
-This project is a starting point for a Flutter application.
+```bash
+flutter pub get
+flutter run
+```
 
-A few resources to get you started if this is your first Flutter project:
+## Ukázky
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![Ukazky](images/IMG_0390.jpeg?raw=true)
